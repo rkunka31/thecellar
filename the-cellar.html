@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cellar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_API_KEY",
+    authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+    databaseURL: "PASTE_YOUR_DATABASE_URL",
+    projectId: "PASTE_YOUR_PROJECT_ID",
+    storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+    appId: "PASTE_YOUR_APP_ID"
+  };
+  // ─────────────────────────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window._db = db;
+  window._ref = ref;
+  window._set = set;
+  window._push = push;
+  window._onValue = onValue;
+  window._update = update;
+  window._remove = remove;
+
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<style>
+:root {
+  --deep:       #130609;
+  --surface:    #1C0B0F;
+  --card:       #221014;
+  --merlot:     #7B1D2E;
+  --merlot-mid: #9E2A3F;
+  --merlot-lt:  #C04060;
+  --gold:       #B8965A;
+  --gold-lt:    #D4B47A;
+  --cream:      #F2E8D9;
+  --cream-dim:  #C8B89A;
+  --ink:        #8A6E5A;
+  --border:     rgba(184,150,90,0.18);
+  --border-hi:  rgba(184,150,90,0.45);
+  --glass:      rgba(255,255,255,0.03);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep);
+  color: var(--cream);
+  font-family: 'Noto Serif', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  padding: 52px 24px 36px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.header-eyebrow {
+  font-family: 'Noto Serif', serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 10vw, 80px);
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -2px;
+  line-height: 0.95;
+}
+.header h1 em {
+  font-style: italic;
+  color: var(--merlot-lt);
+}
+.header-rule {
+  width: 48px;
+  height: 1px;
+  background: var(--gold);
+  margin: 18px auto 14px;
+}
+.header-sub {
+  font-family: 'Noto Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: 1px;
+}
+
+/* ── FIREBASE SETUP BANNER ── */
+.setup-banner {
+  background: rgba(123,29,46,0.3);
+  border: 1px solid var(--merlot);
+  border-radius: 3px;
+  padding: 16px 20px;
+  margin: 20px;
+  font-family: 'Noto Serif', serif;
+  font-size: 13px;
+  color: var(--cream-dim);
+  line-height: 1.7;
+}
+.setup-banner strong { color: var(--gold); font-weight: 600; }
+.setup-banner code {
+  font-family: monospace;
+  background: rgba(0,0,0,0.4);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 12px;
+  color: var(--gold-lt);
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink);
+  font-family: 'Noto Serif', serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 15px 18px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.nav-btn:hover { color: var(--cream-dim); }
+.nav-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 44px 20px 80px;
+}
+
+/* ── SECTION HEADERS ── */
+.section-head {
+  margin-bottom: 36px;
+}
+.section-head h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.5px;
+}
+.section-head h2 em { color: var(--merlot-lt); font-style: italic; }
+.section-desc {
+  font-family: 'Noto Serif', serif;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 6px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 28px 28px 24px;
+  margin-bottom: 18px;
+}
+.card-label {
+  font-family: 'Noto Serif', serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+/* ── FORMS ── */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-family: 'Noto Serif', serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 7px;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--cream);
+  font-family: 'Noto Serif', serif;
+  font-size: 15px;
+  font-weight: 300;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus { border-color: var(--gold); }
+.field select option { background: #1C0B0F; }
+.field textarea { resize: vertical; min-height: 72px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ── BUTTONS ── */
+.btn {
+  font-family: 'Noto Serif', serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+}
+.btn-primary { background: var(--merlot); color: var(--cream); border: 1px solid rgba(184,150,90,0.25); }
+.btn-primary:hover { background: var(--merlot-mid); }
+.btn-gold { background: var(--gold); color: var(--deep); }
+.btn-gold:hover { background: var(--gold-lt); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--cream); border-color: var(--cream-dim); }
+.btn-sm { padding: 8px 18px; font-size: 10px; letter-spacing: 2px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 24px; }
+
+/* ── STARS ── */
+.star-group { margin-bottom: 22px; }
+.star-group-label {
+  font-family: 'Noto Serif', serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.star-group-label span { color: var(--ink); font-weight: 300; }
+.stars { display: flex; gap: 8px; }
+.star {
+  font-size: 26px;
+  cursor: pointer;
+  color: rgba(184,150,90,0.15);
+  transition: color 0.12s, transform 0.1s;
+  user-select: none;
+  line-height: 1;
+}
+.star.on { color: var(--gold); }
+.star:hover { transform: scale(1.15); }
+
+/* ── NOTE CHIPS ── */
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.chip {
+  font-family: 'Noto Serif', serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.18s;
+  background: transparent;
+  text-transform: lowercase;
+}
+.chip:hover { color: var(--cream); border-color: var(--cream-dim); }
+.chip.sel { background: var(--merlot); color: var(--cream); border-color: var(--merlot); }
+.chip.hit { background: rgba(80,160,80,0.18); border-color: #5a9e6a; color: #8ecf9a; }
+.chip.miss { background: rgba(160,60,60,0.15); border-color: #9e4040; color: #cf8e8e; text-decoration: line-through; }
+.chip.revealed { background: rgba(80,160,80,0.1); border-color: #5a9e6a; color: #8ecf9a; }
+
+/* ── WINE LIST ITEMS ── */
+.wine-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 20px 24px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.wine-row:hover { border-color: var(--border-hi); background: rgba(34,16,20,0.9); }
+.wine-rank {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 30px;
+  color: var(--border-hi);
+  min-width: 32px;
+  line-height: 1;
+  padding-top: 2px;
+}
+.wine-info { flex: 1; min-width: 0; }
+.wine-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wine-meta {
+  font-family: 'Noto Serif', serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 3px;
+}
+.wine-bringer {
+  font-family: 'Noto Serif', serif;
+  font-size: 12px;
+  color: var(--gold);
+  margin-top: 2px;
+  font-style: italic;
+}
+.wine-score-col { text-align: right; flex-shrink: 0; }
+.wine-score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--gold);
+  line-height: 1;
+}
+.wine-score-denom {
+  font-family: 'Noto Serif', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.score-bars { display: flex; gap: 3px; margin-top: 8px; justify-content: flex-end; }
+.sbar { width: 4px; height: 22px; background: var(--border); border-radius: 2px; position: relative; overflow: hidden; }
+.sbar-fill { position: absolute; bottom: 0; left: 0; right: 0; background: var(--gold); border-radius: 2px; transition: height 0.5s ease; }
+
+/* ── TYPE BADGES ── */
+.badge {
+  display: inline-block;
+  font-family: 'Noto Serif', serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.badge-red    { background: rgba(123,29,46,0.4); color: #d48a9a; border: 1px solid rgba(123,29,46,0.6); }
+.badge-white  { background: rgba(184,150,90,0.15); color: var(--gold-lt); border: 1px solid rgba(184,150,90,0.3); }
+.badge-rose   { background: rgba(180,80,110,0.2); color: #e8a0b8; border: 1px solid rgba(180,80,110,0.3); }
+.badge-spark  { background: rgba(180,180,120,0.15); color: #d8d490; border: 1px solid rgba(180,180,120,0.3); }
+
+/* ── DIVIDERS ── */
+.rule { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+.gold-rule { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 28px 0; }
+
+/* ── MODAL ── */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 500;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 36px 32px 32px;
+  max-width: 620px;
+  width: 100%;
+  margin: auto;
+  position: relative;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+.modal-x {
+  position: absolute;
+  top: 16px; right: 20px;
+  background: none; border: none;
+  color: var(--ink); font-size: 18px;
+  cursor: pointer; font-family: 'Noto Serif', serif;
+  transition: color 0.2s;
+}
+.modal-x:hover { color: var(--cream); }
+
+/* ── SCANNER ── */
+#scanner-box {
+  width: 100%; max-width: 380px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: #000;
+  position: relative;
+}
+#scanner-box video { width: 100%; height: 100%; object-fit: cover; }
+.scan-reticle {
+  position: absolute;
+  left: 15%; right: 15%; top: 30%; height: 40%;
+  border: 1px solid rgba(184,150,90,0.6);
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
+  pointer-events: none;
+}
+.scan-beam {
+  position: absolute;
+  left: 15%; right: 15%;
+  height: 1px;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+  animation: beam 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes beam { 0%,100% { top: 30%; } 50% { top: 70%; } }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.upload-zone:hover { border-color: var(--gold); }
+.upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-label {
+  font-family: 'Noto Serif', serif;
+  font-size: 13px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* ── AI BOX ── */
+.ai-box {
+  background: rgba(123,29,46,0.12);
+  border: 1px solid rgba(184,150,90,0.3);
+  border-radius: 3px;
+  padding: 18px 20px;
+  margin-top: 16px;
+}
+.ai-box-label {
+  font-family: 'Noto Serif', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+/* ── SCORE BREAKDOWN PILLS ── */
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.pill {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 4px;
+  text-align: center;
+}
+.pill-val { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); line-height: 1; }
+.pill-lbl { font-family: 'Noto Serif', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); margin-top: 3px; }
+
+/* ── TASTING SCORE ── */
+.tasting-score-display {
+  text-align: center;
+  padding: 24px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  margin-top: 18px;
+}
+.tasting-score-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  color: var(--gold);
+  line-height: 1;
+}
+.tasting-score-sub {
+  font-family: 'Noto Serif', serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 6px;
+}
+.tasting-verdict {
+  font-family: 'Noto Serif', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--cream-dim);
+  margin-top: 16px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ── PRETENTIOUSNESS METER ── */
+.pretension-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.pretension-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--merlot-lt));
+  transition: width 0.8s ease;
+}
+
+/* ── H2H ── */
+.h2h-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 20px; }
+.h2h-vs {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--merlot-lt);
+  text-align: center;
+}
+.vote-btn {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 20px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--cream);
+}
+.vote-btn:hover { border-color: var(--gold); background: rgba(34,16,20,0.95); }
+.vote-btn.voted { border-color: var(--gold); background: rgba(123,29,46,0.25); }
+.vote-btn-name { font-family: 'Playfair Display', serif; font-size: 18px; }
+.vote-btn-meta { font-family: 'Noto Serif', serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); margin-top: 4px; }
+.vote-count { font-family: 'Noto Serif', serif; font-size: 12px; color: var(--gold); margin-top: 8px; }
+
+/* ── BRINGER BOARD ── */
+.bringer-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bringer-rank { font-family: 'Playfair Display', serif; font-style: italic; font-size: 26px; color: var(--border-hi); min-width: 28px; }
+.bringer-name { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--cream); flex: 1; }
+.bringer-score { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--gold); }
+
+/* ── TIMELINE ── */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 18px;
+  cursor: pointer;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -21px; top: 8px;
+  width: 7px; height: 7px;
+  background: var(--gold);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.tl-item:hover::before { transform: scale(1.5); }
+.tl-year { font-family: 'Noto Serif', serif; font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+.tl-name { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--cream); }
+.tl-meta { font-family: 'Noto Serif', serif; font-size: 11px; letter-spacing: 1px; color: var(--ink); text-transform: uppercase; }
+
+/* ── BLIND MODE ── */
+.blind-card {
+  text-align: center;
+  padding: 32px 20px;
+}
+.blind-label {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 28px;
+  color: var(--cream-dim);
+}
+
+/* ── PRICE GAME ── */
+.price-reveal {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  color: var(--gold);
+  text-align: center;
+  margin: 16px 0 4px;
+  line-height: 1;
+}
+.price-winner {
+  font-family: 'Noto Serif', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--cream-dim);
+  text-align: center;
+}
+
+/* ── REPORT CARD ── */
+.report-section { margin-bottom: 28px; }
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--gold-lt);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.report-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.6; }
+.report-item strong { color: var(--gold); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--merlot);
+  border: 1px solid var(--gold);
+  color: var(--cream);
+  font-family: 'Noto Serif', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 2px;
+  z-index: 9000;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── LOADER ── */
+.spin {
+  display: inline-block;
+  width: 13px; height: 13px;
+  border: 1px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── UTILS ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.hidden { display: none !important; }
+.empty { text-align: center; padding: 60px 20px; color: var(--ink); font-style: italic; font-size: 17px; }
+
+@media (max-width: 600px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .breakdown { grid-template-columns: repeat(5,1fr); }
+  .wine-row { flex-direction: column; gap: 10px; }
+  .wine-score-col { text-align: left; }
+  .modal { padding: 24px 18px; }
+  .h2h-grid { grid-template-columns: 1fr; }
+  .h2h-vs { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Chalet Edition &middot; 2025</div>
+  <h1>The <em>Cellar</em></h1>
+  <div class="header-rule"></div>
+  <div class="header-sub">A gentleman's guide to drinking well</div>
+</div>
+
+<div id="setup-banner" class="setup-banner hidden">
+  <strong>Firebase not configured.</strong> The app is running in offline mode (local storage only). To enable live multiplayer, open this file and replace the Firebase config at the top with your project credentials from
+  <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">console.firebase.google.com</a>.
+  Create a project &rarr; Add web app &rarr; Copy <code>firebaseConfig</code> object.
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('rankings')">Rankings</button>
+  <button class="nav-btn" onclick="showTab('add')">Add Wine</button>
+  <button class="nav-btn" onclick="showTab('review')">Review</button>
+  <button class="nav-btn" onclick="showTab('tasting')">Tasting Game</button>
+  <button class="nav-btn" onclick="showTab('h2h')">Head to Head</button>
+  <button class="nav-btn" onclick="showTab('bringers')">Bringers</button>
+  <button class="nav-btn" onclick="showTab('timeline')">Vintage</button>
+  <button class="nav-btn" onclick="showTab('report')">Report Card</button>
+</nav>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════
+     RANKINGS
+══════════════════════════════════════════ -->
+<div id="tab-rankings" class="tab-panel active">
+  <div class="section-head" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+    <div>
+      <h2>Tonight's <em>Rankings</em></h2>
+      <div class="section-desc">Live &middot; Updates as reviews come in</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="showTab('add')">Add Wine</button>
+  </div>
+  <div id="rankings-list"><div class="empty">No wines yet. Add the first bottle.</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADD WINE
+══════════════════════════════════════════ -->
+<div id="tab-add" class="tab-panel">
+  <div class="section-head">
+    <h2>Add a <em>Wine</em></h2>
+    <div class="section-desc">Scan, photograph, or enter manually</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Identify the Bottle</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="toggleScanner()">Scan Barcode</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleLabelUpload()">Photograph Label</button>
+    </div>
+
+    <div id="scanner-section" class="hidden" style="margin-top:20px;">
+      <div id="scanner-box">
+        <div class="scan-reticle"></div>
+        <div class="scan-beam"></div>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn btn-ghost btn-sm" onclick="stopScanner()">Stop Scanner</button>
+      </div>
+    </div>
+
+    <div id="label-section" class="hidden" style="margin-top:20px;">
+      <div class="upload-zone">
+        <input type="file" id="label-file" accept="image/*" capture="environment" onchange="handleLabel(event)">
+        <div class="upload-label">Tap to photograph the wine label</div>
+        <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;color:var(--ink);margin-top:4px;text-transform:uppercase;">AI will identify it</div>
+      </div>
+      <div id="label-preview" class="hidden" style="margin-top:14px;">
+        <img id="label-img" style="max-width:100%;border-radius:3px;border:1px solid var(--border);">
+        <div style="text-align:center;margin-top:12px;">
+          <button class="btn btn-primary" onclick="analyzeLabel()">
+            <span class="spin hidden" id="label-spin"></span>Analyze Label with AI
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="manual-card">
+    <div class="card-label">Wine Details</div>
+
+    <div class="grid-2">
+      <div class="field"><label>Wine Name</label><input id="f-name" placeholder="e.g. Chateau Margaux"></div>
+      <div class="field"><label>Producer / Winery</label><input id="f-producer" placeholder="e.g. Domaine Leflaive"></div>
+    </div>
+    <div class="grid-3">
+      <div class="field"><label>Vintage</label><input id="f-year" type="number" placeholder="2019"></div>
+      <div class="field"><label>Type</label>
+        <select id="f-type">
+          <option>Red</option><option>White</option><option>Rose</option>
+          <option>Sparkling</option><option>Dessert</option>
+        </select>
+      </div>
+      <div class="field"><label>Region</label><input id="f-region" placeholder="Bordeaux, France"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Grape</label><input id="f-grape" placeholder="Cabernet Sauvignon"></div>
+      <div class="field"><label>Price (CAD)</label><input id="f-price" type="number" placeholder="45"></div>
+    </div>
+    <div class="field"><label>Who Brought It?</label><input id="f-bringer" placeholder="e.g. Rob"></div>
+    <div class="field">
+      <label>Blind Mode</label>
+      <select id="f-blind">
+        <option value="no">No — name visible to all</option>
+        <option value="yes">Yes — hide identity until revealed</option>
+      </select>
+    </div>
+
+    <hr class="rule">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div>
+        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">AI Tasting Notes</div>
+        <div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);font-style:italic;margin-top:2px;">Used in the tasting game</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="genNotes()">
+        <span class="spin hidden" id="notes-spin"></span>Generate
+      </button>
+    </div>
+    <div id="ai-notes-box" class="hidden ai-box">
+      <div class="ai-box-label">Known Tasting Notes</div>
+      <div id="ai-notes-text" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;line-height:1.7;color:var(--cream-dim);"></div>
+      <div class="chips" id="ai-notes-chips" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveWine()">Save Wine</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearForm()">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     REVIEW
+══════════════════════════════════════════ -->
+<div id="tab-review" class="tab-panel">
+  <div class="section-head">
+    <h2>Write a <em>Review</em></h2>
+    <div class="section-desc">Rate each dimension 1 to 5</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Reviewer</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div class="field" style="margin:0;flex:1;min-width:160px;"><input id="r-name" placeholder="Your name"></div>
+      <button class="btn btn-ghost btn-sm" onclick="setReviewer()">Set</button>
+    </div>
+    <div id="reviewer-set" class="hidden" style="margin-top:10px;font-family:'Noto Serif',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">
+      Reviewing as: <span id="reviewer-show"></span>
+      <button onclick="clearReviewer()" style="background:none;border:none;color:var(--ink);cursor:pointer;margin-left:8px;font-size:12px;">clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Select Wine</div>
+    <div class="field" style="margin:0;"><select id="r-wine-sel" onchange="loadReviewWine()"><option value="">Choose a wine</option></select></div>
+  </div>
+
+  <div id="review-form" class="hidden">
+    <div class="card" id="r-wine-card"></div>
+    <div class="card">
+      <div class="card-label">Your Ratings</div>
+
+      <div class="star-group">
+        <div class="star-group-label">Appearance <span id="lbl-appearance"></span></div>
+        <div class="stars" id="st-appearance"></div>
+      </div>
+      <div class="star-group">
+        <div class="star-group-label">Aroma / Nose <span id="lbl-aroma"></span></div>
+        <div class="stars" id="st-aroma"></div>
+      </div>
+      <div class="star-group">
+        <div class="star-group-label">Taste / Palate <span id="lbl-taste"></span></div>
+        <div class="stars" id="st-taste"></div>
+      </div>
+      <div class="star-group">
+        <div class="star-group-label">Finish <span id="lbl-finish"></span></div>
+        <div class="stars" id="st-finish"></div>
+      </div>
+      <div class="star-group">
+        <div class="star-group-label">Overall <span id="lbl-overall"></span></div>
+        <div class="stars" id="st-overall"></div>
+      </div>
+
+      <hr class="rule">
+      <div class="field">
+        <label>Tasting Notes</label>
+        <textarea id="r-notes" placeholder="Describe what you smell, taste, and feel..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="submitReview()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TASTING GAME
+══════════════════════════════════════════ -->
+<div id="tab-tasting" class="tab-panel">
+  <div class="section-head">
+    <h2>Tasting <em>Game</em></h2>
+    <div class="section-desc">Guess the notes &middot; Reveal the truth</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Select Wine</div>
+    <div class="field" style="margin:0;"><select id="t-wine-sel" onchange="loadTasting()"><option value="">Choose a wine</option></select></div>
+  </div>
+  <div id="tasting-body" class="hidden">
+    <div class="card">
+      <div class="card-label" id="t-type-badge"></div>
+      <div class="card-title" id="t-name"></div>
+      <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);" id="t-meta"></div>
+      <hr class="rule">
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Select everything you detect:</div>
+      <div class="chips" id="t-chips"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="revealTasting()" id="t-reveal-btn">Reveal Answers</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetTasting()">Reset</button>
+      </div>
+      <div id="t-result" class="hidden">
+        <div class="tasting-score-display">
+          <div class="tasting-score-num"><span id="t-score">0</span>/10</div>
+          <div class="tasting-score-sub">Tasting Score</div>
+        </div>
+        <div class="tasting-verdict" id="t-verdict"></div>
+        <hr class="rule">
+        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Expert notes:</div>
+        <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-dim);line-height:1.75;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HEAD TO HEAD
+══════════════════════════════════════════ -->
+<div id="tab-h2h" class="tab-panel">
+  <div class="section-head">
+    <h2>Head to <em>Head</em></h2>
+    <div class="section-desc">Pick two wines &middot; Vote your preference</div>
+  </div>
+  <div class="card">
+    <div class="grid-2">
+      <div class="field"><label>Wine A</label><select id="h2h-a"><option value="">Select</option></select></div>
+      <div class="field"><label>Wine B</label><select id="h2h-b"><option value="">Select</option></select></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="loadH2H()">Start Battle</button>
+  </div>
+  <div id="h2h-body" class="hidden">
+    <div class="h2h-grid">
+      <div class="vote-btn" id="h2h-btn-a" onclick="voteH2H('a')">
+        <div class="vote-btn-name" id="h2h-name-a"></div>
+        <div class="vote-btn-meta" id="h2h-meta-a"></div>
+        <div class="vote-count" id="h2h-votes-a"></div>
+      </div>
+      <div class="h2h-vs">vs</div>
+      <div class="vote-btn" id="h2h-btn-b" onclick="voteH2H('b')">
+        <div class="vote-btn-name" id="h2h-name-b"></div>
+        <div class="vote-btn-meta" id="h2h-meta-b"></div>
+        <div class="vote-count" id="h2h-votes-b"></div>
+      </div>
+    </div>
+    <div id="h2h-reviewer" style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);text-align:center;margin-top:8px;">
+      Voting as <span id="h2h-voter-name" style="color:var(--gold);"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BRINGERS
+══════════════════════════════════════════ -->
+<div id="tab-bringers" class="tab-panel">
+  <div class="section-head">
+    <h2>Bringer <em>Leaderboard</em></h2>
+    <div class="section-desc">Ranked by average score of wines brought</div>
+  </div>
+  <div id="bringers-list"><div class="empty">No reviews yet.</div></div>
+
+  <div class="gold-rule"></div>
+
+  <div class="section-head">
+    <h2>Price <em>Reveal Game</em></h2>
+    <div class="section-desc">Guess the price &middot; Closest wins</div>
+  </div>
+  <div class="card">
+    <div class="field"><label>Select Wine</label><select id="price-wine-sel" onchange="loadPriceGame()"><option value="">Choose a wine</option></select></div>
+  </div>
+  <div id="price-body" class="hidden">
+    <div class="card">
+      <div class="card-label">Your Name</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+        <div class="field" style="margin:0;flex:1;min-width:140px;"><input id="price-guesser" placeholder="Your name"></div>
+      </div>
+      <div class="field"><label>Your Guess (CAD)</label><input id="price-guess" type="number" placeholder="e.g. 38"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="submitPriceGuess()">Lock In Guess</button>
+        <button class="btn btn-ghost btn-sm" onclick="revealPrice()">Reveal Price</button>
+      </div>
+      <div id="price-result" class="hidden" style="margin-top:20px;">
+        <div class="price-reveal" id="price-actual"></div>
+        <div class="price-winner" id="price-winner-txt"></div>
+        <div id="price-guesses-list" style="margin-top:16px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     VINTAGE TIMELINE
+══════════════════════════════════════════ -->
+<div id="tab-timeline" class="tab-panel">
+  <div class="section-head">
+    <h2>Vintage <em>Timeline</em></h2>
+    <div class="section-desc">All wines by year &middot; Tap to review</div>
+  </div>
+  <div id="timeline-body"><div class="empty">No wines added yet.</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     REPORT CARD
+══════════════════════════════════════════ -->
+<div id="tab-report" class="tab-panel">
+  <div class="section-head">
+    <h2>Report <em>Card</em></h2>
+    <div class="section-desc">End of night summary</div>
+  </div>
+  <div id="report-body"><div class="empty">Add wines and reviews to generate the report.</div></div>
+  <div id="roast-section" class="hidden">
+    <hr class="rule">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Sommelier Roast</div>
+    <button class="btn btn-primary" onclick="genRoast()"><span class="spin hidden" id="roast-spin"></span>Generate AI Roast</button>
+    <div id="roast-result" class="hidden ai-box" style="margin-top:16px;">
+      <div class="ai-box-label">Tonight's Verdict</div>
+      <div id="roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-dim);line-height:1.8;white-space:pre-wrap;"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ══════════════════════════════════════════
+     WINE DETAIL MODAL
+══════════════════════════════════════════ -->
+<div class="modal-bg" id="wine-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">&#x2715;</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let wines = [];
+let reviews = [];
+let h2hVotes = {};
+let priceGuesses = {};
+let currentReviewer = localStorage.getItem('cellar-reviewer') || '';
+let currentAINotes = [];
+let labelB64 = null;
+let scanActive = false;
+let ratings = { appearance:0, aroma:0, taste:0, finish:0, overall:0 };
+let tastingSelected = [];
+let tastingRevealed = false;
+let useFirebase = false;
+let DB, dbRef, dbSet, dbPush, dbOnValue, dbUpdate, dbRemove;
+
+// ══════════════════════════════════════════════════════════
+// FIREBASE INIT
+// ══════════════════════════════════════════════════════════
+window.addEventListener('firebase-ready', () => {
+  DB = window._db;
+  dbRef = window._ref;
+  dbSet = window._set;
+  dbPush = window._push;
+  dbOnValue = window._onValue;
+  dbUpdate = window._update;
+  dbRemove = window._remove;
+
+  // Test if config was actually filled in
+  try {
+    const testRef = dbRef(DB, '.info/connected');
+    dbOnValue(testRef, (snap) => {
+      if (snap.val() === true) {
+        useFirebase = true;
+        document.getElementById('setup-banner').classList.add('hidden');
+        listenFirebase();
+      }
+    });
+  } catch(e) {
+    showSetupBanner();
+  }
+
+  // Timeout fallback
+  setTimeout(() => {
+    if (!useFirebase) showSetupBanner();
+  }, 4000);
+});
+
+function showSetupBanner() {
+  document.getElementById('setup-banner').classList.remove('hidden');
+  loadLocalStorage();
+  renderAll();
+}
+
+function listenFirebase() {
+  dbOnValue(dbRef(DB, 'wines'), snap => {
+    wines = snap.val() ? Object.entries(snap.val()).map(([id,v]) => ({...v, id})) : [];
+    renderAll();
+  });
+  dbOnValue(dbRef(DB, 'reviews'), snap => {
+    reviews = snap.val() ? Object.entries(snap.val()).map(([id,v]) => ({...v, id})) : [];
+    renderAll();
+  });
+  dbOnValue(dbRef(DB, 'h2hVotes'), snap => {
+    h2hVotes = snap.val() || {};
+    renderH2H();
+  });
+  dbOnValue(dbRef(DB, 'priceGuesses'), snap => {
+    priceGuesses = snap.val() || {};
+  });
+}
+
+function loadLocalStorage() {
+  wines   = JSON.parse(localStorage.getItem('cellar-wines')   || '[]');
+  reviews = JSON.parse(localStorage.getItem('cellar-reviews') || '[]');
+}
+
+function saveLocal() {
+  localStorage.setItem('cellar-wines',   JSON.stringify(wines));
+  localStorage.setItem('cellar-reviews', JSON.stringify(reviews));
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════════════════════
+function renderAll() {
+  renderRankings();
+  populateSelects();
+  renderBringers();
+  renderTimeline();
+  renderReport();
+}
+
+// ══════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+name+"'")) b.classList.add('active');
+  });
+  stopScanner();
+}
+
+// ══════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════════════════
+// SCORING
+// ══════════════════════════════════════════════════════════
+function getScore(wineId) {
+  const rs = reviews.filter(r => r.wineId === wineId);
+  if (!rs.length) return null;
+  const avg = k => rs.reduce((s,r) => s+(r[k]||0), 0) / rs.length;
+  return {
+    appearance: avg('appearance'), aroma: avg('aroma'), taste: avg('taste'),
+    finish: avg('finish'), overall: avg('overall'),
+    composite: (avg('appearance')+avg('aroma')+avg('taste')+avg('finish')+avg('overall'))/5,
+    count: rs.length
+  };
+}
+
+function typeBadge(type) {
+  const m = { Red:'red', White:'white', Rose:'rose', Sparkling:'spark', Rosé:'rose' };
+  return `<span class="badge badge-${m[type]||'red'}">${type}</span>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// RANKINGS
+// ══════════════════════════════════════════════════════════
+function renderRankings() {
+  const el = document.getElementById('rankings-list');
+  if (!wines.length) { el.innerHTML = '<div class="empty">No wines yet. Add the first bottle.</div>'; return; }
+
+  const scored = wines
+    .map(w => ({ w, s: getScore(w.id) }))
+    .sort((a,b) => {
+      if (!a.s && !b.s) return 0;
+      if (!a.s) return 1; if (!b.s) return -1;
+      return b.s.composite - a.s.composite;
+    });
+
+  el.innerHTML = scored.map(({w,s},i) => {
+    const sc = s ? s.composite.toFixed(1) : '—';
+    const bars = s ? ['appearance','aroma','taste','finish','overall'].map(k =>
+      `<div class="sbar"><div class="sbar-fill" style="height:${(s[k]/5)*100}%"></div></div>`).join('') : '';
+    const nameDisplay = w.blind === 'yes' ? '<em style="color:var(--ink);">Blind Wine</em>' : w.name;
+    return `<div class="wine-row" onclick="openModal('${w.id}')">
+      <div class="wine-rank">${s ? i+1 : '·'}</div>
+      <div class="wine-info">
+        <div class="wine-name">${nameDisplay}</div>
+        <div class="wine-meta">${w.blind==='yes' ? 'Identity hidden' : [w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${typeBadge(w.type)}</div>
+        ${w.bringer ? `<div class="wine-bringer">${w.bringer}</div>` : ''}
+        ${s ? `<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;">${s.count} review${s.count>1?'s':''}</div>` : '<div style="font-family:\'Noto Serif\',serif;font-size:12px;color:var(--ink);font-style:italic;">Not yet reviewed</div>'}
+      </div>
+      <div class="wine-score-col">
+        <div class="wine-score-big">${sc}</div>
+        <div class="wine-score-denom">/ 5.0</div>
+        <div class="score-bars">${bars}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════════
+function openModal(id) {
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  const s = getScore(id);
+  const rs = reviews.filter(r => r.wineId === id);
+  const isBlind = w.blind === 'yes';
+
+  let html = `
+    <div style="margin-bottom:6px;">${typeBadge(w.type)}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:30px;color:var(--cream);letter-spacing:-0.5px;margin-bottom:4px;">${isBlind ? '<em style="color:var(--ink);">Blind Wine</em>' : w.name}</div>
+    <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind ? 'Identity hidden' : [w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
+    ${w.bringer ? `<div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--gold);font-style:italic;margin-top:6px;">Brought by ${w.bringer}</div>` : ''}
+  `;
+
+  if (isBlind) {
+    html += `<div class="gold-rule"></div>
+    <button class="btn btn-ghost btn-sm" onclick="revealBlind('${id}');closeModal();">Reveal Identity</button>`;
+  }
+
+  if (s) {
+    html += `<div class="gold-rule"></div>
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Score Breakdown &middot; ${s.count} review${s.count>1?'s':''}</div>
+    <div class="breakdown">
+      ${['appearance','aroma','taste','finish','overall'].map(k=>`
+        <div class="pill">
+          <div class="pill-val">${s[k].toFixed(1)}</div>
+          <div class="pill-lbl">${k}</div>
+        </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:22px;">
+      <div style="font-family:'Playfair Display',serif;font-size:58px;color:var(--gold);line-height:1;">${s.composite.toFixed(1)}</div>
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);">Composite Score</div>
+    </div>`;
+  }
+
+  if (rs.length) {
+    html += `<div class="gold-rule"></div><div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Individual Reviews</div>`;
+    rs.forEach(r => {
+      const pretension = r.notes ? Math.min(100, Math.round(r.notes.length * 0.8 + (r.notes.match(/\b(terroir|tannins|minerality|finish|barnyard|graphite|pencil shavings)\b/gi)||[]).length * 12)) : 0;
+      html += `<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);">
+        <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-lt);">${r.reviewer||'Anonymous'}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);">
+          ${['appearance','aroma','taste','finish','overall'].map(k=>`${k.charAt(0).toUpperCase()+k.slice(1)}: <strong style="color:var(--cream);">${r[k]||'—'}</strong>`).join(' &middot; ')}
+        </div>
+        ${r.notes ? `
+          <div style="margin-top:8px;font-style:italic;font-size:14px;color:var(--cream-dim);line-height:1.7;">"${r.notes}"</div>
+          ${pretension > 20 ? `<div style="margin-top:8px;">
+            <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">Pretentiousness: ${pretension}%</div>
+            <div class="pretension-bar"><div class="pretension-fill" style="width:${pretension}%"></div></div>
+          </div>` : ''}` : ''}
+      </div>`;
+    });
+  }
+
+  if (w.aiNotes) {
+    html += `<div class="gold-rule"></div>
+    <div class="ai-box">
+      <div class="ai-box-label">AI Tasting Notes</div>
+      <div style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-dim);line-height:1.75;">${w.aiNotes}</div>
+    </div>`;
+  }
+
+  html += `<div class="btn-row">
+    <button class="btn btn-primary btn-sm" onclick="closeModal();showTab('review');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadReviewWine();},80)">Review This Wine</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal();showTab('tasting');setTimeout(()=>{document.getElementById('t-wine-sel').value='${id}';loadTasting();},80)">Tasting Game</button>
+  </div>`;
+
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('wine-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('wine-modal').classList.remove('open'); }
+
+function revealBlind(id) {
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  if (useFirebase) dbUpdate(dbRef(DB, 'wines/'+id), { blind: 'no' });
+  else { w.blind = 'no'; saveLocal(); renderAll(); }
+  toast('Identity revealed');
+}
+
+// ══════════════════════════════════════════════════════════
+// SCANNER
+// ══════════════════════════════════════════════════════════
+function toggleScanner() {
+  const s = document.getElementById('scanner-section');
+  if (s.classList.contains('hidden')) { s.classList.remove('hidden'); startScanner(); }
+  else { stopScanner(); s.classList.add('hidden'); }
+}
+function toggleLabelUpload() {
+  document.getElementById('label-section').classList.toggle('hidden');
+}
+
+function startScanner() {
+  scanActive = true;
+  Quagga.init({
+    inputStream: { type:'LiveStream', target: document.getElementById('scanner-box'), constraints: { facingMode:'environment' } },
+    decoder: { readers: ['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader'] }
+  }, err => {
+    if (err) { toast('Camera unavailable — enter manually'); stopScanner(); return; }
+    Quagga.start();
+    Quagga.onDetected(async d => {
+      const code = d.codeResult.code;
+      stopScanner();
+      document.getElementById('scanner-section').classList.add('hidden');
+      toast('Barcode: ' + code);
+      try {
+        const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
+        const data = await r.json();
+        if (data.status===1 && data.product) {
+          const p = data.product;
+          fillForm({ name: p.product_name||p.brands||'', producer: p.brands||'' });
+          toast('Found in database'); return;
+        }
+      } catch(e) {}
+      const resp = await claude(`Barcode: ${code}. This is from a wine bottle. Identify it. Return ONLY JSON: {"name":"","producer":"","year":"","type":"","region":"","grape":""}. Return only JSON.`);
+      try { fillForm(JSON.parse(resp.replace(/```json?|```/g,'').trim())); toast('Wine identified'); }
+      catch(e) { toast('Enter details manually'); }
+    });
+  });
+}
+function stopScanner() {
+  if (!scanActive) return;
+  scanActive = false;
+  try { Quagga.stop(); } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// LABEL
+// ══════════════════════════════════════════════════════════
+function handleLabel(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    labelB64 = ev.target.result.split(',')[1];
+    document.getElementById('label-img').src = ev.target.result;
+    document.getElementById('label-preview').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeLabel() {
+  if (!labelB64) return;
+  const spin = document.getElementById('label-spin');
+  spin.classList.remove('hidden');
+  try {
+    const resp = await claudeImg(labelB64,
+      `Wine label photo. Identify it. Return ONLY JSON: {"name":"","producer":"","year":"","type":"Red/White/Rose/Sparkling/Dessert","region":"","grape":"","aiNotes":"2-3 sentence tasting note","aiNoteChips":["note1","note2"]}. aiNoteChips: 12-16 tasting descriptors. Return only JSON.`);
+    const d = JSON.parse(resp.replace(/```json?|```/g,'').trim());
+    fillForm(d);
+    if (d.aiNotes) showNotes(d.aiNotes, d.aiNoteChips||[]);
+    toast('Label identified');
+  } catch(e) { toast('Could not identify — enter manually'); }
+  finally { spin.classList.add('hidden'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// NOTES GEN
+// ══════════════════════════════════════════════════════════
+async function genNotes() {
+  const name = document.getElementById('f-name').value;
+  if (!name) { toast('Enter a wine name first'); return; }
+  const spin = document.getElementById('notes-spin');
+  spin.classList.remove('hidden');
+  try {
+    const resp = await claude(
+      `Wine: ${name} ${document.getElementById('f-producer').value} ${document.getElementById('f-year').value} ${document.getElementById('f-type').value} ${document.getElementById('f-region').value} ${document.getElementById('f-grape').value}.
+Generate professional tasting notes. Return ONLY JSON: {"aiNotes":"2-3 sentence note on colour, aroma, flavour, finish","aiNoteChips":["descriptor1"]}. 12-16 chips. Return only JSON.`);
+    const d = JSON.parse(resp.replace(/```json?|```/g,'').trim());
+    showNotes(d.aiNotes, d.aiNoteChips||[]);
+    toast('Notes generated');
+  } catch(e) { toast('Could not generate notes'); }
+  finally { spin.classList.add('hidden'); }
+}
+
+function showNotes(notes, chips) {
+  currentAINotes = chips;
+  document.getElementById('ai-notes-text').textContent = notes;
+  document.getElementById('ai-notes-chips').innerHTML = chips.map(c=>`<span class="chip">${c}</span>`).join('');
+  document.getElementById('ai-notes-box').classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════════════════════
+// FORM
+// ══════════════════════════════════════════════════════════
+function fillForm(d) {
+  if (d.name)     document.getElementById('f-name').value = d.name;
+  if (d.producer) document.getElementById('f-producer').value = d.producer;
+  if (d.year)     document.getElementById('f-year').value = d.year;
+  if (d.type)     document.getElementById('f-type').value = d.type;
+  if (d.region)   document.getElementById('f-region').value = d.region;
+  if (d.grape)    document.getElementById('f-grape').value = d.grape;
+  document.getElementById('manual-card').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function clearForm() {
+  ['f-name','f-producer','f-year','f-region','f-grape','f-price','f-bringer'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-type').value = 'Red';
+  document.getElementById('f-blind').value = 'no';
+  document.getElementById('ai-notes-box').classList.add('hidden');
+  document.getElementById('label-preview').classList.add('hidden');
+  labelB64 = null; currentAINotes = [];
+}
+
+async function saveWine() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Enter a wine name'); return; }
+  const wine = {
+    name, producer: document.getElementById('f-producer').value.trim(),
+    year: document.getElementById('f-year').value,
+    type: document.getElementById('f-type').value,
+    region: document.getElementById('f-region').value.trim(),
+    grape: document.getElementById('f-grape').value.trim(),
+    price: document.getElementById('f-price').value,
+    bringer: document.getElementById('f-bringer').value.trim(),
+    blind: document.getElementById('f-blind').value,
+    aiNotes: document.getElementById('ai-notes-text').textContent || '',
+    aiNoteChips: currentAINotes,
+    addedAt: Date.now()
+  };
+  if (useFirebase) {
+    await dbPush(dbRef(DB, 'wines'), wine);
+  } else {
+    wine.id = Date.now().toString();
+    wines.push(wine);
+    saveLocal();
+    renderAll();
+  }
+  toast(name + ' added');
+  clearForm();
+  showTab('rankings');
+}
+
+// ══════════════════════════════════════════════════════════
+// POPULATE SELECTS
+// ══════════════════════════════════════════════════════════
+function populateSelects() {
+  const opts = wines.map(w => `<option value="${w.id}">${w.blind==='yes'?'Blind Wine':w.name}${w.year?' '+w.year:''}${w.bringer?' ('+w.bringer+')':''}</option>`).join('');
+  const empty = '<option value="">Choose a wine</option>';
+  ['r-wine-sel','t-wine-sel','h2h-a','h2h-b','price-wine-sel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = empty + opts;
+  });
+  if (currentReviewer) {
+    document.getElementById('r-name').value = currentReviewer;
+    document.getElementById('reviewer-show').textContent = currentReviewer;
+    document.getElementById('reviewer-set').classList.remove('hidden');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// REVIEW
+// ══════════════════════════════════════════════════════════
+function setReviewer() {
+  const n = document.getElementById('r-name').value.trim();
+  if (!n) return;
+  currentReviewer = n;
+  localStorage.setItem('cellar-reviewer', n);
+  document.getElementById('reviewer-show').textContent = n;
+  document.getElementById('reviewer-set').classList.remove('hidden');
+}
+function clearReviewer() {
+  currentReviewer = '';
+  localStorage.removeItem('cellar-reviewer');
+  document.getElementById('r-name').value = '';
+  document.getElementById('reviewer-set').classList.add('hidden');
+}
+
+function loadReviewWine() {
+  const id = document.getElementById('r-wine-sel').value;
+  if (!id) { document.getElementById('review-form').classList.add('hidden'); return; }
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  const blind = w.blind === 'yes';
+  document.getElementById('r-wine-card').innerHTML = `
+    <div class="card-label">${typeBadge(w.type)}</div>
+    <div class="card-title">${blind ? '<em style="color:var(--ink);">Blind Wine</em>' : w.name}</div>
+    <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${blind?'Identity hidden':[w.producer,w.year,w.region].filter(Boolean).join(' &middot; ')}</div>
+  `;
+  ratings = { appearance:0, aroma:0, taste:0, finish:0, overall:0 };
+  ['appearance','aroma','taste','finish','overall'].forEach(k => {
+    buildStars(k);
+    document.getElementById('lbl-'+k).textContent = '';
+  });
+  document.getElementById('r-notes').value = '';
+  document.getElementById('review-form').classList.remove('hidden');
+}
+
+function buildStars(key) {
+  const c = document.getElementById('st-'+key);
+  c.innerHTML = '';
+  for (let i=1; i<=5; i++) {
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.textContent = '\u2605';
+    s.addEventListener('click', () => setRating(key, i));
+    s.addEventListener('mouseover', () => hlStars(key, i));
+    s.addEventListener('mouseout', () => hlStars(key, ratings[key]));
+    c.appendChild(s);
+  }
+}
+function hlStars(key, val) {
+  document.getElementById('st-'+key).querySelectorAll('.star').forEach((s,i) => s.classList.toggle('on', i<val));
+}
+function setRating(key, val) {
+  ratings[key] = val;
+  hlStars(key, val);
+  const lbls = {1:'Poor',2:'Fair',3:'Good',4:'Very Good',5:'Excellent'};
+  document.getElementById('lbl-'+key).textContent = val+'/5 · '+lbls[val];
+}
+
+async function submitReview() {
+  const id = document.getElementById('r-wine-sel').value;
+  if (!id) { toast('Select a wine'); return; }
+  if (Object.values(ratings).some(v=>v===0)) { toast('Rate all five dimensions'); return; }
+  const review = {
+    wineId: id, reviewer: currentReviewer||'Anonymous',
+    ...ratings, notes: document.getElementById('r-notes').value.trim(),
+    createdAt: Date.now()
+  };
+  if (useFirebase) {
+    await dbPush(dbRef(DB, 'reviews'), review);
+  } else {
+    review.id = Date.now().toString();
+    reviews.push(review);
+    saveLocal();
+    renderAll();
+  }
+  toast('Review submitted');
+  document.getElementById('r-wine-sel').value = '';
+  document.getElementById('review-form').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════════════
+// TASTING GAME
+// ══════════════════════════════════════════════════════════
+const ALL_NOTES = [
+  'blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig',
+  'prune','raisin','peach','apricot','lemon','lime','grapefruit','apple','pear','melon',
+  'vanilla','oak','cedar','tobacco','smoke','toast','leather','truffle','earth','mushroom',
+  'wet stone','mineral','pepper','clove','cinnamon','nutmeg','licorice','anise',
+  'violet','rose','lavender','jasmine','coffee','chocolate','caramel','butter','cream',
+  'honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus',
+  'dried herbs','menthol','barnyard','pencil shavings','tar','game'
+];
+
+function loadTasting() {
+  const id = document.getElementById('t-wine-sel').value;
+  if (!id) { document.getElementById('tasting-body').classList.add('hidden'); return; }
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  tastingSelected = []; tastingRevealed = false;
+  const notes = w.aiNoteChips || [];
+  document.getElementById('t-name').textContent = w.blind==='yes' ? 'Blind Wine' : w.name;
+  document.getElementById('t-meta').textContent = [w.year,w.type,w.region].filter(Boolean).join(' · ').toUpperCase();
+  document.getElementById('t-type-badge').innerHTML = typeBadge(w.type);
+  document.getElementById('t-result').classList.add('hidden');
+  document.getElementById('t-reveal-btn').disabled = false;
+  const pool = [...new Set([...notes, ...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
+  document.getElementById('t-chips').innerHTML = shuffle(pool).map(n =>
+    `<button class="chip" onclick="toggleNote(this,'${n}')">${n}</button>`).join('');
+  document.getElementById('tasting-body').classList.remove('hidden');
+}
+
+function shuffle(arr) {
+  for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+function toggleNote(el, note) {
+  if (tastingRevealed) return;
+  el.classList.toggle('sel');
+  if (el.classList.contains('sel')) tastingSelected.push(note);
+  else tastingSelected = tastingSelected.filter(n=>n!==note);
+}
+
+function revealTasting() {
+  const w = wines.find(x => x.id === document.getElementById('t-wine-sel').value);
+  const known = w?.aiNoteChips || [];
+  if (!known.length) { toast('No tasting notes for this wine — generate them when adding'); return; }
+  tastingRevealed = true;
+  document.getElementById('t-reveal-btn').disabled = true;
+  const correct = tastingSelected.filter(n=>known.includes(n));
+  const score = Math.min(10, Math.round((correct.length/Math.max(known.length,1))*10));
+  document.querySelectorAll('#t-chips .chip').forEach(chip => {
+    const n = chip.textContent;
+    chip.classList.remove('sel');
+    if (known.includes(n)) chip.classList.add(tastingSelected.includes(n)?'hit':'revealed');
+    else if (tastingSelected.includes(n)) chip.classList.add('miss');
+  });
+  document.getElementById('t-score').textContent = score;
+  const verdicts = [[0,2,"Your palate requires further development. And another glass."],[3,4,"A valiant effort. The wine is not judging you."],[5,6,"Respectable. You paid attention."],[7,8,"Impressive nose. Have you considered a career change?"],[9,10,"Extraordinary. Are you sure you're in finance?"]];
+  document.getElementById('t-verdict').textContent = (verdicts.find(([lo,hi])=>score>=lo&&score<=hi)||[])[2]||'';
+  document.getElementById('t-expert').textContent = w?.aiNotes||'No expert notes available for this wine.';
+  document.getElementById('t-result').classList.remove('hidden');
+}
+function resetTasting() { loadTasting(); }
+
+// ══════════════════════════════════════════════════════════
+// HEAD TO HEAD
+// ══════════════════════════════════════════════════════════
+let h2hCurrent = { a:null, b:null };
+
+function loadH2H() {
+  const aId = document.getElementById('h2h-a').value;
+  const bId = document.getElementById('h2h-b').value;
+  if (!aId||!bId||aId===bId) { toast('Select two different wines'); return; }
+  h2hCurrent = { a:aId, b:bId };
+  const a = wines.find(x=>x.id===aId), b = wines.find(x=>x.id===bId);
+  document.getElementById('h2h-name-a').textContent = a.blind==='yes'?'Blind Wine':a.name;
+  document.getElementById('h2h-meta-a').textContent = [a.year,a.type].filter(Boolean).join(' · ').toUpperCase();
+  document.getElementById('h2h-name-b').textContent = b.blind==='yes'?'Blind Wine':b.name;
+  document.getElementById('h2h-meta-b').textContent = [b.year,b.type].filter(Boolean).join(' · ').toUpperCase();
+  document.getElementById('h2h-voter-name').textContent = currentReviewer||'Anonymous';
+  document.getElementById('h2h-body').classList.remove('hidden');
+  renderH2H();
+}
+
+async function voteH2H(side) {
+  const key = h2hCurrent.a + '_' + h2hCurrent.b;
+  const voter = currentReviewer||'Anonymous';
+  const path = 'h2hVotes/'+key+'/'+voter;
+  if (useFirebase) {
+    await dbSet(dbRef(DB, path), side);
+  } else {
+    if (!h2hVotes[key]) h2hVotes[key] = {};
+    h2hVotes[key][voter] = side;
+  }
+  document.getElementById('h2h-btn-'+side).classList.add('voted');
+  toast('Vote recorded');
+  renderH2H();
+}
+
+function renderH2H() {
+  if (!h2hCurrent.a) return;
+  const key = h2hCurrent.a + '_' + h2hCurrent.b;
+  const votes = h2hVotes[key] || {};
+  const aVotes = Object.values(votes).filter(v=>v==='a').length;
+  const bVotes = Object.values(votes).filter(v=>v==='b').length;
+  const el_a = document.getElementById('h2h-votes-a');
+  const el_b = document.getElementById('h2h-votes-b');
+  if (el_a) el_a.textContent = aVotes + ' vote' + (aVotes!==1?'s':'');
+  if (el_b) el_b.textContent = bVotes + ' vote' + (bVotes!==1?'s':'');
+}
+
+// ══════════════════════════════════════════════════════════
+// BRINGERS
+// ══════════════════════════════════════════════════════════
+function renderBringers() {
+  const el = document.getElementById('bringers-list');
+  const bringers = {};
+  wines.forEach(w => {
+    if (!w.bringer) return;
+    const s = getScore(w.id);
+    if (!s) return;
+    if (!bringers[w.bringer]) bringers[w.bringer] = { total:0, count:0, wines:[] };
+    bringers[w.bringer].total += s.composite;
+    bringers[w.bringer].count++;
+    bringers[w.bringer].wines.push(w.name);
+  });
+  const sorted = Object.entries(bringers).sort((a,b)=>b[1].total/b[1].count-a[1].total/a[1].count);
+  if (!sorted.length) { el.innerHTML = '<div class="empty">No reviewed wines with bringers yet.</div>'; return; }
+  el.innerHTML = sorted.map(([name,d],i) => `
+    <div class="bringer-row">
+      <div class="bringer-rank">${i+1}</div>
+      <div>
+        <div class="bringer-name">${name}</div>
+        <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${d.wines.join(', ')}</div>
+      </div>
+      <div class="bringer-score">${(d.total/d.count).toFixed(1)}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// PRICE GAME
+// ══════════════════════════════════════════════════════════
+function loadPriceGame() {
+  const id = document.getElementById('price-wine-sel').value;
+  document.getElementById('price-body').classList.toggle('hidden', !id);
+  document.getElementById('price-result').classList.add('hidden');
+}
+
+async function submitPriceGuess() {
+  const id = document.getElementById('price-wine-sel').value;
+  const guesser = document.getElementById('price-guesser').value.trim() || currentReviewer || 'Anonymous';
+  const guess = parseFloat(document.getElementById('price-guess').value);
+  if (!id||isNaN(guess)) { toast('Select a wine and enter a guess'); return; }
+  const path = 'priceGuesses/'+id+'/'+guesser;
+  if (useFirebase) await dbSet(dbRef(DB, path), guess);
+  else { if(!priceGuesses[id]) priceGuesses[id]={}; priceGuesses[id][guesser]=guess; }
+  toast('Guess locked in');
+}
+
+function revealPrice() {
+  const id = document.getElementById('price-wine-sel').value;
+  const w = wines.find(x=>x.id===id);
+  if (!w||!w.price) { toast('No price set for this wine'); return; }
+  const actual = parseFloat(w.price);
+  const guesses = priceGuesses[id] || {};
+  document.getElementById('price-actual').textContent = '$'+actual.toFixed(0);
+  const sorted = Object.entries(guesses).sort((a,b)=>Math.abs(a[1]-actual)-Math.abs(b[1]-actual));
+  const winner = sorted[0];
+  document.getElementById('price-winner-txt').textContent = winner ? `Closest guess: ${winner[0]} ($${winner[1]})` : 'No guesses recorded';
+  document.getElementById('price-guesses-list').innerHTML = sorted.map(([name,g]) =>
+    `<div class="report-item"><strong>${name}</strong>: $${g} &nbsp;&middot;&nbsp; off by $${Math.abs(g-actual).toFixed(0)}</div>`).join('');
+  document.getElementById('price-result').classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════════════════════
+// TIMELINE
+// ══════════════════════════════════════════════════════════
+function renderTimeline() {
+  const el = document.getElementById('timeline-body');
+  if (!wines.length) { el.innerHTML = '<div class="empty">No wines added yet.</div>'; return; }
+  const sorted = [...wines].filter(w=>w.year).sort((a,b)=>a.year-b.year);
+  const noYear = wines.filter(w=>!w.year);
+  const all = [...sorted, ...noYear];
+  if (!all.length) { el.innerHTML = '<div class="empty">No wines added yet.</div>'; return; }
+  el.innerHTML = `<div class="timeline">${all.map(w=>`
+    <div class="tl-item" onclick="openModal('${w.id}')">
+      <div class="tl-year">${w.year||'No vintage'}</div>
+      <div class="tl-name">${w.blind==='yes'?'Blind Wine':w.name}</div>
+      <div class="tl-meta">${[w.type,w.region].filter(Boolean).join(' &middot; ')}</div>
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// REPORT CARD
+// ══════════════════════════════════════════════════════════
+function renderReport() {
+  const el = document.getElementById('report-body');
+  if (!wines.length||!reviews.length) { el.innerHTML = '<div class="empty">Add wines and reviews to generate the report.</div>'; return; }
+
+  const scored = wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
+  if (!scored.length) { el.innerHTML = '<div class="empty">No reviews yet.</div>'; return; }
+
+  const winner = scored[0];
+  const loser = scored[scored.length-1];
+  const allNotes = reviews.filter(r=>r.notes).sort((a,b)=>b.notes.length-a.notes.length);
+  const mostPretentious = allNotes[0];
+  const bringers = {};
+  wines.forEach(w=>{ if(w.bringer){ const s=getScore(w.id); if(!s) return; if(!bringers[w.bringer]) bringers[w.bringer]={t:0,c:0}; bringers[w.bringer].t+=s.composite; bringers[w.bringer].c++; } });
+  const brSorted = Object.entries(bringers).sort((a,b)=>b[1].t/b[1].c-a[1].t/a[1].c);
+
+  el.innerHTML = `
+    <div class="report-section">
+      <div class="report-title">Wine of the Night</div>
+      <div class="report-item"><strong>${winner.w.name}</strong> — ${winner.s.composite.toFixed(1)} / 5.0 &nbsp;${typeBadge(winner.w.type)} ${winner.w.bringer?'&nbsp;&middot;&nbsp; Brought by '+winner.w.bringer:''}</div>
+    </div>
+    <div class="report-section">
+      <div class="report-title">Final Rankings</div>
+      ${scored.map(({w,s},i)=>`<div class="report-item">${i+1}. <strong>${w.blind==='yes'?'Blind Wine':w.name}</strong> &nbsp;&middot;&nbsp; ${s.composite.toFixed(1)} &nbsp;&middot;&nbsp; ${s.count} review${s.count>1?'s':''}</div>`).join('')}
+    </div>
+    ${brSorted.length?`<div class="report-section">
+      <div class="report-title">Best Bringer</div>
+      ${brSorted.map(([name,d],i)=>`<div class="report-item">${i+1}. <strong>${name}</strong> &nbsp;&middot;&nbsp; Avg. ${(d.t/d.c).toFixed(1)}</div>`).join('')}
+    </div>`:''}
+    ${mostPretentious?`<div class="report-section">
+      <div class="report-title">Most Pretentious Note</div>
+      <div class="report-item"><strong>${mostPretentious.reviewer}</strong>: "${mostPretentious.notes}"</div>
+    </div>`:''}
+    ${loser&&loser.w.id!==winner.w.id?`<div class="report-section">
+      <div class="report-title">Bottom of the Cellar</div>
+      <div class="report-item"><strong>${loser.w.blind==='yes'?'Blind Wine':loser.w.name}</strong> — ${loser.s.composite.toFixed(1)} / 5.0 ${loser.w.bringer?'&nbsp;&middot;&nbsp; Brought by '+loser.w.bringer:''}</div>
+    </div>`:''}
+  `;
+  document.getElementById('roast-section').classList.remove('hidden');
+}
+
+async function genRoast() {
+  const scored = wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
+  if (!scored.length) { toast('Need reviews first'); return; }
+  const spin = document.getElementById('roast-spin');
+  spin.classList.remove('hidden');
+  const summary = scored.map(({w,s},i) => {
+    const rs = reviews.filter(r=>r.wineId===w.id);
+    const notes = rs.map(r=>r.notes).filter(Boolean).join('; ');
+    return `${i+1}. ${w.blind==='yes'?'A blind wine':w.name} (${s.composite.toFixed(1)}/5)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Tasting notes: '+notes:''}`;
+  }).join('\n');
+  try {
+    const roast = await claude(`You are a sarcastically brilliant sommelier MC at a finance industry chalet night. Here are tonight's wines and reviews:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph roast of tonight's proceedings. Roast the wines, the scores, the tasting notes, and the bringers by name where available. Be funny, specific, and merciless but charming. Finance industry humour welcome. Do not use markdown formatting.`);
+    document.getElementById('roast-text').textContent = roast;
+    document.getElementById('roast-result').classList.remove('hidden');
+  } catch(e) { toast('Could not generate roast'); }
+  finally { spin.classList.add('hidden'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// CLAUDE API
+// ══════════════════════════════════════════════════════════
+async function claude(prompt) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+  });
+  const d = await r.json();
+  return d.content[0].text;
+}
+
+async function claudeImg(b64, prompt) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[
+      {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+      {type:'text',text:prompt}
+    ]}]})
+  });
+  const d = await r.json();
+  return d.content[0].text;
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+['appearance','aroma','taste','finish','overall'].forEach(buildStars);
+document.getElementById('wine-modal').addEventListener('click', e => { if(e.target===document.getElementById('wine-modal')) closeModal(); });
+
+// Fallback: if firebase never fires
+setTimeout(() => { if (!useFirebase && !wines.length) { loadLocalStorage(); renderAll(); } }, 2000);
+</script>
+</body>
+</html>
