@@ -266,7 +266,27 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 <!-- ADD WINE -->
 <div id="tab-add" class="tp">
-  <div class="sh"><h2>Add a <em>Wine</em></h2><div class="sh-desc">Enter wine details manually</div></div>
+  <div class="sh"><h2>Add a <em>Wine</em></h2><div class="sh-desc">Photograph label or enter manually</div></div>
+
+  <div class="card">
+    <div class="clabel">Identify from Label</div>
+    <button class="btn bq bsm" onclick="toggleLabel()">Photograph Label</button>
+    <div id="label-section" class="hidden" style="margin-top:16px;">
+      <div class="upzone">
+        <input type="file" id="label-file" accept="image/*" capture="environment" onchange="handleLabel(event)">
+        <div class="uplbl">Tap to photograph the wine label</div>
+        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;color:var(--ink);margin-top:4px;text-transform:uppercase;">AI will identify it</div>
+      </div>
+      <div id="label-preview" class="hidden" style="margin-top:13px;">
+        <img id="label-img" style="max-width:100%;border-radius:3px;border:1px solid var(--border);display:block;margin:0 auto;">
+        <div style="text-align:center;margin-top:12px;">
+          <button class="btn bp bsm" onclick="analyzeLabel()">
+            <span class="spin hidden" id="label-spin"></span>Analyze with AI
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="card" id="manual-card">
     <div class="clabel">Wine Details</div>
@@ -665,16 +685,19 @@ function renderRankings(){
   if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Add the first bottle.</div>';return;}
   const sc=wines.map(w=>({w,s:getScore(w.id)}))
     .sort((a,b)=>{if(!a.s&&!b.s)return 0;if(!a.s)return 1;if(!b.s)return -1;return b.s.composite-a.s.composite;});
+  let blindCount=0;
   el.innerHTML=sc.map(({w,s},i)=>{
+    const isBlind=w.blind==='yes';
+    if(isBlind) blindCount++;
+    const nm=isBlind?`<em style="color:var(--ink);">Blind Wine ${blindCount}</em>`:w.name;
     const n=s?s.composite.toFixed(1):'—';
     const bars=s?['appearance','aroma','taste','finish','overall'].map(k=>
       `<div class="sbar"><div class="sbar-f" style="height:${(s[k]/5)*100}%"></div></div>`).join(''):'';
-    const nm=w.blind==='yes'?'<em style="color:var(--ink);">Blind Wine</em>':w.name;
     return`<div class="wrow" onclick="openModal('${w.id}')">
       <div class="wrank">${s?i+1:'·'}</div>
       <div class="winfo">
         <div class="wname">${nm}</div>
-        <div class="wmeta">${w.blind==='yes'?'Identity hidden':[w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${badge(w.type)}</div>
+        <div class="wmeta">${isBlind?'Identity hidden':[w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${badge(w.type)}</div>
         ${w.bringer?`<div class="wbring">${w.bringer}</div>`:''}
         <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;margin-top:1px;">${s?s.count+' review'+(s.count>1?'s':''):'Not yet reviewed'}</div>
       </div>
@@ -730,6 +753,7 @@ function openModal(id){
   document.getElementById('modal-footer').innerHTML=`
     <button class="btn bp bsm" onclick="closeModal();showTab('review');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadReviewWine();},80)">Review This Wine</button>
     <button class="btn bq bsm" onclick="closeModal();showTab('tasting');setTimeout(()=>{document.getElementById('t-wine-sel').value='${id}';loadTasting();},80)">Tasting Game</button>
+    <button class="btn bq bsm" onclick="editWine('${id}')">Edit</button>
     <button class="btn bq bsm" style="color:#c06060;border-color:rgba(180,80,80,0.3);margin-left:auto;" onclick="deleteWine('${id}')">Remove</button>
   `;
   document.getElementById('wine-modal').classList.add('open');
@@ -838,7 +862,45 @@ function fillForm(d){
   document.getElementById('manual-card').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
+let editingWineId = null;
+
+function editWine(id){
+  const w=wines.find(x=>x.id===id); if(!w) return;
+  closeModal();
+  editingWineId=id;
+  // Pre-fill form
+  document.getElementById('f-name').value=w.name||'';
+  document.getElementById('f-producer').value=w.producer||'';
+  document.getElementById('f-bringer').value=w.bringer||'';
+  // Set selects
+  const setVal=(selId,val)=>{
+    if(!val) return;
+    const sel=document.getElementById(selId);
+    for(let o of sel.options){ if(o.value===val){sel.value=val;return;} }
+    const o=new Option(val,val); sel.add(o); sel.value=val;
+  };
+  setVal('f-year',w.year);
+  setVal('f-type',w.type||'Red');
+  setVal('f-region',w.region);
+  setVal('f-grape',w.grape);
+  setVal('f-price',w.price);
+  setVal('f-blind',w.blind||'no');
+  // Restore AI notes
+  if(w.aiNotes){
+    document.getElementById('ai-notes-text').textContent=w.aiNotes;
+    document.getElementById('ai-notes-chips').innerHTML=(w.aiNoteChips||[]).map(c=>`<span class="chip">${c}</span>`).join('');
+    document.getElementById('ai-notes-box').classList.remove('hidden');
+    currentAINotes=w.aiNoteChips||[];
+  }
+  // Update save button label
+  document.querySelector('#manual-card .btn.bp').textContent='Update Wine';
+  showTab('add');
+  document.getElementById('manual-card').scrollIntoView({behavior:'smooth'});
+  toast('Editing '+( w.blind==='yes'?'blind wine':w.name));
+}
+
 function clearForm(){
+  editingWineId=null;
   document.getElementById('f-name').value='';
   document.getElementById('f-producer').value='';
   document.getElementById('f-bringer').value='';
@@ -846,13 +908,16 @@ function clearForm(){
     const el=document.getElementById(id); if(el) el.selectedIndex=0;
   });
   document.getElementById('ai-notes-box').classList.add('hidden');
+  document.getElementById('label-preview').classList.add('hidden');
   currentAINotes=[];
+  labelB64=null;
+  document.querySelector('#manual-card .btn.bp').textContent='Save Wine';
 }
 
 async function saveWine(){
   const name=document.getElementById('f-name').value.trim();
   if(!name){toast('Enter a wine name');return;}
-  const wine={
+  const data={
     name, producer:document.getElementById('f-producer').value.trim(),
     year:document.getElementById('f-year').value,
     type:document.getElementById('f-type').value||'Red',
@@ -862,20 +927,103 @@ async function saveWine(){
     bringer:document.getElementById('f-bringer').value.trim(),
     blind:document.getElementById('f-blind').value,
     aiNotes:document.getElementById('ai-notes-text').textContent||'',
-    aiNoteChips:currentAINotes,
-    addedAt:Date.now()
+    aiNoteChips:currentAINotes
   };
-  if(useFirebase){await dbPush(dbRef(DB,'wines'),wine);}
-  else{wine.id=Date.now().toString();wines.push(wine);saveLocal();renderAll();}
-  toast(name+' added to the cellar');
+  if(editingWineId){
+    // Update existing
+    if(useFirebase){ await dbUpdate(dbRef(DB,'wines/'+editingWineId), data); }
+    else{ const w=wines.find(x=>x.id===editingWineId); if(w) Object.assign(w,data); saveLocal(); renderAll(); }
+    toast(name+' updated');
+  } else {
+    // New wine
+    data.addedAt=Date.now();
+    if(useFirebase){await dbPush(dbRef(DB,'wines'),data);}
+    else{data.id=Date.now().toString();wines.push(data);saveLocal();renderAll();}
+    toast(name+' added to the cellar');
+  }
   clearForm(); showTab('rankings');
+}
+
+// ══════════════════════════════════════════════════
+// LABEL PHOTO
+// ══════════════════════════════════════════════════
+let labelB64=null, labelMime='image/jpeg';
+
+function toggleLabel(){
+  document.getElementById('label-section').classList.toggle('hidden');
+}
+
+function handleLabel(e){
+  const file=e.target.files[0]; if(!file) return;
+  labelMime=file.type||'image/jpeg';
+  if(!['image/jpeg','image/png','image/gif','image/webp'].includes(labelMime)) labelMime='image/jpeg';
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const max=1024; let w=img.width,h=img.height;
+      if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const out=canvas.toDataURL('image/jpeg',0.85);
+      labelB64=out.split(',')[1]; labelMime='image/jpeg';
+      document.getElementById('label-img').src=out;
+      document.getElementById('label-preview').classList.remove('hidden');
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeLabel(){
+  if(!labelB64) return;
+  const spin=document.getElementById('label-spin');
+  spin.classList.remove('hidden');
+  toast('Analyzing label...');
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:labelMime,data:labelB64}},
+          {type:'text',text:`This is a photo of a wine bottle label. Identify the wine as precisely as possible.
+Return ONLY a raw JSON object, no markdown, no explanation:
+{"name":"","producer":"","year":"","type":"Red or White or Rose or Sparkling or Dessert","region":"","grape":"","aiNotes":"2-3 sentence professional tasting note","aiNoteChips":["descriptor1","descriptor2"]}
+Provide 12-16 specific tasting descriptor chips. Leave fields as empty string if unknown.`}
+        ]}]}
+      )
+    });
+    if(!res.ok) throw new Error('Worker error '+res.status);
+    const d=await res.json();
+    if(d.error) throw new Error(d.error.message);
+    const text=d.content[0].text;
+    const parsed=JSON.parse(text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim());
+    fillForm(parsed);
+    if(parsed.aiNotes) showNotes(parsed.aiNotes, parsed.aiNoteChips||[]);
+    toast('Label identified — review and save');
+  }catch(e){
+    console.error('Label error:',e);
+    toast('Could not identify label — enter manually');
+  }finally{
+    spin.classList.add('hidden');
+  }
 }
 
 // ══════════════════════════════════════════════════
 // POPULATE SELECTS
 // ══════════════════════════════════════════════════
 function populateSelects(){
-  const opts=wines.map(w=>`<option value="${w.id}">${w.blind==='yes'?'Blind Wine':w.name}${w.year?' '+w.year:''}${w.bringer?' ('+w.bringer+')':''}</option>`).join('');
+  let blindCount=0;
+  const opts=wines.map(w=>{
+    const isBlind=w.blind==='yes';
+    if(isBlind) blindCount++;
+    const label=isBlind?`Blind Wine ${blindCount}`:`${w.name}${w.year?' '+w.year:''}`;
+    return`<option value="${w.id}">${label}${w.bringer?' ('+w.bringer+')':''}</option>`;
+  }).join('');
   const empty='<option value="">Choose a wine</option>';
   ['r-wine-sel','t-wine-sel','h2h-a','h2h-b','price-wine-sel'].forEach(id=>{
     const el=document.getElementById(id);
