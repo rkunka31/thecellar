@@ -11,17 +11,16 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────
   const firebaseConfig = {
-    apiKey: "PASTE_API_KEY",
-    authDomain: "PASTE_AUTH_DOMAIN",
-    databaseURL: "PASTE_DATABASE_URL",
-    projectId: "PASTE_PROJECT_ID",
-    storageBucket: "PASTE_STORAGE_BUCKET",
-    messagingSenderId: "PASTE_SENDER_ID",
-    appId: "PASTE_APP_ID"
+    apiKey: "AIzaSyAnVyxJKLmdGVzLW-fr01s0GbssnW0H0U0",
+    authDomain: "the-cellar-8ef9e.firebaseapp.com",
+    databaseURL: "https://the-cellar-8ef9e-default-rtdb.firebaseio.com",
+    projectId: "the-cellar-8ef9e",
+    storageBucket: "the-cellar-8ef9e.firebasestorage.app",
+    messagingSenderId: "29341652653",
+    appId: "1:29341652653:web:fbccf0b07e455a135e9824",
+    measurementId: "G-P3LFR1TYC6"
   };
-  // ─────────────────────────────────────────────────────────
 
   try {
     const app = initializeApp(firebaseConfig);
