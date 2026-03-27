@@ -179,6 +179,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .hidden{display:none!important;}
 .empty{text-align:center;padding:52px 18px;color:var(--ink);font-style:italic;font-size:17px;}
 
+/* SWIPE TO DELETE */
+.swipe-wrap{position:relative;overflow:hidden;border-radius:3px;margin-bottom:10px;}
+.swipe-delete-bg{position:absolute;right:0;top:0;bottom:0;width:80px;background:var(--merlot);display:flex;align-items:center;justify-content:center;font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cream);border-radius:3px;cursor:pointer;}
+.swipe-inner{position:relative;transition:transform .22s ease;background:var(--card);border:1px solid var(--border);border-radius:3px;}
+.swipe-inner.swiped{transform:translateX(-80px);}
+
+/* PAST EVENTS */
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:20px 22px;margin-bottom:12px;cursor:pointer;transition:border-color .2s;}
+.event-card:hover{border-color:var(--border-hi);}
+.event-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--cream);}
+.event-meta{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:3px;}
+.event-rankings{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;display:none;}
+.event-rankings.open{display:block;}
+
 @media(max-width:600px){
   .g2,.g3{grid-template-columns:1fr;}
   .wrow{flex-direction:column;gap:8px;}.wscol{text-align:left;}
@@ -207,6 +221,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   <button class="nb" onclick="showTab('cellar')">The Cellar</button>
   <button class="nb" onclick="showTab('tasting')">Tasting Game</button>
   <button class="nb" onclick="showTab('report')">Report Card</button>
+  <button class="nb" onclick="showTab('events')">Past Events</button>
 </nav>
 
 <div class="main">
@@ -326,6 +341,32 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   </div>
 </div>
 
+<!-- ══ PAST EVENTS ══ -->
+<div id="tab-events" class="tp">
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+    <div><h2>Past <em>Events</em></h2><div class="sh-desc">Previous tastings &middot; Rankings only</div></div>
+    <button class="btn bp bsm" onclick="openNewEvent()">+ New Event</button>
+  </div>
+  <div id="events-list"><div class="empty">No past events yet.</div></div>
+</div>
+
+</div>
+
+<!-- EVENT NAME MODAL -->
+<div class="mbg" id="event-modal">
+  <div class="modal" style="max-height:auto;">
+    <button class="mx" onclick="closeEventModal()">&#x2715;</button>
+    <div class="modal-body" style="padding-bottom:24px;">
+      <div class="clabel">New Event</div>
+      <div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--ink);font-style:italic;margin-bottom:18px;">This will archive the current event and start a fresh one.</div>
+      <div class="field"><label>Event Name</label><input id="new-event-name" placeholder="e.g. Whistler Chalet · March 2026"></div>
+      <div style="margin-top:6px;font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);">The current wines and ratings will be saved under this name and remain viewable in Past Events.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn bp bsm" onclick="archiveAndNewEvent()">Archive &amp; Start Fresh</button>
+      <button class="btn bq bsm" onclick="closeEventModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- ADD/EDIT WINE MODAL -->
@@ -477,7 +518,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
-let wines=[], reviews=[];
+let wines=[], reviews=[], archivedEvents=[];
+let currentEventName='';
 let currentReviewer=localStorage.getItem('cellar-reviewer')||'';
 let currentAINotes=[], labelB64=null, labelMime='image/jpeg';
 let ratings={aroma:0,taste:0,finish:0,overall:0};
@@ -510,6 +552,8 @@ window.addEventListener('firebase-failed',fallbackLocal);
 function listenFirebase(){
   dbOnValue(dbRef(DB,'wines'),s=>{ wines=o2a(s.val()); renderAll(); });
   dbOnValue(dbRef(DB,'reviews'),s=>{ reviews=o2a(s.val()); renderAll(); });
+  dbOnValue(dbRef(DB,'archivedEvents'),s=>{ archivedEvents=o2a(s.val()); renderEvents(); });
+  dbOnValue(dbRef(DB,'currentEventName'),s=>{ currentEventName=s.val()||''; updateEventHeader(); });
 }
 function o2a(obj){ return obj?Object.entries(obj).map(([id,v])=>({...v,id})):[];}
 function fallbackLocal(){
@@ -579,6 +623,14 @@ function renderAll(){
   renderCellar();
   populateSelects();
   renderReport();
+  renderEvents();
+  updateEventHeader();
+}
+
+function updateEventHeader(){
+  // Show current event name in header if set
+  const sub=document.querySelector('.hdr-sub');
+  if(sub) sub.textContent=currentEventName?currentEventName:"A king's guide to wine";
 }
 
 // ══════════════════════════════════════════════════
@@ -614,47 +666,111 @@ function renderRankings(){
 }
 
 // ══════════════════════════════════════════════════
-// CELLAR — collapsed by default, tap to expand
+// CELLAR — collapsed by default, swipe left to delete
 // ══════════════════════════════════════════════════
 function renderCellar(){
   const el=document.getElementById('cellar-list');
   if(!wines.length){el.innerHTML='<div class="empty">No wines added yet.</div>';return;}
   const sorted=[...wines].sort((a,b)=>(a.addedAt||0)-(b.addedAt||0));
   el.innerHTML=sorted.map(w=>`
-    <div class="card" style="margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleCellarCard('${w.id}')">
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;">
-            ${badge(w.type)}
-            ${w.blind==='yes'?`<span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||'?'}</span>`:''}
+    <div class="swipe-wrap" id="swrap-${w.id}">
+      <div class="swipe-delete-bg" onclick="confirmDeleteWine('${w.id}')">Remove</div>
+      <div class="swipe-inner" id="sinner-${w.id}">
+        <div style="padding:18px 20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleCellarCard('${w.id}')">
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;">
+                ${badge(w.type)}
+                ${w.blind==='yes'?`<span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||'?'}</span>`:''}
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);">${w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'}`:w.name}</div>
+              <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${w.bringer||''}${w.bringer&&w.year?' &middot; ':''}${w.year||''}</div>
+            </div>
+            <div style="font-family:'Noto Serif',serif;font-size:18px;color:var(--ink);padding-left:12px;flex-shrink:0;" id="cellar-chevron-${w.id}">&#8964;</div>
           </div>
-          <div style="font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);">${w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'}`:w.name}</div>
-          <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${w.bringer||''}${w.bringer&&w.year?' &middot; ':''}${w.year||''}</div>
-        </div>
-        <div style="font-family:'Noto Serif',serif;font-size:18px;color:var(--ink);padding-left:12px;flex-shrink:0;" id="cellar-chevron-${w.id}">&#8964;</div>
-      </div>
-      <div id="cellar-detail-${w.id}" class="hidden" style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
-        <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);line-height:2;">
-          ${[w.producer,w.region,w.grape,w.price].filter(Boolean).map(v=>`<span style="margin-right:12px;">${v}</span>`).join('')}
-        </div>
-        ${w.aiNotes?`<div class="aibox" style="margin-top:12px;">
-          <div class="aibox-lbl">AI Tasting Notes</div>
-          <div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div>
-          ${(w.aiNoteChips||[]).length?`<div class="chips" style="margin-top:8px;">${w.aiNoteChips.map(c=>`<span class="chip" style="cursor:default;">${c}</span>`).join('')}</div>`:''}
-        </div>`:''}
-        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn bp bsm" onclick="openEditWine('${w.id}')">Edit</button>
+          <div id="cellar-detail-${w.id}" class="hidden" style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
+            <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);line-height:2;">
+              ${[w.producer,w.region,w.grape,w.price].filter(Boolean).map(v=>`<span style="margin-right:12px;">${v}</span>`).join('')}
+            </div>
+            ${w.aiNotes?`<div class="aibox" style="margin-top:12px;">
+              <div class="aibox-lbl">AI Tasting Notes</div>
+              <div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div>
+              ${(w.aiNoteChips||[]).length?`<div class="chips" style="margin-top:8px;">${w.aiNoteChips.map(c=>`<span class="chip" style="cursor:default;">${c}</span>`).join('')}</div>`:''}
+            </div>`:''}
+            <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn bp bsm" onclick="openEditWine('${w.id}')">Edit</button>
+              <button class="btn bq bsm" style="color:#c06060;border-color:rgba(180,80,80,.3);" onclick="confirmDeleteWine('${w.id}')">Remove</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>`).join('');
+
+  // Attach swipe listeners after rendering
+  sorted.forEach(w=>attachSwipe(w.id));
 }
 
 function toggleCellarCard(id){
   const detail=document.getElementById('cellar-detail-'+id);
   const chevron=document.getElementById('cellar-chevron-'+id);
+  if(!detail) return;
   const isOpen=!detail.classList.contains('hidden');
+  // Close any open swiped cards first
+  const inner=document.getElementById('sinner-'+id);
+  if(inner) inner.classList.remove('swiped');
   detail.classList.toggle('hidden');
   chevron.innerHTML=isOpen?'&#8964;':'&#8963;';
+}
+
+function attachSwipe(id){
+  const inner=document.getElementById('sinner-'+id);
+  if(!inner) return;
+  let startX=0, startY=0, isDragging=false;
+  inner.addEventListener('touchstart',e=>{
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    isDragging=false;
+  },{passive:true});
+  inner.addEventListener('touchmove',e=>{
+    const dx=e.touches[0].clientX-startX;
+    const dy=e.touches[0].clientY-startY;
+    if(Math.abs(dy)>Math.abs(dx)) return; // vertical scroll
+    isDragging=true;
+    if(dx<-20) inner.classList.add('swiped');
+    else if(dx>20) inner.classList.remove('swiped');
+  },{passive:true});
+  inner.addEventListener('touchend',()=>{
+    // left open — tap on bg to confirm delete
+  });
+  // Also close swipe if tapping elsewhere
+  document.addEventListener('touchstart',e=>{
+    if(!inner.contains(e.target)&&!document.getElementById('swrap-'+id)?.contains(e.target)){
+      inner.classList.remove('swiped');
+    }
+  },{passive:true});
+}
+
+function confirmDeleteWine(id){
+  const w=wines.find(x=>x.id===id); if(!w) return;
+  if(!confirm('Remove "'+displayName(w)+'" and all its reviews? This cannot be undone.')) return;
+  deleteWineById(id);
+}
+
+async function deleteWineById(id){
+  if(useFirebase){
+    // Delete wine node
+    await dbSet(dbRef(DB,'wines/'+id), null);
+    // Delete all reviews for this wine
+    const toDelete=reviews.filter(r=>String(r.wineId)===String(id));
+    for(const r of toDelete){
+      await dbSet(dbRef(DB,'reviews/'+r.id), null);
+    }
+  } else {
+    wines=wines.filter(x=>x.id!==id);
+    reviews=reviews.filter(r=>String(r.wineId)!==String(id));
+    saveLocal(); renderAll();
+  }
+  toast('Wine removed');
 }
 
 // ══════════════════════════════════════════════════
@@ -987,19 +1103,10 @@ async function saveWine(){
 async function deleteCurrentWine(){
   if(!editingWineId) return;
   const w=wines.find(x=>x.id===editingWineId); if(!w) return;
-  if(!confirm('Remove "'+displayName(w)+'" and all its reviews?')) return;
-  const idToDelete=editingWineId; // capture before closeWineForm clears it
+  if(!confirm('Remove "'+displayName(w)+'" and all its reviews? This cannot be undone.')) return;
+  const idToDelete=editingWineId;
   closeWineForm();
-  if(useFirebase){
-    await dbSet(dbRef(DB,'wines/'+idToDelete),null);
-    const toDelete=reviews.filter(r=>String(r.wineId)===String(idToDelete));
-    for(const r of toDelete) await dbSet(dbRef(DB,'reviews/'+r.id),null);
-  } else {
-    wines=wines.filter(x=>x.id!==idToDelete);
-    reviews=reviews.filter(r=>String(r.wineId)!==String(idToDelete));
-    saveLocal(); renderAll();
-  }
-  toast('Wine removed');
+  await deleteWineById(idToDelete);
 }
 
 // ══════════════════════════════════════════════════
@@ -1189,6 +1296,101 @@ async function genRoast(){
     document.getElementById('roast-result').classList.remove('hidden');
   }catch(e){ toast('Could not generate roast'); }
   finally{ spin.classList.add('hidden'); }
+}
+
+// ══════════════════════════════════════════════════
+// EVENTS SYSTEM
+// ══════════════════════════════════════════════════
+function openNewEvent(){
+  document.getElementById('new-event-name').value='';
+  document.getElementById('event-modal').classList.add('open');
+}
+function closeEventModal(){
+  document.getElementById('event-modal').classList.remove('open');
+}
+
+async function archiveAndNewEvent(){
+  const name=document.getElementById('new-event-name').value.trim();
+  if(!name){toast('Enter an event name');return;}
+
+  // Snapshot current wines and reviews
+  const snapshot={
+    name,
+    archivedAt:Date.now(),
+    wines: wines.map(w=>({...w})),
+    reviews: reviews.map(r=>({...r}))
+  };
+
+  if(useFirebase){
+    // Save archive
+    await dbPush(dbRef(DB,'archivedEvents'), snapshot);
+    // Clear current wines and reviews
+    await dbSet(dbRef(DB,'wines'), null);
+    await dbSet(dbRef(DB,'reviews'), null);
+    // Save new event name (blank = fresh start)
+    await dbSet(dbRef(DB,'currentEventName'), '');
+  } else {
+    archivedEvents.push({...snapshot, id:Date.now().toString()});
+    wines=[]; reviews=[];
+    saveLocal();
+    localStorage.setItem('cellar-archivedEvents', JSON.stringify(archivedEvents));
+    renderAll();
+  }
+  closeEventModal();
+  currentEventName='';
+  updateEventHeader();
+  toast('Archived as "'+name+'" — fresh start!');
+  showTab('rate');
+}
+
+function renderEvents(){
+  const el=document.getElementById('events-list');
+  if(!archivedEvents.length){el.innerHTML='<div class="empty">No past events yet.<br>Use New Event to archive the current session.</div>';return;}
+  const sorted=[...archivedEvents].sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
+  el.innerHTML=sorted.map(ev=>{
+    const evWines=ev.wines||[];
+    const evReviews=ev.reviews||[];
+    const date=ev.archivedAt?new Date(ev.archivedAt).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'}):'';
+    // Compute scores for this event
+    const scored=evWines.map(w=>{
+      const rs=evReviews.filter(r=>String(r.wineId)===String(w.id));
+      if(!rs.length) return null;
+      const avg=k=>rs.reduce((s,r)=>s+(Number(r[k])||0),0)/rs.length;
+      const composite=DIMS.reduce((s,k)=>s+avg(k),0)/DIMS.length;
+      return{w,composite,count:rs.length};
+    }).filter(Boolean).sort((a,b)=>b.composite-a.composite);
+
+    return`<div class="event-card" id="ecard-${ev.id}" onclick="toggleEventCard('${ev.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="event-name">${ev.name}</div>
+          <div class="event-meta">${date} &middot; ${evWines.length} wine${evWines.length!==1?'s':''} &middot; ${evReviews.length} review${evReviews.length!==1?'s':''}</div>
+        </div>
+        <div style="font-family:'Noto Serif',serif;font-size:18px;color:var(--ink);" id="echev-${ev.id}">&#8964;</div>
+      </div>
+      <div class="event-rankings" id="erank-${ev.id}">
+        ${scored.length?scored.map(({w,composite,count},i)=>`
+          <div style="display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);">
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:var(--border-hi);min-width:22px;">${i+1}</div>
+            <div style="flex:1;">
+              <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);">${displayName(w)}</div>
+              <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${count} review${count!==1?'s':''}</div>
+            </div>
+            <div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);">${composite.toFixed(1)}</div>
+          </div>`).join('')
+        :'<div style="color:var(--ink);font-style:italic;font-size:14px;padding-top:8px;">No reviews in this event.</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEventCard(id){
+  const rank=document.getElementById('erank-'+id);
+  const chev=document.getElementById('echev-'+id);
+  if(!rank) return;
+  const isOpen=rank.classList.contains('open');
+  rank.classList.toggle('open');
+  chev.innerHTML=isOpen?'&#8964;':'&#8963;';
 }
 
 // ══════════════════════════════════════════════════
