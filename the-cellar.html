@@ -614,33 +614,47 @@ function renderRankings(){
 }
 
 // ══════════════════════════════════════════════════
-// CELLAR — full details + AI notes shown here only
+// CELLAR — collapsed by default, tap to expand
 // ══════════════════════════════════════════════════
 function renderCellar(){
   const el=document.getElementById('cellar-list');
   if(!wines.length){el.innerHTML='<div class="empty">No wines added yet.</div>';return;}
   const sorted=[...wines].sort((a,b)=>(a.addedAt||0)-(b.addedAt||0));
   el.innerHTML=sorted.map(w=>`
-    <div class="card" style="cursor:pointer;" onclick="openEditWine('${w.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+    <div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleCellarCard('${w.id}')">
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px;">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;">
             ${badge(w.type)}
-            ${w.blind==='yes'?`<span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||''}</span>`:''}
+            ${w.blind==='yes'?`<span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||'?'}</span>`:''}
           </div>
-          <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);">${w.name}</div>
-          <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
-          ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--gold);font-style:italic;margin-top:2px;">${w.bringer}</div>`:''}
-          ${w.price?`<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);margin-top:2px;">${w.price}</div>`:''}
+          <div style="font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);">${w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'}`:w.name}</div>
+          <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${w.bringer||''}${w.bringer&&w.year?' &middot; ':''}${w.year||''}</div>
         </div>
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);flex-shrink:0;">Tap to edit</div>
+        <div style="font-family:'Noto Serif',serif;font-size:18px;color:var(--ink);padding-left:12px;flex-shrink:0;" id="cellar-chevron-${w.id}">&#8964;</div>
       </div>
-      ${w.aiNotes?`<div class="aibox" style="margin-top:12px;">
-        <div class="aibox-lbl">AI Tasting Notes</div>
-        <div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div>
-        ${(w.aiNoteChips||[]).length?`<div class="chips" style="margin-top:8px;">${w.aiNoteChips.map(c=>`<span class="chip" style="cursor:default;">${c}</span>`).join('')}</div>`:''}
-      </div>`:''}
+      <div id="cellar-detail-${w.id}" class="hidden" style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
+        <div style="font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);line-height:2;">
+          ${[w.producer,w.region,w.grape,w.price].filter(Boolean).map(v=>`<span style="margin-right:12px;">${v}</span>`).join('')}
+        </div>
+        ${w.aiNotes?`<div class="aibox" style="margin-top:12px;">
+          <div class="aibox-lbl">AI Tasting Notes</div>
+          <div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div>
+          ${(w.aiNoteChips||[]).length?`<div class="chips" style="margin-top:8px;">${w.aiNoteChips.map(c=>`<span class="chip" style="cursor:default;">${c}</span>`).join('')}</div>`:''}
+        </div>`:''}
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn bp bsm" onclick="openEditWine('${w.id}')">Edit</button>
+        </div>
+      </div>
     </div>`).join('');
+}
+
+function toggleCellarCard(id){
+  const detail=document.getElementById('cellar-detail-'+id);
+  const chevron=document.getElementById('cellar-chevron-'+id);
+  const isOpen=!detail.classList.contains('hidden');
+  detail.classList.toggle('hidden');
+  chevron.innerHTML=isOpen?'&#8964;':'&#8963;';
 }
 
 // ══════════════════════════════════════════════════
@@ -803,7 +817,11 @@ function openWineModal(id){
     <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind?'Identity hidden':[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
     ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--gold);font-style:italic;margin-top:5px;">Brought by ${w.bringer}</div>`:''}`;
 
-  if(isBlind) html+=`<div class="grule"></div><button class="btn bq bsm" onclick="revealBlind('${id}')">Reveal Identity</button>`;
+  if(isBlind){
+    html+=`<div class="grule"></div><button class="btn bq bsm" onclick="toggleBlind('${id}',false)">Reveal Identity</button>`;
+  } else {
+    html+=`<div class="grule"></div><button class="btn bq bsm" onclick="toggleBlind('${id}',true)">Set as Blind</button>`;
+  }
 
   if(s){
     html+=`<div class="grule"></div>
@@ -843,12 +861,19 @@ function openWineModal(id){
 }
 function closeModal(){ document.getElementById('wine-modal').classList.remove('open'); }
 
-function revealBlind(id){
+function toggleBlind(id, makeBlind){
   const w=wines.find(x=>x.id===id); if(!w) return;
-  if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'no'});
-  else{ w.blind='no'; saveLocal(); renderAll(); }
-  closeModal();
-  toast('Identity revealed');
+  if(makeBlind){
+    // Re-hiding: reassign a blind number
+    const newNum=(wines.filter(w=>w.blind==='yes').length)+1;
+    if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'yes',blindNumber:newNum});
+    else{ w.blind='yes'; w.blindNumber=newNum; saveLocal(); renderAll(); }
+    closeModal(); toast('Identity hidden — Blind Wine '+newNum);
+  } else {
+    if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'no'});
+    else{ w.blind='no'; saveLocal(); renderAll(); }
+    closeModal(); toast('Identity revealed');
+  }
 }
 
 // ══════════════════════════════════════════════════
@@ -931,14 +956,26 @@ async function saveWine(){
     aiNoteChips:currentAINotes
   };
   if(editingWineId){
+    // When editing, if blind mode is being turned ON for the first time, assign a number
+    if(blind==='yes'){
+      const existing=wines.find(x=>x.id===editingWineId);
+      if(existing&&existing.blind!=='yes'){
+        // Was not blind before, assign next number
+        data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
+      } else if(existing&&existing.blindNumber){
+        // Keep existing blind number
+        data.blindNumber=existing.blindNumber;
+      }
+    }
     if(useFirebase){ await dbUpdate(dbRef(DB,'wines/'+editingWineId),data); }
     else{ const w=wines.find(x=>x.id===editingWineId); if(w) Object.assign(w,data); saveLocal(); renderAll(); }
     toast(name+' updated');
   } else {
     data.addedAt=Date.now();
-    // Assign permanent blind number at creation — stored in Firebase, never recalculated
     if(blind==='yes'){
-      data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
+      // Count wines already marked blind in the current wines array
+      const existingBlindCount=wines.filter(w=>w.blind==='yes').length;
+      data.blindNumber=existingBlindCount+1;
     }
     if(useFirebase){ await dbPush(dbRef(DB,'wines'),data); }
     else{ data.id=Date.now().toString(); wines.push(data); saveLocal(); renderAll(); }
@@ -951,14 +988,15 @@ async function deleteCurrentWine(){
   if(!editingWineId) return;
   const w=wines.find(x=>x.id===editingWineId); if(!w) return;
   if(!confirm('Remove "'+displayName(w)+'" and all its reviews?')) return;
+  const idToDelete=editingWineId; // capture before closeWineForm clears it
   closeWineForm();
   if(useFirebase){
-    await dbSet(dbRef(DB,'wines/'+editingWineId),null);
-    const toDelete=reviews.filter(r=>String(r.wineId)===String(editingWineId));
+    await dbSet(dbRef(DB,'wines/'+idToDelete),null);
+    const toDelete=reviews.filter(r=>String(r.wineId)===String(idToDelete));
     for(const r of toDelete) await dbSet(dbRef(DB,'reviews/'+r.id),null);
   } else {
-    wines=wines.filter(x=>x.id!==editingWineId);
-    reviews=reviews.filter(r=>String(r.wineId)!==String(editingWineId));
+    wines=wines.filter(x=>x.id!==idToDelete);
+    reviews=reviews.filter(r=>String(r.wineId)!==String(idToDelete));
     saveLocal(); renderAll();
   }
   toast('Wine removed');
