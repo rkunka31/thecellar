@@ -9,7 +9,6 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyAnVyxJKLmdGVzLW-fr01s0GbssnW0H0U0",
     authDomain: "the-cellar-8ef9e.firebaseapp.com",
@@ -20,117 +19,73 @@
     appId: "1:29341652653:web:fbccf0b07e455a135e9824",
     measurementId: "G-P3LFR1TYC6"
   };
-
   try {
     const app = initializeApp(firebaseConfig);
-    const db  = getDatabase(app);
-    window._db = db; window._ref = ref; window._set = set;
-    window._push = push; window._onValue = onValue; window._update = update;
+    const db = getDatabase(app);
+    window._db=db; window._ref=ref; window._set=set;
+    window._push=push; window._onValue=onValue; window._update=update;
     window.dispatchEvent(new Event('firebase-ready'));
-  } catch(e) {
-    window.dispatchEvent(new Event('firebase-failed'));
-  }
+  } catch(e) { window.dispatchEvent(new Event('firebase-failed')); }
 </script>
 <style>
 :root {
-  --deep:      #110508;
-  --surface:   #1A0A0D;
-  --card:      #200D11;
-  --merlot:    #7B1D2E;
-  --merlot-m:  #9E2A3F;
-  --merlot-lt: #BF4060;
-  --gold:      #B8965A;
-  --gold-lt:   #D4B47A;
-  --cream:     #F2E8D9;
-  --cream-d:   #C4B09A;
-  --ink:       #8A6E5A;
-  --border:    rgba(184,150,90,0.16);
-  --border-hi: rgba(184,150,90,0.42);
+  --deep:#110508; --surface:#1A0A0D; --card:#200D11;
+  --merlot:#7B1D2E; --merlot-m:#9E2A3F; --merlot-lt:#BF4060;
+  --gold:#B8965A; --gold-lt:#D4B47A;
+  --cream:#F2E8D9; --cream-d:#C4B09A; --ink:#8A6E5A;
+  --border:rgba(184,150,90,0.16); --border-hi:rgba(184,150,90,0.42);
+  --green:rgba(80,160,80,0.18); --green-b:#5a9e6a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--deep);color:var(--cream);font-family:'Noto Serif',Georgia,serif;font-size:16px;line-height:1.65;min-height:100vh;overflow-x:hidden;}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
 
-.hdr{text-align:center;padding:52px 24px 34px;border-bottom:1px solid var(--border);}
-.hdr-eye{font-family:'Noto Serif',serif;font-size:10px;font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
-.hdr h1{font-family:'Playfair Display',serif;font-size:clamp(42px,10vw,78px);font-weight:700;letter-spacing:-2px;line-height:.95;color:var(--cream);}
+.hdr{text-align:center;padding:44px 24px 28px;border-bottom:1px solid var(--border);}
+.hdr-eye{font-family:'Noto Serif',serif;font-size:10px;font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.hdr h1{font-family:'Playfair Display',serif;font-size:clamp(40px,10vw,76px);font-weight:700;letter-spacing:-2px;line-height:.95;color:var(--cream);}
 .hdr h1 em{font-style:italic;color:var(--merlot-lt);}
-.hdr-rule{width:46px;height:1px;background:var(--gold);margin:18px auto 14px;}
+.hdr-rule{width:46px;height:1px;background:var(--gold);margin:16px auto 12px;}
 .hdr-sub{font-family:'Noto Serif',serif;font-style:italic;font-weight:300;font-size:13px;color:var(--ink);letter-spacing:1px;}
 
-.setup-banner{display:none;background:rgba(123,29,46,.28);border:1px solid var(--merlot);border-radius:3px;padding:14px 17px;margin:14px;font-size:13px;color:var(--cream-d);line-height:1.7;}
-.setup-banner.show{display:block;}
-.setup-banner strong{color:var(--gold);}
-.setup-banner code{font-family:monospace;background:rgba(0,0,0,.4);padding:1px 5px;border-radius:2px;font-size:11px;color:var(--gold-lt);}
-.setup-banner a{color:var(--gold);}
-
 .nav{display:flex;justify-content:center;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.nb{background:none;border:none;border-bottom:2px solid transparent;color:var(--ink);font-family:'Noto Serif',serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:14px 15px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;}
+.nb{background:none;border:none;border-bottom:2px solid transparent;color:var(--ink);font-family:'Noto Serif',serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:14px 16px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;}
 .nb:hover{color:var(--cream-d);}
 .nb.active{color:var(--gold);border-bottom-color:var(--gold);}
 
-.main{max-width:740px;margin:0 auto;padding:42px 18px 80px;}
+.main{max-width:720px;margin:0 auto;padding:36px 18px 80px;}
+.sh{margin-bottom:28px;}
+.sh h2{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--cream);letter-spacing:-.5px;}
+.sh h2 em{color:var(--merlot-lt);font-style:italic;}
+.sh-desc{font-family:'Noto Serif',serif;font-size:11px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--ink);margin-top:5px;}
 
-.sh{margin-bottom:32px;}
-.sh h2{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;letter-spacing:-.5px;color:var(--cream);}
-.sh h2 em{font-style:italic;color:var(--merlot-lt);}
-.sh-desc{font-family:'Noto Serif',serif;font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--ink);margin-top:5px;}
-
-.card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:26px 26px 22px;margin-bottom:16px;}
-.clabel{font-family:'Noto Serif',serif;font-size:10px;font-weight:400;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
-.ctitle{font-family:'Playfair Display',serif;font-size:21px;color:var(--cream);margin-bottom:14px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:24px;margin-bottom:16px;}
+.clabel{font-family:'Noto Serif',serif;font-size:10px;font-weight:400;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.ctitle{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:12px;}
+.rule{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.grule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:22px 0;}
 
 .field{margin-bottom:14px;}
 .field label{display:block;font-family:'Noto Serif',serif;font-size:10px;font-weight:400;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
-.field input,.field select,.field textarea{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--border);border-radius:2px;color:var(--cream);font-family:'Noto Serif',serif;font-size:15px;font-weight:300;padding:10px 13px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A6E5A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer;}
+.field input,.field select,.field textarea{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--border);border-radius:2px;color:var(--cream);font-family:'Noto Serif',serif;font-size:15px;font-weight:300;padding:10px 13px;outline:none;transition:border-color .2s;-webkit-appearance:none;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
-.field select option,.field select optgroup{background:#1A0A0D;color:var(--cream);}
-.field textarea{resize:vertical;min-height:70px;}
+.field select option{background:#1A0A0D;}
+.field select optgroup{background:#1A0A0D;color:var(--gold);}
+.field textarea{resize:vertical;min-height:68px;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
 
-.btn{font-family:'Noto Serif',serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:11px 26px;border:none;border-radius:2px;cursor:pointer;transition:all .2s;display:inline-block;text-align:center;}
+.btn{font-family:'Noto Serif',serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:11px 26px;border:none;border-radius:2px;cursor:pointer;transition:all .2s;display:inline-block;}
 .bp{background:var(--merlot);color:var(--cream);border:1px solid rgba(184,150,90,.22);}
 .bp:hover{background:var(--merlot-m);}
 .bg{background:var(--gold);color:var(--deep);}
 .bg:hover{background:var(--gold-lt);}
 .bq{background:transparent;color:var(--ink);border:1px solid var(--border);}
-.bq:hover{color:var(--cream-d);border-color:var(--cream-d);}
+.bq:hover{color:var(--cream);border-color:var(--cream-d);}
 .bsm{padding:8px 16px;font-size:10px;letter-spacing:2px;}
-.btn:disabled{opacity:.38;cursor:not-allowed;}
-.brow{display:flex;gap:11px;flex-wrap:wrap;align-items:center;margin-top:22px;}
-
-.sg{margin-bottom:20px;}
-.sg-lbl{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:7px;display:flex;justify-content:space-between;}
-.sg-lbl span{color:var(--ink);font-weight:300;}
-.stars{display:flex;gap:7px;}
-.star{font-size:25px;cursor:pointer;color:rgba(184,150,90,.14);transition:color .1s,transform .1s;user-select:none;line-height:1;}
-.star.on{color:var(--gold);}
-.star:hover{transform:scale(1.15);}
-
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
-.chip{font-family:'Noto Serif',serif;font-size:11px;font-weight:300;letter-spacing:1px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--ink);cursor:pointer;transition:all .18s;background:transparent;}
-.chip:hover{color:var(--cream);border-color:var(--cream-d);}
-.chip.sel{background:var(--merlot);color:var(--cream);border-color:var(--merlot);}
-.chip.hit{background:rgba(70,150,70,.18);border-color:#5a9a6a;color:#8ecf9a;}
-.chip.miss{background:rgba(150,60,60,.15);border-color:#9a4040;color:#cf8e8e;text-decoration:line-through;}
-.chip.rev{background:rgba(70,150,70,.1);border-color:#5a9a6a;color:#8ecf9a;}
-
-.wrow{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:18px 22px;margin-bottom:9px;display:flex;align-items:flex-start;gap:16px;cursor:pointer;transition:border-color .2s,background .2s;}
-.wrow:hover{border-color:var(--border-hi);background:rgba(32,13,17,.9);}
-.wrank{font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--border-hi);min-width:30px;line-height:1;padding-top:2px;}
-.winfo{flex:1;min-width:0;}
-.wname{font-family:'Playfair Display',serif;font-size:19px;color:var(--cream);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.wmeta{font-family:'Noto Serif',serif;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;}
-.wbring{font-family:'Noto Serif',serif;font-size:12px;color:var(--gold);font-style:italic;margin-top:1px;}
-.wscol{text-align:right;flex-shrink:0;}
-.wsbig{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);line-height:1;}
-.wssub{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-top:1px;}
-.sbars{display:flex;gap:3px;margin-top:7px;justify-content:flex-end;}
-.sbar{width:4px;height:20px;background:var(--border);border-radius:2px;position:relative;overflow:hidden;}
-.sbar-f{position:absolute;bottom:0;left:0;right:0;background:var(--gold);border-radius:2px;transition:height .5s ease;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.brow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px;}
 
 .bdg{display:inline-block;font-family:'Noto Serif',serif;font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;border-radius:2px;}
 .bdr{background:rgba(123,29,46,.38);color:#d48a9a;border:1px solid rgba(123,29,46,.55);}
@@ -138,75 +93,79 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .bdo{background:rgba(170,80,100,.2);color:#e8a0b8;border:1px solid rgba(170,80,100,.3);}
 .bds{background:rgba(170,170,110,.14);color:#d8d490;border:1px solid rgba(170,170,110,.28);}
 
-.rule{border:none;border-top:1px solid var(--border);margin:20px 0;}
-.grule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:26px 0;}
+/* HALF-STAR */
+.star-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;}
+.star-row-label{font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);width:90px;flex-shrink:0;}
+.star-row-val{font-family:'Noto Serif',serif;font-size:12px;color:var(--cream-d);min-width:28px;}
+.stars-wrap{display:flex;gap:3px;}
+.s-star{position:relative;width:30px;height:30px;cursor:pointer;}
+.s-half{position:absolute;top:0;height:100%;z-index:2;}
+.s-half.left{left:0;width:50%;}
+.s-half.right{right:0;width:50%;}
+.s-svg{position:absolute;top:0;left:0;pointer-events:none;transition:transform .1s;}
+.s-star:hover .s-svg{transform:scale(1.1);}
 
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:500;align-items:center;justify-content:center;padding:18px;overflow-y:auto;}
-.mbg.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;max-width:610px;width:100%;margin:auto;position:relative;animation:su .25s ease;display:flex;flex-direction:column;max-height:90vh;}
-.modal-body{padding:32px 28px 0;overflow-y:auto;flex:1;}
-.modal-footer{padding:16px 28px 20px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex-shrink:0;}
-@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.mx{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ink);font-size:18px;cursor:pointer;transition:color .2s;}
-.mx:hover{color:var(--cream);}
+/* RANKINGS */
+.wrow{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:16px 20px;margin-bottom:8px;display:flex;align-items:flex-start;gap:16px;cursor:pointer;transition:border-color .2s;}
+.wrow:hover{border-color:var(--border-hi);}
+.wrank{font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--border-hi);min-width:28px;line-height:1;padding-top:2px;}
+.winfo{flex:1;min-width:0;}
+.wname{font-family:'Playfair Display',serif;font-size:19px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wmeta{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;}
+.wbring{font-family:'Noto Serif',serif;font-size:12px;color:var(--gold);font-style:italic;margin-top:2px;}
+.wscol{text-align:right;flex-shrink:0;}
+.wsnum{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);line-height:1;}
+.wssub{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-top:1px;}
+.sbars{display:flex;gap:3px;margin-top:6px;justify-content:flex-end;}
+.sbar{width:4px;height:20px;background:var(--border);border-radius:2px;position:relative;overflow:hidden;}
+.sbar-f{position:absolute;bottom:0;left:0;right:0;background:var(--gold);border-radius:2px;transition:height .5s ease;}
 
-#scanner-box{width:100%;max-width:360px;margin:0 auto;border:1px solid var(--border);border-radius:3px;overflow:hidden;aspect-ratio:4/3;background:#000;position:relative;}
-#scanner-box video{width:100%;height:100%;object-fit:cover;}
-.scan-ret{position:absolute;left:15%;right:15%;top:30%;height:40%;border:1px solid rgba(184,150,90,.55);box-shadow:0 0 0 9999px rgba(0,0,0,.43);pointer-events:none;}
-.scan-beam{position:absolute;left:15%;right:15%;height:1px;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:beam 2s ease-in-out infinite;pointer-events:none;}
-@keyframes beam{0%,100%{top:30%}50%{top:70%}}
-
-.upzone{border:1px dashed var(--border);border-radius:3px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;}
-.upzone:hover{border-color:var(--gold);}
-.upzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.uplbl{font-family:'Noto Serif',serif;font-size:13px;font-weight:300;font-style:italic;color:var(--ink);}
-
-.aibox{background:rgba(123,29,46,.1);border:1px solid rgba(184,150,90,.28);border-radius:3px;padding:17px 19px;margin-top:14px;}
-.aibox-lbl{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
-
-.bdwn{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:13px;}
+/* MODAL */
+.bdwn{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px;}
 .pill{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:3px;padding:9px 3px;text-align:center;}
-.pill-v{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);line-height:1;}
+.pill-v{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);line-height:1;}
 .pill-l{font-family:'Noto Serif',serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;}
+.pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:5px;}
+.pbar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--merlot-lt));transition:width .8s ease;}
 
+/* TASTING */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.chip{font-family:'Noto Serif',serif;font-size:11px;font-weight:300;letter-spacing:1px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--ink);cursor:pointer;transition:all .18s;background:transparent;text-transform:lowercase;}
+.chip:hover{color:var(--cream);border-color:var(--cream-d);}
+.chip.sel{background:var(--merlot);color:var(--cream);border-color:var(--merlot);}
+.chip.hit{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
+.chip.miss{background:rgba(160,60,60,.15);border-color:#9e4040;color:#cf8e8e;text-decoration:line-through;}
+.chip.rev{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
 .t-score{text-align:center;padding:22px;background:rgba(0,0,0,.22);border-radius:3px;border:1px solid var(--border);margin-top:16px;}
 .t-score-n{font-family:'Playfair Display',serif;font-size:60px;color:var(--gold);line-height:1;}
 .t-score-l{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);margin-top:5px;}
 .t-verdict{font-family:'Noto Serif',serif;font-style:italic;font-size:15px;color:var(--cream-d);margin-top:14px;line-height:1.7;text-align:center;}
 
-.pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px;}
-.pbar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--merlot-lt));transition:width .8s ease;}
-
-.h2h-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:11px;align-items:center;margin-bottom:18px;}
-.h2h-vs{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--merlot-lt);text-align:center;}
-.vbtn{width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:18px 14px;cursor:pointer;text-align:center;transition:all .2s;color:var(--cream);}
-.vbtn:hover{border-color:var(--gold);}
-.vbtn.voted{border-color:var(--gold);background:rgba(123,29,46,.22);}
-.vbtn-name{font-family:'Playfair Display',serif;font-size:17px;}
-.vbtn-meta{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:3px;}
-.vbtn-ct{font-family:'Noto Serif',serif;font-size:12px;color:var(--gold);margin-top:7px;}
-
-.brrow{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);}
-.brnk{font-family:'Playfair Display',serif;font-style:italic;font-size:25px;color:var(--border-hi);min-width:26px;}
-.brname{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);flex:1;}
-.brsc{font-family:'Playfair Display',serif;font-size:25px;color:var(--gold);}
-
-.tl{position:relative;padding-left:22px;}
-.tl::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--border);}
-.tl-item{position:relative;margin-bottom:16px;cursor:pointer;}
-.tl-item::before{content:'';position:absolute;left:-19px;top:7px;width:7px;height:7px;background:var(--gold);border-radius:50%;transition:transform .2s;}
-.tl-item:hover::before{transform:scale(1.5);}
-.tl-yr{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
-.tl-nm{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);}
-.tl-mt{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:1px;color:var(--ink);text-transform:uppercase;}
-
-.price-big{font-family:'Playfair Display',serif;font-size:46px;color:var(--gold);text-align:center;line-height:1;margin:14px 0 3px;}
-.price-win{font-family:'Noto Serif',serif;font-style:italic;font-size:14px;color:var(--cream-d);text-align:center;}
-
-.rep-sec{margin-bottom:26px;}
-.rep-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold-lt);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);}
-.rep-item{padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6;}
+/* REPORT */
+.rep-sec{margin-bottom:24px;}
+.rep-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-lt);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.rep-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6;}
 .rep-item strong{color:var(--gold);}
+
+.aibox{background:rgba(123,29,46,.1);border:1px solid rgba(184,150,90,.28);border-radius:3px;padding:16px 18px;margin-top:14px;}
+.aibox-lbl{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
+
+.upzone{border:1px dashed var(--border);border-radius:3px;padding:26px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;}
+.upzone:hover{border-color:var(--gold);}
+.upzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.uplbl{font-family:'Noto Serif',serif;font-size:13px;font-weight:300;font-style:italic;color:var(--ink);}
+
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:500;align-items:center;justify-content:center;padding:18px;overflow-y:auto;}
+.mbg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;max-width:610px;width:100%;margin:auto;position:relative;animation:su .25s ease;display:flex;flex-direction:column;max-height:90vh;}
+.modal-body{padding:28px 26px 0;overflow-y:auto;flex:1;}
+.modal-footer{padding:14px 26px 18px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex-shrink:0;}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.mx{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--ink);font-size:18px;cursor:pointer;transition:color .2s;}
+.mx:hover{color:var(--cream);}
+
+.setup-banner{background:rgba(123,29,46,.28);border:1px solid var(--merlot);border-radius:3px;padding:14px 18px;margin:16px;font-family:'Noto Serif',serif;font-size:13px;color:var(--cream-d);line-height:1.7;display:none;}
+.setup-banner.show{display:block;}
 
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--merlot);border:1px solid var(--gold);color:var(--cream);font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:11px 22px;border-radius:2px;z-index:9000;transition:transform .3s ease;white-space:nowrap;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
@@ -218,252 +177,108 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .tp.active{display:block;animation:fi .28s ease;}
 @keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 .hidden{display:none!important;}
-.empty{text-align:center;padding:56px 18px;color:var(--ink);font-style:italic;font-size:17px;}
+.empty{text-align:center;padding:52px 18px;color:var(--ink);font-style:italic;font-size:17px;}
 
 @media(max-width:600px){
   .g2,.g3{grid-template-columns:1fr;}
-  .h2h-grid{grid-template-columns:1fr;}.h2h-vs{display:none;}
-  .wrow{flex-direction:column;gap:9px;}.wscol{text-align:left;}
-  .modal{padding:22px 16px;}
+  .wrow{flex-direction:column;gap:8px;}.wscol{text-align:left;}
+  .modal-body{padding:20px 16px 0;}.modal-footer{padding:12px 16px 16px;}
+  .bdwn{grid-template-columns:repeat(4,1fr);}
+  .star-row-label{width:72px;font-size:10px;}
 }
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div class="hdr-eye">Osler Bluff &middot; Collingwood</div>
+  <div class="hdr-eye">Osler Bluff &middot; Collingwood &middot; 2025</div>
   <h1>The <em>Cellar</em></h1>
   <div class="hdr-rule"></div>
   <div class="hdr-sub">A king's guide to wine</div>
 </div>
 
-<div id="setup-banner" class="setup-banner">
-  <strong>Running in offline mode.</strong> Data saves to this device only. For live multiplayer, paste your Firebase config at the top of this file.
-  Create a free project at <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> &rarr; Add web app &rarr; Realtime Database &rarr; copy <code>firebaseConfig</code>.
+<div class="setup-banner" id="setup-banner">
+  Running in offline mode — Firebase not connected.
 </div>
 
 <nav class="nav">
-  <button class="nb active" onclick="showTab('rankings')">Rankings</button>
-  <button class="nb" onclick="showTab('add')">Add Wine</button>
-  <button class="nb" onclick="showTab('review')">Review</button>
+  <button class="nb active" onclick="showTab('rate')">Rate a Wine</button>
+  <button class="nb" onclick="showTab('rankings')">Rankings</button>
+  <button class="nb" onclick="showTab('cellar')">The Cellar</button>
   <button class="nb" onclick="showTab('tasting')">Tasting Game</button>
-  <button class="nb" onclick="showTab('h2h')">Head to Head</button>
-  <button class="nb" onclick="showTab('bringers')">Bringers</button>
-  <button class="nb" onclick="showTab('timeline')">Vintage</button>
   <button class="nb" onclick="showTab('report')">Report Card</button>
 </nav>
 
 <div class="main">
 
-<!-- RANKINGS -->
-<div id="tab-rankings" class="tp active">
-  <div class="sh" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
-    <div><h2>Tonight's <em>Rankings</em></h2><div class="sh-desc">Live &middot; Updates as reviews come in</div></div>
-    <button class="btn bq bsm" onclick="showTab('add')">Add Wine</button>
+<!-- ══ RATE A WINE ══ -->
+<div id="tab-rate" class="tp active">
+  <div class="sh">
+    <h2>Rate a <em>Wine</em></h2>
+    <div class="sh-desc">Select &middot; Score &middot; Submit</div>
   </div>
-  <div id="rankings-list"><div class="empty">No wines yet. Add the first bottle.</div></div>
-</div>
-
-<!-- ADD WINE -->
-<div id="tab-add" class="tp">
-  <div class="sh"><h2>Add a <em>Wine</em></h2><div class="sh-desc">Photograph label or enter manually</div></div>
 
   <div class="card">
-    <div class="clabel">Identify from Label</div>
-    <button class="btn bq bsm" onclick="toggleLabel()">Photograph Label</button>
-    <div id="label-section" class="hidden" style="margin-top:16px;">
-      <div class="upzone">
-        <input type="file" id="label-file" accept="image/*" capture="environment" onchange="handleLabel(event)">
-        <div class="uplbl">Tap to photograph the wine label</div>
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;color:var(--ink);margin-top:4px;text-transform:uppercase;">AI will identify it</div>
-      </div>
-      <div id="label-preview" class="hidden" style="margin-top:13px;">
-        <img id="label-img" style="max-width:100%;border-radius:3px;border:1px solid var(--border);display:block;margin:0 auto;">
-        <div style="text-align:center;margin-top:12px;">
-          <button class="btn bp bsm" onclick="analyzeLabel()">
-            <span class="spin hidden" id="label-spin"></span>Analyze with AI
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" id="manual-card">
-    <div class="clabel">Wine Details</div>
-
-    <div class="g2">
-      <div class="field"><label>Wine Name</label><input id="f-name" placeholder="e.g. Chateau Margaux"></div>
-      <div class="field"><label>Producer / Winery</label><input id="f-producer" placeholder="e.g. Domaine Leflaive"></div>
-    </div>
-    <div class="g3">
-      <div class="field"><label>Vintage</label>
-        <select id="f-year">
-          <option value="">Year</option>
-          <option>2024</option><option>2023</option><option>2022</option><option>2021</option>
-          <option>2020</option><option>2019</option><option>2018</option><option>2017</option>
-          <option>2016</option><option>2015</option><option>2014</option><option>2013</option>
-          <option>2012</option><option>2011</option><option>2010</option><option>2009</option>
-          <option>2008</option><option>2007</option><option>2006</option><option>2005</option>
-          <option>2004</option><option>2003</option><option>2002</option><option>2001</option>
-          <option>2000</option><option>1999</option><option>1998</option><option>1997</option>
-          <option>1996</option><option>1995</option><option>1990</option><option>1985</option>
-        </select>
-      </div>
-      <div class="field"><label>Type</label>
-        <select id="f-type">
-          <option value="Red">Red</option>
-          <option value="White">White</option>
-          <option value="Rose">Ros&eacute;</option>
-          <option value="Sparkling">Sparkling</option>
-          <option value="Dessert">Dessert</option>
-          <option value="Orange">Orange</option>
-        </select>
-      </div>
-      <div class="field"><label>Price (CAD)</label>
-        <select id="f-price">
-          <option value="">Unknown</option>
-          <option value="Under $20">Under $20</option>
-          <option value="$20-30">$20&ndash;$30</option>
-          <option value="$30-50">$30&ndash;$50</option>
-          <option value="$50-75">$50&ndash;$75</option>
-          <option value="$75-100">$75&ndash;$100</option>
-          <option value="$100-150">$100&ndash;$150</option>
-          <option value="$150-200">$150&ndash;$200</option>
-          <option value="$200+">$200+</option>
-        </select>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="field"><label>Region</label>
-        <select id="f-region">
-          <option value="">Select region</option>
-          <optgroup label="France">
-            <option>Bordeaux, France</option><option>Burgundy, France</option>
-            <option>Champagne, France</option><option>Rh&ocirc;ne Valley, France</option>
-            <option>Loire Valley, France</option><option>Alsace, France</option>
-            <option>Languedoc, France</option><option>Provence, France</option>
-          </optgroup>
-          <optgroup label="Italy">
-            <option>Tuscany, Italy</option><option>Piedmont, Italy</option>
-            <option>Veneto, Italy</option><option>Sicily, Italy</option><option>Friuli, Italy</option>
-          </optgroup>
-          <optgroup label="Spain">
-            <option>Rioja, Spain</option><option>Ribera del Duero, Spain</option>
-            <option>Priorat, Spain</option><option>Galicia, Spain</option>
-          </optgroup>
-          <optgroup label="USA">
-            <option>Napa Valley, California</option><option>Sonoma, California</option>
-            <option>Willamette Valley, Oregon</option><option>Washington State</option>
-          </optgroup>
-          <optgroup label="Canada">
-            <option>Okanagan Valley, BC</option><option>Niagara Peninsula, Ontario</option>
-          </optgroup>
-          <optgroup label="New Zealand">
-            <option>Marlborough, New Zealand</option><option>Central Otago, New Zealand</option>
-          </optgroup>
-          <optgroup label="Australia">
-            <option>Barossa Valley, Australia</option><option>McLaren Vale, Australia</option>
-            <option>Margaret River, Australia</option>
-          </optgroup>
-          <optgroup label="South America">
-            <option>Mendoza, Argentina</option><option>Maipo Valley, Chile</option>
-          </optgroup>
-          <optgroup label="Other">
-            <option>Stellenbosch, South Africa</option><option>Portugal</option>
-            <option>Germany</option><option>Austria</option><option>Greece</option><option>Other</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="field"><label>Grape Variety</label>
-        <select id="f-grape">
-          <option value="">Select grape</option>
-          <optgroup label="Red Grapes">
-            <option>Cabernet Sauvignon</option><option>Merlot</option><option>Pinot Noir</option>
-            <option>Syrah / Shiraz</option><option>Grenache</option><option>Nebbiolo</option>
-            <option>Sangiovese</option><option>Tempranillo</option><option>Malbec</option>
-            <option>Zinfandel</option><option>Barbera</option><option>Cabernet Franc</option>
-            <option>Mourvedre</option><option>Gamay</option><option>Petit Verdot</option>
-          </optgroup>
-          <optgroup label="White Grapes">
-            <option>Chardonnay</option><option>Sauvignon Blanc</option><option>Riesling</option>
-            <option>Pinot Grigio / Pinot Gris</option><option>Gewurztraminer</option>
-            <option>Viognier</option><option>Chenin Blanc</option><option>Albarino</option>
-            <option>Gruner Veltliner</option><option>Moscato / Muscat</option>
-          </optgroup>
-          <optgroup label="Blends">
-            <option>Bordeaux Blend (Red)</option><option>Bordeaux Blend (White)</option>
-            <option>Rhone Blend (Red)</option><option>Rhone Blend (White)</option>
-            <option>GSM Blend</option><option>Mixed / Other</option>
-          </optgroup>
-        </select>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="field"><label>Who Brought It?</label><input id="f-bringer" placeholder="e.g. Rob"></div>
-      <div class="field"><label>Blind Mode</label>
-        <select id="f-blind">
-          <option value="no">No — name visible</option>
-          <option value="yes">Yes — hide identity</option>
-        </select>
-      </div>
-    </div>
-
-    <hr class="rule">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <div>
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">AI Tasting Notes</div>
-        <div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);font-style:italic;margin-top:2px;">Powers the tasting game</div>
-      </div>
-      <button class="btn bq bsm" onclick="genNotes()"><span class="spin hidden" id="notes-spin"></span>Generate</button>
-    </div>
-    <div id="ai-notes-box" class="hidden aibox">
-      <div class="aibox-lbl">Known Tasting Notes</div>
-      <div id="ai-notes-text" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;line-height:1.72;color:var(--cream-d);"></div>
-      <div class="chips" id="ai-notes-chips"></div>
-    </div>
-
-    <div class="brow">
-      <button class="btn bp" onclick="saveWine()">Save Wine</button>
-      <button class="btn bq bsm" onclick="clearForm()">Clear</button>
-    </div>
-  </div>
-</div>
-
-<!-- REVIEW -->
-<div id="tab-review" class="tp">
-  <div class="sh"><h2>Write a <em>Review</em></h2><div class="sh-desc">Rate each dimension 1 to 5</div></div>
-  <div class="card">
-    <div class="clabel">Reviewer</div>
+    <div class="clabel">Who are you?</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <div class="field" style="margin:0;flex:1;min-width:150px;"><input id="r-name" placeholder="Your name"></div>
-      <button class="btn bq bsm" onclick="setReviewer()">Set</button>
+      <button class="btn bp bsm" onclick="setReviewer()">Set</button>
     </div>
     <div id="reviewer-set" class="hidden" style="margin-top:10px;font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">
-      Reviewing as: <span id="reviewer-show"></span>
-      <button onclick="clearReviewer()" style="background:none;border:none;color:var(--ink);cursor:pointer;margin-left:8px;font-size:11px;font-family:'Noto Serif',serif;">clear</button>
+      Tasting as: <span id="reviewer-show"></span>
+      <button onclick="clearReviewer()" style="background:none;border:none;color:var(--ink);cursor:pointer;margin-left:8px;font-size:11px;font-family:'Noto Serif',serif;">change</button>
     </div>
   </div>
+
   <div class="card">
-    <div class="clabel">Select Wine</div>
-    <div class="field" style="margin:0;"><select id="r-wine-sel" onchange="loadReviewWine()"><option value="">Choose a wine</option></select></div>
+    <div class="clabel">Select a Wine to Rate</div>
+    <div class="field" style="margin:0;"><select id="r-wine-sel" onchange="loadRateWine()"><option value="">Choose a wine</option></select></div>
   </div>
-  <div id="review-form" class="hidden">
-    <div class="card" id="r-wine-card"></div>
+
+  <div id="rate-form" class="hidden">
+    <div class="card" id="r-wine-display"></div>
     <div class="card">
-      <div class="clabel">Your Ratings</div>
-      <div class="sg"><div class="sg-lbl">Appearance <span id="lbl-appearance"></span></div><div class="stars" id="st-appearance"></div></div>
-      <div class="sg"><div class="sg-lbl">Aroma / Nose <span id="lbl-aroma"></span></div><div class="stars" id="st-aroma"></div></div>
-      <div class="sg"><div class="sg-lbl">Taste / Palate <span id="lbl-taste"></span></div><div class="stars" id="st-taste"></div></div>
-      <div class="sg"><div class="sg-lbl">Finish <span id="lbl-finish"></span></div><div class="stars" id="st-finish"></div></div>
-      <div class="sg"><div class="sg-lbl">Overall <span id="lbl-overall"></span></div><div class="stars" id="st-overall"></div></div>
+      <div class="clabel">Your Scores</div>
+      <div class="star-row"><div class="star-row-label">Aroma</div><div class="stars-wrap" id="st-aroma"></div><div class="star-row-val" id="lv-aroma"></div></div>
+      <div class="star-row"><div class="star-row-label">Taste</div><div class="stars-wrap" id="st-taste"></div><div class="star-row-val" id="lv-taste"></div></div>
+      <div class="star-row"><div class="star-row-label">Finish</div><div class="stars-wrap" id="st-finish"></div><div class="star-row-val" id="lv-finish"></div></div>
+      <div class="star-row"><div class="star-row-label">Overall</div><div class="stars-wrap" id="st-overall"></div><div class="star-row-val" id="lv-overall"></div></div>
       <hr class="rule">
-      <div class="field"><label>Tasting Notes (optional)</label><textarea id="r-notes" placeholder="What do you smell, taste, and feel?"></textarea></div>
-      <div class="brow"><button class="btn bg" onclick="submitReview()">Submit Review</button></div>
+      <div class="field">
+        <label>Tasting Notes <span style="color:var(--ink);font-size:10px;letter-spacing:0;text-transform:none;font-style:italic;">optional</span></label>
+        <textarea id="r-notes" placeholder="What do you smell, taste, and feel?"></textarea>
+      </div>
+      <div class="brow">
+        <button class="btn bg" onclick="submitReview()">Submit Rating</button>
+        <button class="btn bq bsm" onclick="resetRateForm()">Cancel</button>
+      </div>
     </div>
+  </div>
+
+  <div style="margin-top:20px;text-align:center;">
+    <button class="btn bq bsm" onclick="showTab('cellar')">+ Add a New Wine</button>
   </div>
 </div>
 
-<!-- TASTING GAME -->
+<!-- ══ RANKINGS ══ -->
+<div id="tab-rankings" class="tp">
+  <div class="sh">
+    <h2>Tonight's <em>Rankings</em></h2>
+    <div class="sh-desc">Live &middot; Updates as reviews come in</div>
+  </div>
+  <div id="rankings-list"><div class="empty">No wines rated yet.</div></div>
+</div>
+
+<!-- ══ THE CELLAR ══ -->
+<div id="tab-cellar" class="tp">
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+    <div><h2>The <em>Cellar</em></h2><div class="sh-desc">All wines &middot; Full details &middot; AI notes</div></div>
+    <button class="btn bp bsm" onclick="openAddWine()">+ Add Wine</button>
+  </div>
+  <div id="cellar-list"><div class="empty">No wines added yet.</div></div>
+</div>
+
+<!-- ══ TASTING GAME ══ -->
 <div id="tab-tasting" class="tp">
   <div class="sh"><h2>Tasting <em>Game</em></h2><div class="sh-desc">Guess the notes &middot; Reveal the truth</div></div>
   <div class="card">
@@ -472,14 +287,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   </div>
   <div id="tasting-body" class="hidden">
     <div class="card">
-      <div class="clabel" id="t-badge-wrap"></div>
+      <div class="clabel" id="t-badge"></div>
       <div class="ctitle" id="t-name"></div>
       <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);" id="t-meta"></div>
       <hr class="rule">
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;">Select everything you detect:</div>
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Select everything you detect:</div>
       <div class="chips" id="t-chips"></div>
       <div class="brow">
-        <button class="btn bp" onclick="revealTasting()" id="t-reveal-btn">Reveal Answers</button>
+        <button class="btn bp bsm" onclick="revealTasting()" id="t-reveal-btn">Reveal Answers</button>
         <button class="btn bq bsm" onclick="resetTasting()">Reset</button>
       </div>
       <div id="t-result" class="hidden">
@@ -489,85 +304,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
         </div>
         <div class="t-verdict" id="t-verdict"></div>
         <hr class="rule">
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:9px;">Expert notes:</div>
-        <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.75;"></div>
+        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Expert notes:</div>
+        <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- HEAD TO HEAD -->
-<div id="tab-h2h" class="tp">
-  <div class="sh"><h2>Head to <em>Head</em></h2><div class="sh-desc">Two wines enter &middot; One wins</div></div>
-  <div class="card">
-    <div class="g2">
-      <div class="field"><label>Wine A</label><select id="h2h-a"><option value="">Select</option></select></div>
-      <div class="field"><label>Wine B</label><select id="h2h-b"><option value="">Select</option></select></div>
-    </div>
-    <button class="btn bp bsm" onclick="loadH2H()">Start Battle</button>
-  </div>
-  <div id="h2h-body" class="hidden">
-    <div class="card">
-      <div class="h2h-grid">
-        <div class="vbtn" id="h2h-btn-a" onclick="voteH2H('a')">
-          <div class="vbtn-name" id="h2h-name-a"></div>
-          <div class="vbtn-meta" id="h2h-meta-a"></div>
-          <div class="vbtn-ct" id="h2h-votes-a">0 votes</div>
-        </div>
-        <div class="h2h-vs">vs</div>
-        <div class="vbtn" id="h2h-btn-b" onclick="voteH2H('b')">
-          <div class="vbtn-name" id="h2h-name-b"></div>
-          <div class="vbtn-meta" id="h2h-meta-b"></div>
-          <div class="vbtn-ct" id="h2h-votes-b">0 votes</div>
-        </div>
-      </div>
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);text-align:center;">Voting as <span id="h2h-voter" style="color:var(--gold);"></span></div>
-    </div>
-  </div>
-</div>
-
-<!-- BRINGERS -->
-<div id="tab-bringers" class="tp">
-  <div class="sh"><h2>Bringer <em>Leaderboard</em></h2><div class="sh-desc">Ranked by average score of wines brought</div></div>
-  <div id="bringers-list"><div class="empty">No reviewed wines with bringers yet.</div></div>
-  <div class="grule"></div>
-  <div class="sh"><h2>Price <em>Reveal Game</em></h2><div class="sh-desc">Guess the price &middot; Closest wins</div></div>
-  <div class="card">
-    <div class="field"><label>Select Wine</label><select id="price-wine-sel" onchange="loadPriceGame()"><option value="">Choose a wine</option></select></div>
-  </div>
-  <div id="price-body" class="hidden">
-    <div class="card">
-      <div class="g2">
-        <div class="field"><label>Your Name</label><input id="price-guesser" placeholder="Your name"></div>
-        <div class="field"><label>Your Guess (CAD $)</label><input id="price-guess" type="number" placeholder="e.g. 45"></div>
-      </div>
-      <div class="brow">
-        <button class="btn bp bsm" onclick="submitPriceGuess()">Lock In Guess</button>
-        <button class="btn bq bsm" onclick="revealPrice()">Reveal Price</button>
-      </div>
-      <div id="price-result" class="hidden" style="margin-top:18px;">
-        <div class="price-big" id="price-actual"></div>
-        <div class="price-win" id="price-winner-txt"></div>
-        <div id="price-guesses-list" style="margin-top:14px;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- TIMELINE -->
-<div id="tab-timeline" class="tp">
-  <div class="sh"><h2>Vintage <em>Timeline</em></h2><div class="sh-desc">All wines by year &middot; Tap to open</div></div>
-  <div id="timeline-body"><div class="empty">No wines added yet.</div></div>
-</div>
-
-<!-- REPORT CARD -->
+<!-- ══ REPORT CARD ══ -->
 <div id="tab-report" class="tp">
   <div class="sh"><h2>Report <em>Card</em></h2><div class="sh-desc">End of night summary</div></div>
   <div id="report-body"><div class="empty">Add wines and reviews to generate the report.</div></div>
-  <div id="roast-section" class="hidden">
+  <div id="roast-section" class="hidden" style="margin-top:8px;">
     <hr class="rule">
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Sommelier Roast</div>
-    <button class="btn bp" onclick="genRoast()"><span class="spin hidden" id="roast-spin"></span>Generate AI Roast</button>
+    <div class="clabel" style="margin-bottom:12px;">Sommelier Roast</div>
+    <button class="btn bp bsm" onclick="genRoast()"><span class="spin hidden" id="roast-spin"></span>Generate AI Roast</button>
     <div id="roast-result" class="hidden aibox" style="margin-top:16px;">
       <div class="aibox-lbl">Tonight's Verdict</div>
       <div id="roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.8;white-space:pre-wrap;"></div>
@@ -577,7 +328,141 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 </div>
 
-<!-- MODAL -->
+<!-- ADD/EDIT WINE MODAL -->
+<div class="mbg" id="wine-form-modal">
+  <div class="modal">
+    <button class="mx" onclick="closeWineForm()">&#x2715;</button>
+    <div class="modal-body">
+      <div class="clabel" id="wf-title-label">Add a Wine</div>
+
+      <div style="margin-bottom:14px;">
+        <button class="btn bq bsm" onclick="toggleLabel()">Photograph Label</button>
+        <div id="label-section" class="hidden" style="margin-top:14px;">
+          <div class="upzone">
+            <input type="file" id="label-file" accept="image/*" capture="environment" onchange="handleLabel(event)">
+            <div class="uplbl">Tap to photograph the wine label</div>
+            <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;color:var(--ink);margin-top:4px;text-transform:uppercase;">AI will identify it</div>
+          </div>
+          <div id="label-preview" class="hidden" style="margin-top:13px;">
+            <img id="label-img" style="max-width:100%;border-radius:3px;border:1px solid var(--border);display:block;margin:0 auto;">
+            <div style="text-align:center;margin-top:10px;">
+              <button class="btn bp bsm" onclick="analyzeLabel()">
+                <span class="spin hidden" id="label-spin"></span>Analyze with AI
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="rule">
+      <div class="g2">
+        <div class="field"><label>Wine Name</label><input id="f-name" placeholder="e.g. Chateau Margaux"></div>
+        <div class="field"><label>Producer / Winery</label><input id="f-producer" placeholder="e.g. Domaine Leflaive"></div>
+      </div>
+      <div class="g3">
+        <div class="field"><label>Vintage</label>
+          <select id="f-year">
+            <option value="">Year</option>
+            <option>2024</option><option>2023</option><option>2022</option><option>2021</option>
+            <option>2020</option><option>2019</option><option>2018</option><option>2017</option>
+            <option>2016</option><option>2015</option><option>2014</option><option>2013</option>
+            <option>2012</option><option>2011</option><option>2010</option><option>2009</option>
+            <option>2008</option><option>2007</option><option>2006</option><option>2005</option>
+            <option>2004</option><option>2003</option><option>2002</option><option>2001</option>
+            <option>2000</option><option>1999</option><option>1998</option><option>1997</option>
+            <option>1996</option><option>1995</option><option>1990</option><option>1985</option>
+          </select>
+        </div>
+        <div class="field"><label>Type</label>
+          <select id="f-type">
+            <option value="Red">Red</option><option value="White">White</option>
+            <option value="Rose">Ros&eacute;</option><option value="Sparkling">Sparkling</option>
+            <option value="Dessert">Dessert</option><option value="Orange">Orange</option>
+          </select>
+        </div>
+        <div class="field"><label>Price (CAD)</label>
+          <select id="f-price">
+            <option value="">Unknown</option><option value="Under $20">Under $20</option>
+            <option value="$20-30">$20&ndash;$30</option><option value="$30-50">$30&ndash;$50</option>
+            <option value="$50-75">$50&ndash;$75</option><option value="$75-100">$75&ndash;$100</option>
+            <option value="$100-150">$100&ndash;$150</option><option value="$150-200">$150&ndash;$200</option>
+            <option value="$200+">$200+</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label>Region</label>
+          <select id="f-region">
+            <option value="">Select region</option>
+            <optgroup label="France"><option>Bordeaux, France</option><option>Burgundy, France</option>
+              <option>Champagne, France</option><option>Rh&ocirc;ne Valley, France</option>
+              <option>Loire Valley, France</option><option>Alsace, France</option>
+              <option>Languedoc, France</option><option>Provence, France</option></optgroup>
+            <optgroup label="Italy"><option>Tuscany, Italy</option><option>Piedmont, Italy</option>
+              <option>Veneto, Italy</option><option>Sicily, Italy</option></optgroup>
+            <optgroup label="Spain"><option>Rioja, Spain</option><option>Ribera del Duero, Spain</option>
+              <option>Priorat, Spain</option><option>Galicia, Spain</option></optgroup>
+            <optgroup label="USA"><option>Napa Valley, California</option><option>Sonoma, California</option>
+              <option>Willamette Valley, Oregon</option><option>Washington State</option></optgroup>
+            <optgroup label="Canada"><option>Okanagan Valley, BC</option><option>Niagara Peninsula, Ontario</option></optgroup>
+            <optgroup label="New Zealand"><option>Marlborough, New Zealand</option><option>Central Otago, New Zealand</option></optgroup>
+            <optgroup label="Australia"><option>Barossa Valley, Australia</option><option>McLaren Vale, Australia</option></optgroup>
+            <optgroup label="South America"><option>Mendoza, Argentina</option><option>Maipo Valley, Chile</option></optgroup>
+            <optgroup label="Other"><option>Stellenbosch, South Africa</option><option>Douro Valley, Portugal</option>
+              <option>Mosel, Germany</option><option>Other</option></optgroup>
+          </select>
+        </div>
+        <div class="field"><label>Grape Variety</label>
+          <select id="f-grape">
+            <option value="">Select grape</option>
+            <optgroup label="Red"><option>Cabernet Sauvignon</option><option>Merlot</option>
+              <option>Pinot Noir</option><option>Syrah / Shiraz</option><option>Grenache</option>
+              <option>Nebbiolo</option><option>Sangiovese</option><option>Tempranillo</option>
+              <option>Malbec</option><option>Zinfandel</option><option>Barbera</option>
+              <option>Cabernet Franc</option><option>Mourvedre</option><option>Gamay</option></optgroup>
+            <optgroup label="White"><option>Chardonnay</option><option>Sauvignon Blanc</option>
+              <option>Riesling</option><option>Pinot Grigio / Pinot Gris</option>
+              <option>Gewurztraminer</option><option>Viognier</option><option>Chenin Blanc</option>
+              <option>Albarino</option><option>Gruner Veltliner</option></optgroup>
+            <optgroup label="Blends"><option>Bordeaux Blend (Red)</option><option>Rhone Blend (Red)</option>
+              <option>GSM Blend</option><option>Mixed / Other</option></optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label>Who Brought It?</label><input id="f-bringer" placeholder="e.g. Rob"></div>
+        <div class="field"><label>Blind Mode</label>
+          <select id="f-blind">
+            <option value="no">No — name visible</option>
+            <option value="yes">Yes — hide identity</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="rule">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div>
+          <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">AI Tasting Notes</div>
+          <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-top:2px;">For tasting game only — hidden from raters</div>
+        </div>
+        <button class="btn bq bsm" onclick="genNotes()"><span class="spin hidden" id="notes-spin"></span>Generate</button>
+      </div>
+      <div id="ai-notes-box" class="hidden aibox">
+        <div class="aibox-lbl">Known Tasting Notes</div>
+        <div id="ai-notes-text" style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;line-height:1.72;color:var(--cream-d);"></div>
+        <div class="chips" id="ai-notes-chips" style="margin-top:10px;"></div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn bp bsm" id="wf-save-btn" onclick="saveWine()">Save Wine</button>
+      <button class="btn bq bsm" onclick="closeWineForm()">Cancel</button>
+      <button id="wf-delete-btn" class="btn bq bsm hidden" style="color:#c06060;border-color:rgba(180,80,80,.3);margin-left:auto;" onclick="deleteCurrentWine()">Remove Wine</button>
+    </div>
+  </div>
+</div>
+
+<!-- WINE DETAIL MODAL -->
 <div class="mbg" id="wine-modal">
   <div class="modal">
     <button class="mx" onclick="closeModal()">&#x2715;</button>
@@ -592,14 +477,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
-let wines=[], reviews=[], h2hVotes={}, priceGuesses={};
-let currentReviewer = localStorage.getItem('cellar-reviewer')||'';
-let currentAINotes=[];
-let ratings={appearance:0,aroma:0,taste:0,finish:0,overall:0};
+let wines=[], reviews=[];
+let currentReviewer=localStorage.getItem('cellar-reviewer')||'';
+let currentAINotes=[], labelB64=null, labelMime='image/jpeg';
+let ratings={aroma:0,taste:0,finish:0,overall:0};
 let tastingSelected=[], tastingRevealed=false;
 let useFirebase=false;
 let DB,dbRef,dbSet,dbPush,dbOnValue,dbUpdate;
-let h2hCurrent={a:null,b:null};
+let editingWineId=null;
+
+const DIMS=['aroma','taste','finish','overall'];
+const DIM_LABELS={aroma:'Aroma',taste:'Taste',finish:'Finish',overall:'Overall'};
+const WORKER='https://cellar-ai.rkunka31.workers.dev';
 
 // ══════════════════════════════════════════════════
 // FIREBASE
@@ -621,8 +510,6 @@ window.addEventListener('firebase-failed',fallbackLocal);
 function listenFirebase(){
   dbOnValue(dbRef(DB,'wines'),s=>{ wines=o2a(s.val()); renderAll(); });
   dbOnValue(dbRef(DB,'reviews'),s=>{ reviews=o2a(s.val()); renderAll(); });
-  dbOnValue(dbRef(DB,'h2hVotes'),s=>{ h2hVotes=s.val()||{}; renderH2HCounts(); });
-  dbOnValue(dbRef(DB,'priceGuesses'),s=>{ priceGuesses=s.val()||{}; });
 }
 function o2a(obj){ return obj?Object.entries(obj).map(([id,v])=>({...v,id})):[];}
 function fallbackLocal(){
@@ -660,49 +547,65 @@ function toast(msg){
 }
 
 // ══════════════════════════════════════════════════
-// SCORING
+// SCORING — strictly keyed by wineId (the Firebase push key)
+// This is the fix for the ranking bug. Reviews store wineId as the
+// Firebase push key (e.g. "-OQx..."), never as a positional index.
+// getScore filters reviews by exact string match on that key.
 // ══════════════════════════════════════════════════
-function getScore(id){
-  const rs=reviews.filter(r=>r.wineId===id);
+function getScore(wineId){
+  const rs=reviews.filter(r=>String(r.wineId)===String(wineId));
   if(!rs.length) return null;
   const avg=k=>rs.reduce((s,r)=>s+(Number(r[k])||0),0)/rs.length;
-  return{appearance:avg('appearance'),aroma:avg('aroma'),taste:avg('taste'),
-    finish:avg('finish'),overall:avg('overall'),
-    composite:(avg('appearance')+avg('aroma')+avg('taste')+avg('finish')+avg('overall'))/5,
-    count:rs.length};
+  const composite=DIMS.reduce((s,k)=>s+avg(k),0)/DIMS.length;
+  const obj={composite,count:rs.length};
+  DIMS.forEach(k=>obj[k]=avg(k));
+  return obj;
 }
+
 function badge(type){
   const m={Red:'bdr',White:'bdw',Rose:'bdo',Ros:'bdo',Sparkling:'bds',Dessert:'bds',Orange:'bdo'};
   const k=Object.keys(m).find(k=>type&&type.toLowerCase().startsWith(k.toLowerCase()))||'bdr';
   return`<span class="bdg ${m[k]||'bdr'}">${type||'Red'}</span>`;
 }
 
+// Blind label uses permanent blindNumber set at creation time — never changes
+function displayName(w){ return w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'}`:w.name; }
+
 // ══════════════════════════════════════════════════
-// RANKINGS
+// RENDER ALL
+// ══════════════════════════════════════════════════
+function renderAll(){
+  renderRankings();
+  renderCellar();
+  populateSelects();
+  renderReport();
+}
+
+// ══════════════════════════════════════════════════
+// RANKINGS — no AI notes shown, blind wines show no year
 // ══════════════════════════════════════════════════
 function renderRankings(){
   const el=document.getElementById('rankings-list');
-  if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Add the first bottle.</div>';return;}
+  if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Go add some bottles.</div>';return;}
   const sc=wines.map(w=>({w,s:getScore(w.id)}))
-    .sort((a,b)=>{if(!a.s&&!b.s)return 0;if(!a.s)return 1;if(!b.s)return -1;return b.s.composite-a.s.composite;});
-  let blindCount=0;
+    .sort((a,b)=>{
+      if(!a.s&&!b.s)return 0; if(!a.s)return 1; if(!b.s)return -1;
+      return b.s.composite-a.s.composite;
+    });
   el.innerHTML=sc.map(({w,s},i)=>{
     const isBlind=w.blind==='yes';
-    if(isBlind) blindCount++;
-    const nm=isBlind?`<em style="color:var(--ink);">Blind Wine ${blindCount}</em>`:w.name;
     const n=s?s.composite.toFixed(1):'—';
-    const bars=s?['appearance','aroma','taste','finish','overall'].map(k=>
-      `<div class="sbar"><div class="sbar-f" style="height:${(s[k]/5)*100}%"></div></div>`).join(''):'';
-    return`<div class="wrow" onclick="openModal('${w.id}')">
+    const bars=s?DIMS.map(k=>`<div class="sbar"><div class="sbar-f" style="height:${(s[k]/5)*100}%"></div></div>`).join(''):'';
+    return`<div class="wrow" onclick="openWineModal('${w.id}')">
       <div class="wrank">${s?i+1:'·'}</div>
       <div class="winfo">
-        <div class="wname">${nm}</div>
+        <div class="wname">${displayName(w)}</div>
         <div class="wmeta">${isBlind?'Identity hidden':[w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${badge(w.type)}</div>
         ${w.bringer?`<div class="wbring">${w.bringer}</div>`:''}
-        <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;margin-top:1px;">${s?s.count+' review'+(s.count>1?'s':''):'Not yet reviewed'}</div>
+        <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;margin-top:2px;">${s?s.count+' review'+(s.count>1?'s':''):'Not yet reviewed'}</div>
       </div>
       <div class="wscol">
-        <div class="wsbig">${n}</div>
+        <div class="wsnum">${n}</div>
         <div class="wssub">/ 5.0</div>
         <div class="sbars">${bars}</div>
       </div>
@@ -711,212 +614,310 @@ function renderRankings(){
 }
 
 // ══════════════════════════════════════════════════
-// MODAL
+// CELLAR — full details + AI notes shown here only
 // ══════════════════════════════════════════════════
-function openModal(id){
+function renderCellar(){
+  const el=document.getElementById('cellar-list');
+  if(!wines.length){el.innerHTML='<div class="empty">No wines added yet.</div>';return;}
+  const sorted=[...wines].sort((a,b)=>(a.addedAt||0)-(b.addedAt||0));
+  el.innerHTML=sorted.map(w=>`
+    <div class="card" style="cursor:pointer;" onclick="openEditWine('${w.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px;">
+            ${badge(w.type)}
+            ${w.blind==='yes'?`<span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||''}</span>`:''}
+          </div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);">${w.name}</div>
+          <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
+          ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--gold);font-style:italic;margin-top:2px;">${w.bringer}</div>`:''}
+          ${w.price?`<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);margin-top:2px;">${w.price}</div>`:''}
+        </div>
+        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);flex-shrink:0;">Tap to edit</div>
+      </div>
+      ${w.aiNotes?`<div class="aibox" style="margin-top:12px;">
+        <div class="aibox-lbl">AI Tasting Notes</div>
+        <div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div>
+        ${(w.aiNoteChips||[]).length?`<div class="chips" style="margin-top:8px;">${w.aiNoteChips.map(c=>`<span class="chip" style="cursor:default;">${c}</span>`).join('')}</div>`:''}
+      </div>`:''}
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+// POPULATE SELECTS
+// ══════════════════════════════════════════════════
+function populateSelects(){
+  // Blind wines: show name without year in dropdowns
+  const opts=wines.map(w=>{
+    const label=displayName(w)+(w.blind!=='yes'&&w.year?' '+w.year:'')+(w.bringer?' ('+w.bringer+')':'');
+    return`<option value="${w.id}">${label}</option>`;
+  }).join('');
+  const empty='<option value="">Choose a wine</option>';
+  ['r-wine-sel','t-wine-sel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){const cur=el.value;el.innerHTML=empty+opts;if(cur)el.value=cur;}
+  });
+  if(currentReviewer){
+    document.getElementById('r-name').value=currentReviewer;
+    document.getElementById('reviewer-show').textContent=currentReviewer;
+    document.getElementById('reviewer-set').classList.remove('hidden');
+  }
+}
+
+// ══════════════════════════════════════════════════
+// REVIEWER
+// ══════════════════════════════════════════════════
+function setReviewer(){
+  const n=document.getElementById('r-name').value.trim(); if(!n) return;
+  currentReviewer=n; localStorage.setItem('cellar-reviewer',n);
+  document.getElementById('reviewer-show').textContent=n;
+  document.getElementById('reviewer-set').classList.remove('hidden');
+  toast('Tasting as '+n);
+}
+function clearReviewer(){
+  currentReviewer=''; localStorage.removeItem('cellar-reviewer');
+  document.getElementById('r-name').value='';
+  document.getElementById('reviewer-set').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════
+// RATE A WINE
+// ══════════════════════════════════════════════════
+function loadRateWine(){
+  const id=document.getElementById('r-wine-sel').value;
+  if(!id){document.getElementById('rate-form').classList.add('hidden');return;}
   const w=wines.find(x=>x.id===id); if(!w) return;
-  const s=getScore(id), rs=reviews.filter(r=>r.wineId===id), bl=w.blind==='yes';
-  let html=`
+  const isBlind=w.blind==='yes';
+  document.getElementById('r-wine-display').innerHTML=`
     <div style="margin-bottom:5px;">${badge(w.type)}</div>
-    <div style="font-family:'Playfair Display',serif;font-size:28px;letter-spacing:-.5px;color:var(--cream);margin-bottom:3px;">${bl?'<em style="color:var(--ink);">Blind Wine</em>':w.name}</div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${bl?'Identity hidden':[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
-    ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--gold);font-style:italic;margin-top:5px;">Brought by ${w.bringer}</div>`:''}
-    ${w.price?`<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);margin-top:3px;">${w.price}</div>`:''}`;
-  if(bl) html+=`<div class="grule"></div><button class="btn bq bsm" onclick="revealBlind('${id}');closeModal();">Reveal Identity</button>`;
+    <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">${isBlind?`<em style="color:var(--ink);">${displayName(w)}</em>`:w.name}</div>
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind?'Blind tasting — rate what you taste':[w.producer,w.year,w.region].filter(Boolean).join(' &middot; ')}</div>`;
+  ratings={aroma:0,taste:0,finish:0,overall:0};
+  DIMS.forEach(k=>{buildHalfStars(k);document.getElementById('lv-'+k).textContent='';});
+  document.getElementById('r-notes').value='';
+  document.getElementById('rate-form').classList.remove('hidden');
+}
+
+function resetRateForm(){
+  document.getElementById('r-wine-sel').value='';
+  document.getElementById('rate-form').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════
+// HALF-STAR RATING
+// ══════════════════════════════════════════════════
+function buildHalfStars(key){
+  const wrap=document.getElementById('st-'+key);
+  wrap.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const star=document.createElement('div');
+    star.className='s-star';
+    // Left half click = i - 0.5
+    const lh=document.createElement('div');
+    lh.className='s-half left';
+    lh.addEventListener('click',()=>setRating(key,i-0.5));
+    lh.addEventListener('mouseover',()=>hlStars(key,i-0.5));
+    lh.addEventListener('mouseout',()=>hlStars(key,ratings[key]));
+    // Right half click = i
+    const rh=document.createElement('div');
+    rh.className='s-half right';
+    rh.addEventListener('click',()=>setRating(key,i));
+    rh.addEventListener('mouseover',()=>hlStars(key,i));
+    rh.addEventListener('mouseout',()=>hlStars(key,ratings[key]));
+    // SVG with two colored halves
+    const ns='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('width','30'); svg.setAttribute('height','30');
+    svg.setAttribute('viewBox','0 0 30 30');
+    svg.className='s-svg';
+    svg.innerHTML=`
+      <defs>
+        <clipPath id="cl-${key}-${i}"><rect x="0" y="0" width="15" height="30"/></clipPath>
+        <clipPath id="cr-${key}-${i}"><rect x="15" y="0" width="15" height="30"/></clipPath>
+      </defs>
+      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="rgba(184,150,90,0.15)"/>
+      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="var(--gold)" clip-path="url(#cl-${key}-${i})" class="sl-${key}-${i}" opacity="0"/>
+      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="var(--gold)" clip-path="url(#cr-${key}-${i})" class="sr-${key}-${i}" opacity="0"/>`;
+    star.appendChild(svg);
+    star.appendChild(lh);
+    star.appendChild(rh);
+    wrap.appendChild(star);
+  }
+}
+
+function hlStars(key,val){
+  for(let i=1;i<=5;i++){
+    const l=document.querySelector(`.sl-${key}-${i}`);
+    const r=document.querySelector(`.sr-${key}-${i}`);
+    if(!l||!r) continue;
+    l.setAttribute('opacity', val>=i-0.5?'1':'0');
+    r.setAttribute('opacity', val>=i?'1':'0');
+  }
+}
+
+function setRating(key,val){
+  ratings[key]=val;
+  hlStars(key,val);
+  document.getElementById('lv-'+key).textContent=val%1?val.toFixed(1):val+'.0';
+}
+
+// ══════════════════════════════════════════════════
+// SUBMIT REVIEW
+// wineId is stored as the Firebase push key string.
+// This never changes regardless of sort order or blind numbering.
+// ══════════════════════════════════════════════════
+async function submitReview(){
+  const wineId=document.getElementById('r-wine-sel').value;
+  if(!wineId){toast('Select a wine first');return;}
+  if(DIMS.some(k=>ratings[k]===0)){toast('Please rate all four dimensions');return;}
+  const review={
+    wineId:String(wineId),
+    reviewer:currentReviewer||'Anonymous',
+    aroma:ratings.aroma, taste:ratings.taste,
+    finish:ratings.finish, overall:ratings.overall,
+    notes:document.getElementById('r-notes').value.trim(),
+    createdAt:Date.now()
+  };
+  if(useFirebase){ await dbPush(dbRef(DB,'reviews'),review); }
+  else{
+    review.id=Date.now().toString();
+    reviews.push(review);
+    saveLocal(); renderAll();
+  }
+  toast('Rating submitted');
+  resetRateForm();
+}
+
+// ══════════════════════════════════════════════════
+// WINE DETAIL MODAL
+// ══════════════════════════════════════════════════
+function openWineModal(id){
+  const w=wines.find(x=>x.id===id); if(!w) return;
+  const s=getScore(id);
+  const rs=reviews.filter(r=>String(r.wineId)===String(id));
+  const isBlind=w.blind==='yes';
+
+  let html=`
+    <div style="margin-bottom:5px;">${badge(w.type)}${isBlind?` <span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||''}</span>`:''}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);letter-spacing:-.5px;margin-bottom:3px;">${displayName(w)}</div>
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind?'Identity hidden':[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
+    ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--gold);font-style:italic;margin-top:5px;">Brought by ${w.bringer}</div>`:''}`;
+
+  if(isBlind) html+=`<div class="grule"></div><button class="btn bq bsm" onclick="revealBlind('${id}')">Reveal Identity</button>`;
+
   if(s){
     html+=`<div class="grule"></div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;">Score Breakdown &middot; ${s.count} review${s.count>1?'s':''}</div>
-    <div class="bdwn">${['appearance','aroma','taste','finish','overall'].map(k=>`<div class="pill"><div class="pill-v">${s[k].toFixed(1)}</div><div class="pill-l">${k}</div></div>`).join('')}</div>
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;">Score &middot; ${s.count} review${s.count>1?'s':''}</div>
+    <div class="bdwn">${DIMS.map(k=>`<div class="pill"><div class="pill-v">${s[k].toFixed(1)}</div><div class="pill-l">${DIM_LABELS[k]}</div></div>`).join('')}</div>
     <div style="text-align:center;margin-top:20px;">
       <div style="font-family:'Playfair Display',serif;font-size:55px;color:var(--gold);line-height:1;">${s.composite.toFixed(1)}</div>
       <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);">Composite Score</div>
     </div>`;
+  } else {
+    html+=`<div class="grule"></div><div style="color:var(--ink);font-style:italic;font-size:14px;">No reviews yet.</div>`;
   }
+
   if(rs.length){
     html+=`<div class="grule"></div><div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Individual Reviews</div>`;
     rs.forEach(r=>{
-      const pompWords=(r.notes||('')).match(/\b(terroir|tannins|minerality|barnyard|graphite|pencil|garrigue|brett|reductive|oxidative|phenolic)\b/gi)||[];
+      const pompWords=(r.notes||'').match(/\b(terroir|tannins|minerality|barnyard|graphite|pencil|garrigue|brett|reductive|phenolic)\b/gi)||[];
       const pretension=r.notes?Math.min(100,Math.round(r.notes.split(' ').length*1.1+pompWords.length*20)):0;
       html+=`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
         <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-lt);">${r.reviewer||'Anonymous'}</div>
-        <div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);margin-top:5px;display:flex;gap:8px;flex-wrap:wrap;">
-          ${['appearance','aroma','taste','finish','overall'].map(k=>`${k.charAt(0).toUpperCase()+k.slice(1)}: <strong style="color:var(--cream);">${r[k]||'—'}</strong>`).join(' &middot; ')}
+        <div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);margin-top:5px;display:flex;gap:6px;flex-wrap:wrap;">
+          ${DIMS.map(k=>`${DIM_LABELS[k]}: <strong style="color:var(--cream);">${r[k]||'—'}</strong>`).join(' &middot; ')}
         </div>
         ${r.notes?`<div style="margin-top:7px;font-style:italic;font-size:14px;color:var(--cream-d);line-height:1.7;">"${r.notes}"</div>
-          ${pretension>25?`<div style="margin-top:7px;"><div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">Pretentiousness: ${pretension}%</div><div class="pbar"><div class="pbar-f" style="width:${pretension}%"></div></div></div>`:''}`:'' }
+          ${pretension>30?`<div style="margin-top:6px;"><div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">Pretentiousness: ${pretension}%</div><div class="pbar"><div class="pbar-f" style="width:${pretension}%"></div></div></div>`:''}`:'' }
       </div>`;
     });
   }
-  if(w.aiNotes) html+=`<div class="grule"></div><div class="aibox"><div class="aibox-lbl">AI Tasting Notes</div><div style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;">${w.aiNotes}</div></div>`;
-  html+=`<div style="padding-bottom:8px;"></div>`;
+  html+=`<div style="height:8px;"></div>`;
   document.getElementById('modal-content').innerHTML=html;
   document.getElementById('modal-footer').innerHTML=`
-    <button class="btn bp bsm" onclick="closeModal();showTab('review');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadReviewWine();},80)">Review This Wine</button>
+    <button class="btn bp bsm" onclick="closeModal();showTab('rate');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadRateWine();},80)">Rate This Wine</button>
     <button class="btn bq bsm" onclick="closeModal();showTab('tasting');setTimeout(()=>{document.getElementById('t-wine-sel').value='${id}';loadTasting();},80)">Tasting Game</button>
-    <button class="btn bq bsm" onclick="editWine('${id}')">Edit</button>
-    <button class="btn bq bsm" style="color:#c06060;border-color:rgba(180,80,80,0.3);margin-left:auto;" onclick="deleteWine('${id}')">Remove</button>
+    <button class="btn bq bsm" onclick="closeModal();openEditWine('${id}')">Edit</button>
   `;
   document.getElementById('wine-modal').classList.add('open');
 }
-function closeModal(){document.getElementById('wine-modal').classList.remove('open');}
-
-async function deleteWine(id){
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  if(!confirm('Remove "'+( w.blind==='yes'?'Blind Wine':w.name)+'" and all its reviews?')) return;
-  closeModal();
-  if(useFirebase){
-    // Remove wine
-    await dbSet(dbRef(DB,'wines/'+id), null);
-    // Remove all reviews for this wine
-    const toDelete=reviews.filter(r=>r.wineId===id);
-    for(const r of toDelete) await dbSet(dbRef(DB,'reviews/'+r.id), null);
-  } else {
-    wines=wines.filter(x=>x.id!==id);
-    reviews=reviews.filter(r=>r.wineId!==id);
-    saveLocal(); renderAll();
-  }
-  toast('Wine removed');
-}
+function closeModal(){ document.getElementById('wine-modal').classList.remove('open'); }
 
 function revealBlind(id){
   const w=wines.find(x=>x.id===id); if(!w) return;
   if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'no'});
-  else{w.blind='no';saveLocal();renderAll();}
+  else{ w.blind='no'; saveLocal(); renderAll(); }
+  closeModal();
   toast('Identity revealed');
 }
 
 // ══════════════════════════════════════════════════
-// AI NOTES GENERATOR
+// ADD / EDIT WINE
 // ══════════════════════════════════════════════════
-async function genNotes(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){toast('Enter a wine name first');return;}
-  const spin=document.getElementById('notes-spin');
-  spin.classList.remove('hidden');
-  const wineDesc=[name,
-    document.getElementById('f-producer').value,
-    document.getElementById('f-year').value,
-    document.getElementById('f-type').value,
-    document.getElementById('f-region').value,
-    document.getElementById('f-grape').value
-  ].filter(Boolean).join(', ');
-  try{
-    const resp=await callClaude(`Generate professional tasting notes for: ${wineDesc}.
-Return ONLY valid JSON, no markdown:
-{"aiNotes":"2-3 sentence professional note on colour, aroma, flavour profile and finish","aiNoteChips":["blackberry","vanilla","oak"]}
-aiNoteChips: 12-16 specific tasting descriptor words or short phrases.`);
-    const d=JSON.parse(resp.replace(/```[\w]*\n?|```/g,'').trim());
-    showNotes(d.aiNotes,d.aiNoteChips||[]);
-    toast('Tasting notes generated');
-  }catch(e){toast('Could not generate notes');}
-  finally{spin.classList.add('hidden');}
+function openAddWine(){
+  editingWineId=null;
+  clearWineForm();
+  document.getElementById('wf-title-label').textContent='Add a Wine';
+  document.getElementById('wf-save-btn').textContent='Save Wine';
+  document.getElementById('wf-delete-btn').classList.add('hidden');
+  document.getElementById('wine-form-modal').classList.add('open');
 }
 
-function showNotes(notes,chips){
-  currentAINotes=chips;
-  document.getElementById('ai-notes-text').textContent=notes;
-  document.getElementById('ai-notes-chips').innerHTML=chips.map(c=>`<span class="chip">${c}</span>`).join('');
-  document.getElementById('ai-notes-box').classList.remove('hidden');
-}
-
-// ══════════════════════════════════════════════════
-// FILL FORM (handles selects)
-// ══════════════════════════════════════════════════
-function fillForm(d){
-  if(d.name) document.getElementById('f-name').value=d.name;
-  if(d.producer) document.getElementById('f-producer').value=d.producer;
-
-  if(d.year){
-    const yr=String(d.year).trim();
-    const sel=document.getElementById('f-year');
-    let found=false;
-    for(let o of sel.options){if(o.value===yr){sel.value=yr;found=true;break;}}
-    if(!found&&yr.match(/^\d{4}$/)){const o=new Option(yr,yr);sel.add(o,1);sel.value=yr;}
-  }
-
-  if(d.type){
-    const sel=document.getElementById('f-type');
-    const t=(d.type||'').toLowerCase().replace(/é/g,'e').replace(/[^a-z]/g,'');
-    for(let o of sel.options){
-      const ov=o.value.toLowerCase().replace(/[^a-z]/g,'');
-      if(ov===t||ov.startsWith(t.substring(0,4))){sel.value=o.value;break;}
-    }
-  }
-
-  function setSelect(selId,val){
-    if(!val) return;
-    const sel=document.getElementById(selId);
-    const v=val.toLowerCase();
-    let found=false;
-    for(let o of sel.options){
-      if(!o.value) continue;
-      const ov=o.value.toLowerCase();
-      if(ov===v||ov.includes(v.split(',')[0].trim())||v.includes(ov.split(',')[0].trim())){
-        sel.value=o.value;found=true;break;
-      }
-    }
-    if(!found){const o=new Option(val,val);sel.add(o);sel.value=val;}
-  }
-  setSelect('f-region',d.region);
-  setSelect('f-grape',d.grape);
-  document.getElementById('manual-card').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-let editingWineId = null;
-
-function editWine(id){
+function openEditWine(id){
   const w=wines.find(x=>x.id===id); if(!w) return;
-  closeModal();
   editingWineId=id;
-  // Pre-fill form
+  clearWineForm();
+  document.getElementById('wf-title-label').textContent='Edit Wine';
+  document.getElementById('wf-save-btn').textContent='Update Wine';
+  document.getElementById('wf-delete-btn').classList.remove('hidden');
   document.getElementById('f-name').value=w.name||'';
   document.getElementById('f-producer').value=w.producer||'';
   document.getElementById('f-bringer').value=w.bringer||'';
-  // Set selects
-  const setVal=(selId,val)=>{
-    if(!val) return;
-    const sel=document.getElementById(selId);
-    for(let o of sel.options){ if(o.value===val){sel.value=val;return;} }
-    const o=new Option(val,val); sel.add(o); sel.value=val;
-  };
-  setVal('f-year',w.year);
-  setVal('f-type',w.type||'Red');
-  setVal('f-region',w.region);
-  setVal('f-grape',w.grape);
-  setVal('f-price',w.price);
-  setVal('f-blind',w.blind||'no');
-  // Restore AI notes
+  setSelectVal('f-year',w.year);
+  setSelectVal('f-type',w.type||'Red');
+  setSelectVal('f-region',w.region);
+  setSelectVal('f-grape',w.grape);
+  setSelectVal('f-price',w.price);
+  setSelectVal('f-blind',w.blind||'no');
   if(w.aiNotes){
     document.getElementById('ai-notes-text').textContent=w.aiNotes;
     document.getElementById('ai-notes-chips').innerHTML=(w.aiNoteChips||[]).map(c=>`<span class="chip">${c}</span>`).join('');
     document.getElementById('ai-notes-box').classList.remove('hidden');
     currentAINotes=w.aiNoteChips||[];
   }
-  // Update save button label
-  document.querySelector('#manual-card .btn.bp').textContent='Update Wine';
-  showTab('add');
-  document.getElementById('manual-card').scrollIntoView({behavior:'smooth'});
-  toast('Editing '+( w.blind==='yes'?'blind wine':w.name));
+  document.getElementById('wine-form-modal').classList.add('open');
 }
 
-function clearForm(){
+function closeWineForm(){
+  document.getElementById('wine-form-modal').classList.remove('open');
+  clearWineForm();
+}
+
+function clearWineForm(){
   editingWineId=null;
-  document.getElementById('f-name').value='';
-  document.getElementById('f-producer').value='';
-  document.getElementById('f-bringer').value='';
+  ['f-name','f-producer','f-bringer'].forEach(id=>document.getElementById(id).value='');
   ['f-year','f-type','f-region','f-grape','f-price','f-blind'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.selectedIndex=0;
   });
   document.getElementById('ai-notes-box').classList.add('hidden');
+  document.getElementById('ai-notes-text').textContent='';
+  document.getElementById('ai-notes-chips').innerHTML='';
+  document.getElementById('label-section').classList.add('hidden');
   document.getElementById('label-preview').classList.add('hidden');
-  currentAINotes=[];
-  labelB64=null;
-  document.querySelector('#manual-card .btn.bp').textContent='Save Wine';
+  currentAINotes=[]; labelB64=null;
+}
+
+function setSelectVal(selId,val){
+  if(!val) return;
+  const sel=document.getElementById(selId); if(!sel) return;
+  for(let o of sel.options){ if(o.value===val){sel.value=val;return;} }
+  const o=new Option(val,val); sel.add(o); sel.value=val;
 }
 
 async function saveWine(){
   const name=document.getElementById('f-name').value.trim();
   if(!name){toast('Enter a wine name');return;}
+  const blind=document.getElementById('f-blind').value;
   const data={
     name, producer:document.getElementById('f-producer').value.trim(),
     year:document.getElementById('f-year').value,
@@ -925,38 +926,52 @@ async function saveWine(){
     grape:document.getElementById('f-grape').value,
     price:document.getElementById('f-price').value,
     bringer:document.getElementById('f-bringer').value.trim(),
-    blind:document.getElementById('f-blind').value,
+    blind,
     aiNotes:document.getElementById('ai-notes-text').textContent||'',
     aiNoteChips:currentAINotes
   };
   if(editingWineId){
-    // Update existing
-    if(useFirebase){ await dbUpdate(dbRef(DB,'wines/'+editingWineId), data); }
+    if(useFirebase){ await dbUpdate(dbRef(DB,'wines/'+editingWineId),data); }
     else{ const w=wines.find(x=>x.id===editingWineId); if(w) Object.assign(w,data); saveLocal(); renderAll(); }
     toast(name+' updated');
   } else {
-    // New wine
     data.addedAt=Date.now();
-    if(useFirebase){await dbPush(dbRef(DB,'wines'),data);}
-    else{data.id=Date.now().toString();wines.push(data);saveLocal();renderAll();}
+    // Assign permanent blind number at creation — stored in Firebase, never recalculated
+    if(blind==='yes'){
+      data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
+    }
+    if(useFirebase){ await dbPush(dbRef(DB,'wines'),data); }
+    else{ data.id=Date.now().toString(); wines.push(data); saveLocal(); renderAll(); }
     toast(name+' added to the cellar');
   }
-  clearForm(); showTab('rankings');
+  closeWineForm();
+}
+
+async function deleteCurrentWine(){
+  if(!editingWineId) return;
+  const w=wines.find(x=>x.id===editingWineId); if(!w) return;
+  if(!confirm('Remove "'+displayName(w)+'" and all its reviews?')) return;
+  closeWineForm();
+  if(useFirebase){
+    await dbSet(dbRef(DB,'wines/'+editingWineId),null);
+    const toDelete=reviews.filter(r=>String(r.wineId)===String(editingWineId));
+    for(const r of toDelete) await dbSet(dbRef(DB,'reviews/'+r.id),null);
+  } else {
+    wines=wines.filter(x=>x.id!==editingWineId);
+    reviews=reviews.filter(r=>String(r.wineId)!==String(editingWineId));
+    saveLocal(); renderAll();
+  }
+  toast('Wine removed');
 }
 
 // ══════════════════════════════════════════════════
 // LABEL PHOTO
 // ══════════════════════════════════════════════════
-let labelB64=null, labelMime='image/jpeg';
-
-function toggleLabel(){
-  document.getElementById('label-section').classList.toggle('hidden');
-}
+function toggleLabel(){ document.getElementById('label-section').classList.toggle('hidden'); }
 
 function handleLabel(e){
   const file=e.target.files[0]; if(!file) return;
-  labelMime=file.type||'image/jpeg';
-  if(!['image/jpeg','image/png','image/gif','image/webp'].includes(labelMime)) labelMime='image/jpeg';
+  labelMime=(['image/jpeg','image/png','image/gif','image/webp'].includes(file.type))?file.type:'image/jpeg';
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=new Image();
@@ -979,145 +994,91 @@ function handleLabel(e){
 async function analyzeLabel(){
   if(!labelB64) return;
   const spin=document.getElementById('label-spin');
-  spin.classList.remove('hidden');
-  toast('Analyzing label...');
+  spin.classList.remove('hidden'); toast('Analyzing label...');
   try{
-    const res=await fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
+    const res=await fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:labelMime,data:labelB64}},
-          {type:'text',text:`This is a photo of a wine bottle label. Identify the wine as precisely as possible.
-Return ONLY a raw JSON object, no markdown, no explanation:
-{"name":"","producer":"","year":"","type":"Red or White or Rose or Sparkling or Dessert","region":"","grape":"","aiNotes":"2-3 sentence professional tasting note","aiNoteChips":["descriptor1","descriptor2"]}
-Provide 12-16 specific tasting descriptor chips. Leave fields as empty string if unknown.`}
-        ]}]}
-      )
-    });
-    if(!res.ok) throw new Error('Worker error '+res.status);
+          {type:'text',text:`Wine bottle label photo. Identify this wine precisely.
+Return ONLY raw JSON, no markdown:
+{"name":"","producer":"","year":"","type":"Red or White or Rose or Sparkling or Dessert","region":"","grape":"","aiNotes":"2-3 sentence professional tasting note","aiNoteChips":["descriptor1"]}
+12-16 tasting descriptor chips. Empty string for unknown fields.`}
+        ]}]})});
+    if(!res.ok) throw new Error(res.status);
     const d=await res.json();
     if(d.error) throw new Error(d.error.message);
-    const text=d.content[0].text;
-    const parsed=JSON.parse(text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim());
-    fillForm(parsed);
-    if(parsed.aiNotes) showNotes(parsed.aiNotes, parsed.aiNoteChips||[]);
-    toast('Label identified — review and save');
-  }catch(e){
-    console.error('Label error:',e);
-    toast('Could not identify label — enter manually');
-  }finally{
-    spin.classList.add('hidden');
-  }
+    const p=JSON.parse(d.content[0].text.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
+    fillWineForm(p);
+    if(p.aiNotes) showNotes(p.aiNotes,p.aiNoteChips||[]);
+    toast('Label identified — review details below');
+  }catch(e){ console.error(e); toast('Could not identify — enter manually'); }
+  finally{ spin.classList.add('hidden'); }
+}
+
+function fillWineForm(d){
+  if(d.name) document.getElementById('f-name').value=d.name;
+  if(d.producer) document.getElementById('f-producer').value=d.producer;
+  setSelectVal('f-year',d.year);
+  if(d.type){const sel=document.getElementById('f-type');for(let o of sel.options){if(o.value.toLowerCase()===d.type.toLowerCase()){sel.value=o.value;break;}}}
+  setSelectVal('f-region',d.region);
+  setSelectVal('f-grape',d.grape);
 }
 
 // ══════════════════════════════════════════════════
-// POPULATE SELECTS
+// AI NOTES
 // ══════════════════════════════════════════════════
-function populateSelects(){
-  let blindCount=0;
-  const opts=wines.map(w=>{
-    const isBlind=w.blind==='yes';
-    if(isBlind) blindCount++;
-    const label=isBlind?`Blind Wine ${blindCount}`:`${w.name}${w.year?' '+w.year:''}`;
-    return`<option value="${w.id}">${label}${w.bringer?' ('+w.bringer+')':''}</option>`;
-  }).join('');
-  const empty='<option value="">Choose a wine</option>';
-  ['r-wine-sel','t-wine-sel','h2h-a','h2h-b','price-wine-sel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){const cur=el.value;el.innerHTML=empty+opts;if(cur)el.value=cur;}
-  });
-  if(currentReviewer){
-    document.getElementById('r-name').value=currentReviewer;
-    document.getElementById('reviewer-show').textContent=currentReviewer;
-    document.getElementById('reviewer-set').classList.remove('hidden');
-  }
+async function genNotes(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){toast('Enter a wine name first');return;}
+  const spin=document.getElementById('notes-spin'); spin.classList.remove('hidden');
+  const desc=[name,document.getElementById('f-producer').value,document.getElementById('f-year').value,
+    document.getElementById('f-type').value,document.getElementById('f-region').value,
+    document.getElementById('f-grape').value].filter(Boolean).join(', ');
+  try{
+    const resp=await callClaude(`Generate professional tasting notes for: ${desc}. Return ONLY valid JSON, no markdown:
+{"aiNotes":"2-3 sentence professional note on colour, aroma, flavour and finish","aiNoteChips":["blackberry","vanilla","oak"]}
+12-16 specific tasting descriptor chips.`);
+    const d=JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
+    showNotes(d.aiNotes,d.aiNoteChips||[]);
+    toast('Tasting notes generated');
+  }catch(e){ toast('Could not generate notes'); }
+  finally{ spin.classList.add('hidden'); }
 }
 
-// ══════════════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════════════
-function setReviewer(){
-  const n=document.getElementById('r-name').value.trim(); if(!n) return;
-  currentReviewer=n; localStorage.setItem('cellar-reviewer',n);
-  document.getElementById('reviewer-show').textContent=n;
-  document.getElementById('reviewer-set').classList.remove('hidden');
-  toast('Reviewing as '+n);
-}
-function clearReviewer(){
-  currentReviewer=''; localStorage.removeItem('cellar-reviewer');
-  document.getElementById('r-name').value='';
-  document.getElementById('reviewer-set').classList.add('hidden');
-}
-function loadReviewWine(){
-  const id=document.getElementById('r-wine-sel').value;
-  if(!id){document.getElementById('review-form').classList.add('hidden');return;}
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  const bl=w.blind==='yes';
-  document.getElementById('r-wine-card').innerHTML=`
-    <div class="clabel">${badge(w.type)}</div>
-    <div class="ctitle">${bl?'<em style="color:var(--ink);">Blind Wine</em>':w.name}</div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${bl?'Rate without knowing the identity':[w.producer,w.year,w.region].filter(Boolean).join(' &middot; ')}</div>`;
-  ratings={appearance:0,aroma:0,taste:0,finish:0,overall:0};
-  ['appearance','aroma','taste','finish','overall'].forEach(k=>{buildStars(k);document.getElementById('lbl-'+k).textContent='';});
-  document.getElementById('r-notes').value='';
-  document.getElementById('review-form').classList.remove('hidden');
-}
-
-function buildStars(key){
-  const c=document.getElementById('st-'+key); c.innerHTML='';
-  for(let i=1;i<=5;i++){
-    const s=document.createElement('span');
-    s.className='star';s.textContent='\u2605';
-    s.addEventListener('click',()=>setRating(key,i));
-    s.addEventListener('mouseover',()=>hlStars(key,i));
-    s.addEventListener('mouseout',()=>hlStars(key,ratings[key]));
-    c.appendChild(s);
-  }
-}
-function hlStars(key,val){document.getElementById('st-'+key).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<val));}
-function setRating(key,val){
-  ratings[key]=val; hlStars(key,val);
-  const lbls={1:'Poor',2:'Fair',3:'Good',4:'Very Good',5:'Excellent'};
-  document.getElementById('lbl-'+key).textContent=val+'/5 · '+lbls[val];
-}
-
-async function submitReview(){
-  const id=document.getElementById('r-wine-sel').value;
-  if(!id){toast('Select a wine');return;}
-  if(Object.values(ratings).some(v=>v===0)){toast('Rate all five dimensions');return;}
-  const review={wineId:id,reviewer:currentReviewer||'Anonymous',...ratings,
-    notes:document.getElementById('r-notes').value.trim(),createdAt:Date.now()};
-  if(useFirebase){await dbPush(dbRef(DB,'reviews'),review);}
-  else{review.id=Date.now().toString();reviews.push(review);saveLocal();renderAll();}
-  toast('Review submitted');
-  document.getElementById('r-wine-sel').value='';
-  document.getElementById('review-form').classList.add('hidden');
+function showNotes(notes,chips){
+  currentAINotes=chips;
+  document.getElementById('ai-notes-text').textContent=notes;
+  document.getElementById('ai-notes-chips').innerHTML=chips.map(c=>`<span class="chip">${c}</span>`).join('');
+  document.getElementById('ai-notes-box').classList.remove('hidden');
 }
 
 // ══════════════════════════════════════════════════
 // TASTING GAME
 // ══════════════════════════════════════════════════
-const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig','prune','raisin','peach','apricot','lemon','lime','grapefruit','orange peel','apple','pear','melon','dried fruit','vanilla','oak','cedar','tobacco','smoke','toast','leather','truffle','earth','mushroom','wet stone','mineral','flint','chalk','pepper','clove','cinnamon','nutmeg','licorice','anise','violet','rose','lavender','jasmine','coffee','dark chocolate','caramel','butter','cream','honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus','dried herbs','menthol','barnyard','tar','game','mocha','espresso','burnt sugar'];
+const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig',
+  'prune','raisin','peach','apricot','lemon','lime','grapefruit','apple','pear','melon',
+  'vanilla','oak','cedar','tobacco','smoke','toast','leather','truffle','earth','mushroom',
+  'wet stone','mineral','pepper','clove','cinnamon','nutmeg','licorice','anise',
+  'violet','rose','lavender','jasmine','coffee','chocolate','caramel','butter','cream',
+  'honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus','dried herbs'];
 
 function loadTasting(){
   const id=document.getElementById('t-wine-sel').value;
   if(!id){document.getElementById('tasting-body').classList.add('hidden');return;}
   const w=wines.find(x=>x.id===id); if(!w) return;
-  tastingSelected=[];tastingRevealed=false;
-  document.getElementById('t-name').textContent=w.blind==='yes'?'Blind Wine':w.name;
+  tastingSelected=[]; tastingRevealed=false;
+  document.getElementById('t-name').textContent=displayName(w);
   document.getElementById('t-meta').textContent=[w.year,w.type,w.region].filter(Boolean).join(' · ').toUpperCase();
-  document.getElementById('t-badge-wrap').innerHTML=badge(w.type);
+  document.getElementById('t-badge').innerHTML=badge(w.type);
   document.getElementById('t-result').classList.add('hidden');
   document.getElementById('t-reveal-btn').disabled=false;
   const known=w.aiNoteChips||[];
   const pool=[...new Set([...known,...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
-  document.getElementById('t-chips').innerHTML=shuffle(pool).map(n=>`<button class="chip" onclick="toggleNote(this,'${n.replace(/'/g,"\\'")}' )">${n}</button>`).join('');
+  document.getElementById('t-chips').innerHTML=shuffle(pool).map(n=>
+    `<button class="chip" onclick="toggleNote(this,'${n}')">${n}</button>`).join('');
   document.getElementById('tasting-body').classList.remove('hidden');
 }
-
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function toggleNote(el,note){
   if(tastingRevealed) return;
@@ -1142,194 +1103,76 @@ function revealTasting(){
   document.getElementById('t-expert').textContent=w?.aiNotes||'No expert notes for this wine.';
   document.getElementById('t-result').classList.remove('hidden');
 }
-function resetTasting(){loadTasting();}
-
-// ══════════════════════════════════════════════════
-// HEAD TO HEAD
-// ══════════════════════════════════════════════════
-function loadH2H(){
-  const aId=document.getElementById('h2h-a').value, bId=document.getElementById('h2h-b').value;
-  if(!aId||!bId||aId===bId){toast('Select two different wines');return;}
-  h2hCurrent={a:aId,b:bId};
-  const a=wines.find(x=>x.id===aId),b=wines.find(x=>x.id===bId);
-  document.getElementById('h2h-name-a').textContent=a.blind==='yes'?'Blind Wine':a.name;
-  document.getElementById('h2h-meta-a').textContent=[a.year,a.type].filter(Boolean).join(' · ').toUpperCase();
-  document.getElementById('h2h-name-b').textContent=b.blind==='yes'?'Blind Wine':b.name;
-  document.getElementById('h2h-meta-b').textContent=[b.year,b.type].filter(Boolean).join(' · ').toUpperCase();
-  document.getElementById('h2h-voter').textContent=currentReviewer||'Anonymous';
-  document.getElementById('h2h-body').classList.remove('hidden');
-  renderH2HCounts();
-}
-async function voteH2H(side){
-  if(!h2hCurrent.a) return;
-  const key=h2hCurrent.a+'_'+h2hCurrent.b, voter=currentReviewer||'Anonymous';
-  if(useFirebase) await dbSet(dbRef(DB,'h2hVotes/'+key+'/'+voter),side);
-  else{if(!h2hVotes[key])h2hVotes[key]={};h2hVotes[key][voter]=side;}
-  ['a','b'].forEach(s=>document.getElementById('h2h-btn-'+s).classList.toggle('voted',s===side));
-  toast('Vote recorded'); renderH2HCounts();
-}
-function renderH2HCounts(){
-  if(!h2hCurrent.a) return;
-  const key=h2hCurrent.a+'_'+h2hCurrent.b, votes=h2hVotes[key]||{};
-  const ac=Object.values(votes).filter(v=>v==='a').length;
-  const bc=Object.values(votes).filter(v=>v==='b').length;
-  const ea=document.getElementById('h2h-votes-a'), eb=document.getElementById('h2h-votes-b');
-  if(ea) ea.textContent=ac+' vote'+(ac!==1?'s':'');
-  if(eb) eb.textContent=bc+' vote'+(bc!==1?'s':'');
-}
-
-// ══════════════════════════════════════════════════
-// BRINGERS
-// ══════════════════════════════════════════════════
-function renderBringers(){
-  const el=document.getElementById('bringers-list'), map={};
-  wines.forEach(w=>{
-    if(!w.bringer) return; const s=getScore(w.id); if(!s) return;
-    if(!map[w.bringer]) map[w.bringer]={total:0,count:0,wines:[]};
-    map[w.bringer].total+=s.composite; map[w.bringer].count++;
-    map[w.bringer].wines.push(w.blind==='yes'?'Blind Wine':w.name);
-  });
-  const sorted=Object.entries(map).sort((a,b)=>b[1].total/b[1].count-a[1].total/a[1].count);
-  if(!sorted.length){el.innerHTML='<div class="empty">No reviewed wines with bringers yet.</div>';return;}
-  el.innerHTML=sorted.map(([name,d],i)=>`
-    <div class="brrow">
-      <div class="brnk">${i+1}</div>
-      <div><div class="brname">${name}</div>
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${d.wines.join(', ')}</div></div>
-      <div class="brsc">${(d.total/d.count).toFixed(1)}</div>
-    </div>`).join('');
-}
-
-// ══════════════════════════════════════════════════
-// PRICE GAME
-// ══════════════════════════════════════════════════
-function loadPriceGame(){
-  const id=document.getElementById('price-wine-sel').value;
-  document.getElementById('price-body').classList.toggle('hidden',!id);
-  document.getElementById('price-result').classList.add('hidden');
-  if(id&&currentReviewer) document.getElementById('price-guesser').value=currentReviewer;
-}
-async function submitPriceGuess(){
-  const id=document.getElementById('price-wine-sel').value;
-  const guesser=document.getElementById('price-guesser').value.trim()||currentReviewer||'Anonymous';
-  const guess=parseFloat(document.getElementById('price-guess').value);
-  if(!id||isNaN(guess)){toast('Select a wine and enter your guess');return;}
-  if(useFirebase) await dbSet(dbRef(DB,'priceGuesses/'+id+'/'+guesser),guess);
-  else{if(!priceGuesses[id])priceGuesses[id]={};priceGuesses[id][guesser]=guess;}
-  toast(guesser+' locked in $'+guess);
-}
-function revealPrice(){
-  const id=document.getElementById('price-wine-sel').value;
-  const w=wines.find(x=>x.id===id);
-  if(!w||!w.price){toast('No price set for this wine');return;}
-  const str=w.price;
-  const nums=(str.match(/\d+/g)||[]).map(Number);
-  const mid=nums.length>1?(nums[0]+nums[1])/2:nums[0]||0;
-  document.getElementById('price-actual').textContent=str;
-  const guesses=priceGuesses[id]||{};
-  const sorted=Object.entries(guesses).sort((a,b)=>Math.abs(a[1]-mid)-Math.abs(b[1]-mid));
-  const winner=sorted[0];
-  document.getElementById('price-winner-txt').textContent=winner
-    ?`Closest: ${winner[0]} guessed $${winner[1]} — off by $${Math.abs(winner[1]-mid).toFixed(0)}`
-    :'No guesses recorded';
-  document.getElementById('price-guesses-list').innerHTML=sorted.map(([n,g])=>
-    `<div class="rep-item"><strong>${n}</strong>: $${g} &nbsp;&middot;&nbsp; off by $${Math.abs(g-mid).toFixed(0)}</div>`).join('');
-  document.getElementById('price-result').classList.remove('hidden');
-}
-
-// ══════════════════════════════════════════════════
-// TIMELINE
-// ══════════════════════════════════════════════════
-function renderTimeline(){
-  const el=document.getElementById('timeline-body');
-  if(!wines.length){el.innerHTML='<div class="empty">No wines added yet.</div>';return;}
-  const withYr=[...wines].filter(w=>w.year).sort((a,b)=>a.year-b.year);
-  const noYr=wines.filter(w=>!w.year);
-  el.innerHTML=`<div class="tl">${[...withYr,...noYr].map(w=>`
-    <div class="tl-item" onclick="openModal('${w.id}')">
-      <div class="tl-yr">${w.year||'No vintage'}</div>
-      <div class="tl-nm">${w.blind==='yes'?'Blind Wine':w.name}</div>
-      <div class="tl-mt">${[w.type,w.region].filter(Boolean).join(' &middot; ')}</div>
-    </div>`).join('')}</div>`;
-}
+function resetTasting(){ loadTasting(); }
 
 // ══════════════════════════════════════════════════
 // REPORT CARD
 // ══════════════════════════════════════════════════
 function renderReport(){
   const el=document.getElementById('report-body');
-  if(!wines.length||!reviews.length){el.innerHTML='<div class="empty">Add wines and reviews to generate the report.</div>';document.getElementById('roast-section').classList.add('hidden');return;}
+  if(!wines.length||!reviews.length){
+    el.innerHTML='<div class="empty">Add wines and reviews to generate the report.</div>';
+    document.getElementById('roast-section').classList.add('hidden'); return;
+  }
   const sc=wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
   if(!sc.length){el.innerHTML='<div class="empty">No reviews yet.</div>';return;}
-  const win=sc[0],los=sc[sc.length-1];
+  const win=sc[0], los=sc[sc.length-1];
   const mp=reviews.filter(r=>r.notes).sort((a,b)=>b.notes.length-a.notes.length)[0];
   const bmap={};
-  wines.forEach(w=>{if(w.bringer){const s=getScore(w.id);if(!s)return;if(!bmap[w.bringer])bmap[w.bringer]={t:0,c:0};bmap[w.bringer].t+=s.composite;bmap[w.bringer].c++;}});
+  wines.forEach(w=>{
+    if(w.bringer){const s=getScore(w.id);if(!s)return;
+      if(!bmap[w.bringer])bmap[w.bringer]={t:0,c:0};
+      bmap[w.bringer].t+=s.composite; bmap[w.bringer].c++;}
+  });
   const bs=Object.entries(bmap).sort((a,b)=>b[1].t/b[1].c-a[1].t/a[1].c);
   el.innerHTML=`
     <div class="rep-sec"><div class="rep-title">Wine of the Night</div>
-      <div class="rep-item"><strong>${win.w.blind==='yes'?'Blind Wine':win.w.name}</strong> &nbsp;&middot;&nbsp; ${win.s.composite.toFixed(1)} / 5.0 &nbsp;${badge(win.w.type)} ${win.w.bringer?'&nbsp;&middot;&nbsp; Brought by '+win.w.bringer:''}</div></div>
+      <div class="rep-item"><strong>${displayName(win.w)}</strong> &nbsp;&middot;&nbsp; ${win.s.composite.toFixed(1)} / 5.0 &nbsp;${badge(win.w.type)}${win.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+win.w.bringer:''}</div></div>
     <div class="rep-sec"><div class="rep-title">Final Rankings</div>
-      ${sc.map(({w,s},i)=>`<div class="rep-item">${i+1}. <strong>${w.blind==='yes'?'Blind Wine':w.name}</strong> &nbsp;&middot;&nbsp; ${s.composite.toFixed(1)} &nbsp;&middot;&nbsp; ${s.count} review${s.count>1?'s':''}</div>`).join('')}</div>
+      ${sc.map(({w,s},i)=>`<div class="rep-item">${i+1}. <strong>${displayName(w)}</strong> &nbsp;&middot;&nbsp; ${s.composite.toFixed(1)} &nbsp;&middot;&nbsp; ${s.count} review${s.count>1?'s':''}</div>`).join('')}</div>
     ${bs.length?`<div class="rep-sec"><div class="rep-title">Best Bringer</div>${bs.map(([n,d],i)=>`<div class="rep-item">${i+1}. <strong>${n}</strong> &nbsp;&middot;&nbsp; Avg. ${(d.t/d.c).toFixed(1)}</div>`).join('')}</div>`:''}
     ${mp?`<div class="rep-sec"><div class="rep-title">Most Pretentious Note</div><div class="rep-item"><strong>${mp.reviewer}</strong>: "${mp.notes}"</div></div>`:''}
-    ${los&&los.w.id!==win.w.id?`<div class="rep-sec"><div class="rep-title">Bottom of the Cellar</div><div class="rep-item"><strong>${los.w.blind==='yes'?'Blind Wine':los.w.name}</strong> &nbsp;&middot;&nbsp; ${los.s.composite.toFixed(1)} / 5.0 ${los.w.bringer?'&nbsp;&middot;&nbsp; Brought by '+los.w.bringer:''}</div></div>`:''}`;
+    ${los&&los.w.id!==win.w.id?`<div class="rep-sec"><div class="rep-title">Bottom of the Cellar</div><div class="rep-item"><strong>${displayName(los.w)}</strong> &nbsp;&middot;&nbsp; ${los.s.composite.toFixed(1)} / 5.0${los.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+los.w.bringer:''}</div></div>`:''}`;
   document.getElementById('roast-section').classList.remove('hidden');
 }
 
 async function genRoast(){
   const sc=wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
   if(!sc.length){toast('Need reviews first');return;}
-  const spin=document.getElementById('roast-spin');spin.classList.remove('hidden');
+  const spin=document.getElementById('roast-spin'); spin.classList.remove('hidden');
   const summary=sc.map(({w,s},i)=>{
-    const rs=reviews.filter(r=>r.wineId===w.id);
+    const rs=reviews.filter(r=>String(r.wineId)===String(w.id));
     const notes=rs.map(r=>r.notes).filter(Boolean).join('; ');
-    return`${i+1}. ${w.blind==='yes'?'A blind wine':w.name} (${s.composite.toFixed(1)}/5)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Notes: '+notes:''}`;
+    return`${i+1}. ${displayName(w)} (${s.composite.toFixed(1)}/5)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Notes: '+notes:''}`;
   }).join('\n');
   try{
-    const roast=await callClaude(`You are a sarcastically brilliant sommelier MC at a finance industry chalet weekend at Osler Bluff in Collingwood, Ontario. Here are tonight's wine results:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph end-of-night roast. Name names, call out the scores, mock the tasting notes, shame whoever brought the worst wine. Finance humour welcome. Charming but merciless. Plain text only, no markdown formatting.`);
+    const roast=await callClaude(`You are a sarcastically brilliant sommelier MC at a finance industry chalet weekend at Osler Bluff in Collingwood, Ontario. Wine results:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph end-of-night roast. Name names, call out scores, mock tasting notes, shame whoever brought the worst wine. Finance humour welcome. Charming but merciless. Plain text only, no markdown.`);
     document.getElementById('roast-text').textContent=roast;
     document.getElementById('roast-result').classList.remove('hidden');
-  }catch(e){toast('Could not generate roast');}
-  finally{spin.classList.add('hidden');}
+  }catch(e){ toast('Could not generate roast'); }
+  finally{ spin.classList.add('hidden'); }
 }
 
 // ══════════════════════════════════════════════════
-// CLAUDE API — via Cloudflare Worker
+// CLAUDE API via Cloudflare Worker
 // ══════════════════════════════════════════════════
-const WORKER_URL = 'https://cellar-ai.rkunka31.workers.dev';
-
-async function callClaude(prompt) {
-  const res = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!res.ok) throw new Error('Worker error ' + res.status);
-  const d = await res.json();
-  if (d.error) throw new Error(d.error.message);
+async function callClaude(prompt){
+  const res=await fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+      messages:[{role:'user',content:prompt}]})});
+  if(!res.ok) throw new Error('Worker '+res.status);
+  const d=await res.json();
+  if(d.error) throw new Error(d.error.message);
   return d.content[0].text;
-}
-
-function parseJSON(text) {
-  return JSON.parse(text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim());
 }
 
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
-function renderAll(){
-  renderRankings(); populateSelects(); renderBringers(); renderTimeline(); renderReport();
-}
-['appearance','aroma','taste','finish','overall'].forEach(buildStars);
-document.getElementById('wine-modal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('wine-modal')) closeModal();
-});
-setTimeout(()=>{if(!useFirebase) fallbackLocal();},4000);
+DIMS.forEach(k=>buildHalfStars(k));
+document.getElementById('wine-modal').addEventListener('click',e=>{if(e.target===document.getElementById('wine-modal'))closeModal();});
+document.getElementById('wine-form-modal').addEventListener('click',e=>{if(e.target===document.getElementById('wine-form-modal'))closeWineForm();});
+setTimeout(()=>{if(!useFirebase)fallbackLocal();},4000);
 </script>
 </body>
 </html>
