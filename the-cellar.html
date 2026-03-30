@@ -140,6 +140,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .t-score-n{font-family:'Playfair Display',serif;font-size:60px;color:var(--gold);line-height:1;}
 .t-score-l{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);margin-top:5px;}
 .t-verdict{font-family:'Noto Serif',serif;font-style:italic;font-size:15px;color:var(--cream-d);margin-top:14px;line-height:1.7;text-align:center;}
+.t-breakdown-pill{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:3px;padding:12px;text-align:center;}
+.t-breakdown-pill.good{border-color:var(--green-b);background:var(--green);}
+.t-breakdown-pill.ok{border-color:rgba(184,150,90,.4);background:rgba(184,150,90,.08);}
+.t-breakdown-pill.bad{border-color:rgba(160,60,60,.4);background:rgba(160,60,60,.1);}
+.t-bp-score{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);line-height:1;}
+.t-bp-label{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:3px;}
+.t-bp-detail{font-family:'Noto Serif',serif;font-size:11px;color:var(--cream-d);margin-top:4px;font-style:italic;}
 
 /* REPORT */
 .rep-sec{margin-bottom:24px;}
@@ -295,7 +302,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 <!-- ══ TASTING GAME ══ -->
 <div id="tab-tasting" class="tp">
-  <div class="sh"><h2>Tasting <em>Game</em></h2><div class="sh-desc">Guess the notes &middot; Reveal the truth</div></div>
+  <div class="sh"><h2>Tasting <em>Game</em></h2><div class="sh-desc">Blind tasting &middot; Scored out of 100</div></div>
   <div class="card">
     <div class="clabel">Select Wine</div>
     <div class="field" style="margin:0;"><select id="t-wine-sel" onchange="loadTasting()"><option value="">Choose a wine</option></select></div>
@@ -304,23 +311,83 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
     <div class="card">
       <div class="clabel" id="t-badge"></div>
       <div class="ctitle" id="t-name"></div>
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);" id="t-meta"></div>
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:4px;" id="t-meta"></div>
+
+      <!-- SECTION 1: Grape guess -->
       <hr class="rule">
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Select everything you detect:</div>
+      <div class="clabel" style="margin-bottom:10px;">1 &mdash; Grape Variety <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
+      <div class="field" style="margin-bottom:6px;">
+        <select id="t-grape-guess">
+          <option value="">Select your guess</option>
+          <optgroup label="Red"><option>Cabernet Sauvignon</option><option>Merlot</option><option>Pinot Noir</option><option>Syrah / Shiraz</option><option>Grenache</option><option>Nebbiolo</option><option>Sangiovese</option><option>Tempranillo</option><option>Malbec</option><option>Zinfandel</option><option>Barbera</option><option>Cabernet Franc</option><option>Mourvedre</option><option>Gamay</option></optgroup>
+          <optgroup label="White"><option>Chardonnay</option><option>Sauvignon Blanc</option><option>Riesling</option><option>Pinot Grigio / Pinot Gris</option><option>Gewurztraminer</option><option>Viognier</option><option>Chenin Blanc</option><option>Albarino</option><option>Gruner Veltliner</option></optgroup>
+          <optgroup label="Blends"><option>Bordeaux Blend (Red)</option><option>Rhone Blend (Red)</option><option>GSM Blend</option><option>Mixed / Other</option></optgroup>
+        </select>
+      </div>
+
+      <!-- SECTION 2: Region guess -->
+      <hr class="rule">
+      <div class="clabel" style="margin-bottom:10px;">2 &mdash; Region <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
+      <div class="field" style="margin-bottom:6px;">
+        <select id="t-region-guess">
+          <option value="">Select your guess</option>
+          <optgroup label="France"><option>Bordeaux, France</option><option>Burgundy, France</option><option>Champagne, France</option><option>Rhône Valley, France</option><option>Loire Valley, France</option><option>Alsace, France</option><option>Languedoc, France</option><option>Provence, France</option></optgroup>
+          <optgroup label="Italy"><option>Tuscany, Italy</option><option>Piedmont, Italy</option><option>Veneto, Italy</option><option>Sicily, Italy</option></optgroup>
+          <optgroup label="Spain"><option>Rioja, Spain</option><option>Ribera del Duero, Spain</option><option>Priorat, Spain</option><option>Galicia, Spain</option></optgroup>
+          <optgroup label="USA"><option>Napa Valley, California</option><option>Sonoma, California</option><option>Willamette Valley, Oregon</option><option>Washington State</option></optgroup>
+          <optgroup label="Canada"><option>Okanagan Valley, BC</option><option>Niagara Peninsula, Ontario</option></optgroup>
+          <optgroup label="New World"><option>Marlborough, New Zealand</option><option>Central Otago, New Zealand</option><option>Barossa Valley, Australia</option><option>McLaren Vale, Australia</option><option>Mendoza, Argentina</option><option>Maipo Valley, Chile</option><option>Stellenbosch, South Africa</option></optgroup>
+          <optgroup label="Other"><option>Douro Valley, Portugal</option><option>Mosel, Germany</option><option>Other</option></optgroup>
+        </select>
+      </div>
+
+      <!-- SECTION 3: Vintage age -->
+      <hr class="rule">
+      <div class="clabel" style="margin-bottom:10px;">3 &mdash; Vintage Age <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 20 pts</span></div>
+      <div class="field" style="margin-bottom:6px;">
+        <select id="t-age-guess">
+          <option value="">Select your guess</option>
+          <option value="1-2">Very young (1–2 years)</option>
+          <option value="3-5">Young (3–5 years)</option>
+          <option value="6-8">Approaching maturity (6–8 years)</option>
+          <option value="9-12">Mature (9–12 years)</option>
+          <option value="13-17">Well aged (13–17 years)</option>
+          <option value="18-25">Old (18–25 years)</option>
+          <option value="25+">Very old (25+ years)</option>
+        </select>
+      </div>
+
+      <!-- SECTION 4: Tasting notes -->
+      <hr class="rule">
+      <div class="clabel" style="margin-bottom:4px;">4 &mdash; Tasting Notes <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts &middot; deductions for wrong guesses</span></div>
+      <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:12px;">+1% per correct note, &minus;0.5% per wrong guess</div>
       <div class="chips" id="t-chips"></div>
+
       <div class="brow">
-        <button class="btn bp bsm" onclick="revealTasting()" id="t-reveal-btn">Reveal Answers</button>
+        <button class="btn bp bsm" onclick="revealTasting()" id="t-reveal-btn">Reveal &amp; Score</button>
         <button class="btn bq bsm" onclick="resetTasting()">Reset</button>
       </div>
+
       <div id="t-result" class="hidden">
-        <div class="t-score">
-          <div class="t-score-n"><span id="t-score-num">0</span>/10</div>
-          <div class="t-score-l">Tasting Score</div>
+        <!-- Big score -->
+        <div class="t-score" style="margin-top:20px;">
+          <div class="t-score-n"><span id="t-score-num">0</span><span style="font-size:32px;color:var(--ink)">/100</span></div>
+          <div class="t-score-l">Total Score</div>
         </div>
+
+        <!-- Score breakdown -->
+        <div id="t-breakdown" style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+
         <div class="t-verdict" id="t-verdict"></div>
+
+        <!-- Reveal -->
         <hr class="rule">
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Expert notes:</div>
-        <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;"></div>
+        <div class="clabel" style="margin-bottom:12px;">The Answers</div>
+        <div id="t-answers" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:2;"></div>
+        <div style="margin-top:14px;">
+          <div class="clabel" style="margin-bottom:8px;">Expert Tasting Notes</div>
+          <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -521,7 +588,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 let wines=[], reviews=[], archivedEvents=[];
 let currentEventName='';
 let currentReviewer=localStorage.getItem('cellar-reviewer')||'';
-let currentAINotes=[], labelB64=null, labelMime='image/jpeg';
+let currentAINotes=[], currentPeerRatings=[], labelB64=null, labelMime='image/jpeg';
 let ratings={aroma:0,taste:0,finish:0,overall:0};
 let tastingSelected=[], tastingRevealed=false;
 let useFirebase=false;
@@ -967,6 +1034,31 @@ function openWineModal(id){
     });
   }
   html+=`<div style="height:8px;"></div>`;
+
+  // Peer ratings — hidden if blind
+  if(!isBlind&&w.peerRatings&&w.peerRatings.length){
+    html+=`<div class="grule"></div>
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Peer Rankings</div>
+    ${w.peerRatings.map(r=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--cream-d);">${r.source}</div>
+          ${r.note?`<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;">${r.note}</div>`:''}
+        </div>
+        <div style="text-align:right;">
+          <span style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);">${r.score}</span>
+          <span style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);"> / ${r.scale}</span>
+        </div>
+      </div>`).join('')}`;
+  }
+
+  // AI notes — hidden if blind
+  if(!isBlind&&w.aiNotes){
+    html+=`<div class="grule"></div><div class="aibox"><div class="aibox-lbl">AI Tasting Notes</div>
+    <div style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;">${w.aiNotes}</div></div>`;
+  }
+
+  html+=`<div style="height:8px;"></div>`;
   document.getElementById('modal-content').innerHTML=html;
   document.getElementById('modal-footer').innerHTML=`
     <button class="btn bp bsm" onclick="closeModal();showTab('rate');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadRateWine();},80)">Rate This Wine</button>
@@ -1025,6 +1117,8 @@ function openEditWine(id){
     document.getElementById('ai-notes-chips').innerHTML=(w.aiNoteChips||[]).map(c=>`<span class="chip">${c}</span>`).join('');
     document.getElementById('ai-notes-box').classList.remove('hidden');
     currentAINotes=w.aiNoteChips||[];
+    currentPeerRatings=w.peerRatings||[];
+    if(currentPeerRatings.length) renderPeerRatingsForm(currentPeerRatings);
   }
   document.getElementById('wine-form-modal').classList.add('open');
 }
@@ -1045,7 +1139,9 @@ function clearWineForm(){
   document.getElementById('ai-notes-chips').innerHTML='';
   document.getElementById('label-section').classList.add('hidden');
   document.getElementById('label-preview').classList.add('hidden');
-  currentAINotes=[]; labelB64=null;
+  currentAINotes=[]; currentPeerRatings=[]; labelB64=null;
+  const prBox=document.getElementById('peer-ratings-form-box');
+  if(prBox) prBox.remove();
 }
 
 function setSelectVal(selId,val){
@@ -1069,7 +1165,8 @@ async function saveWine(){
     bringer:document.getElementById('f-bringer').value.trim(),
     blind,
     aiNotes:document.getElementById('ai-notes-text').textContent||'',
-    aiNoteChips:currentAINotes
+    aiNoteChips:currentAINotes,
+    peerRatings:currentPeerRatings
   };
   if(editingWineId){
     // When editing, if blind mode is being turned ON for the first time, assign a number
@@ -1171,7 +1268,7 @@ function fillWineForm(d){
 }
 
 // ══════════════════════════════════════════════════
-// AI NOTES
+// AI NOTES + PEER RANKINGS
 // ══════════════════════════════════════════════════
 async function genNotes(){
   const name=document.getElementById('f-name').value.trim();
@@ -1181,14 +1278,47 @@ async function genNotes(){
     document.getElementById('f-type').value,document.getElementById('f-region').value,
     document.getElementById('f-grape').value].filter(Boolean).join(', ');
   try{
-    const resp=await callClaude(`Generate professional tasting notes for: ${desc}. Return ONLY valid JSON, no markdown:
-{"aiNotes":"2-3 sentence professional note on colour, aroma, flavour and finish","aiNoteChips":["blackberry","vanilla","oak"]}
+    const resp=await callClaude(`Generate professional tasting notes AND look up any known critic or public ratings for this wine: ${desc}.
+
+Return ONLY valid JSON, no markdown:
+{
+  "aiNotes":"2-3 sentence professional note on colour, aroma, flavour and finish",
+  "aiNoteChips":["blackberry","vanilla","oak"],
+  "peerRatings": [
+    {"source":"Wine Spectator","score":"92","scale":"100","note":"Brief descriptor if known"},
+    {"source":"James Suckling","score":"90","scale":"100","note":""},
+    {"source":"Vivino","score":"4.1","scale":"5","note":"avg community rating"}
+  ]
+}
+
+For peerRatings: include any real published scores you know for this specific wine and vintage. Use only sources you are confident about — Wine Spectator, James Suckling, Robert Parker/Wine Advocate, Jancis Robinson, Decanter, Vivino community avg. If you don't know a score with confidence, omit that source entirely. Return an empty array if unknown.
 12-16 specific tasting descriptor chips.`);
     const d=JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
     showNotes(d.aiNotes,d.aiNoteChips||[]);
+    // Store peer ratings on the form for saving with the wine
+    currentPeerRatings=d.peerRatings||[];
+    if(currentPeerRatings.length){
+      renderPeerRatingsForm(currentPeerRatings);
+    }
     toast('Tasting notes generated');
-  }catch(e){ toast('Could not generate notes'); }
+  }catch(e){ console.error(e); toast('Could not generate notes'); }
   finally{ spin.classList.add('hidden'); }
+}
+
+function renderPeerRatingsForm(ratings){
+  let box=document.getElementById('peer-ratings-form-box');
+  if(!box){
+    box=document.createElement('div');
+    box.id='peer-ratings-form-box';
+    box.className='aibox';
+    box.style.marginTop='12px';
+    document.getElementById('ai-notes-box').after(box);
+  }
+  box.innerHTML=`<div class="aibox-lbl">Peer Rankings Found</div>`+
+    ratings.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-family:'Noto Serif',serif;font-size:13px;">
+      <div style="color:var(--cream-d);">${r.source}</div>
+      <div><strong style="color:var(--gold);font-family:'Playfair Display',serif;font-size:18px;">${r.score}</strong><span style="color:var(--ink);font-size:11px;"> / ${r.scale}</span></div>
+    </div>`).join('');
 }
 
 function showNotes(notes,chips){
@@ -1199,7 +1329,8 @@ function showNotes(notes,chips){
 }
 
 // ══════════════════════════════════════════════════
-// TASTING GAME
+// TASTING GAME — scored out of 100
+// Grape: 30pts, Region: 30pts, Age: 20pts, Notes: 10pts (max)
 // ══════════════════════════════════════════════════
 const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig',
   'prune','raisin','peach','apricot','lemon','lime','grapefruit','apple','pear','melon',
@@ -1208,46 +1339,191 @@ const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberr
   'violet','rose','lavender','jasmine','coffee','chocolate','caramel','butter','cream',
   'honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus','dried herbs'];
 
+// Age brackets — midpoint used for scoring
+const AGE_BRACKETS=[
+  {val:'1-2',mid:1.5},
+  {val:'3-5',mid:4},
+  {val:'6-8',mid:7},
+  {val:'9-12',mid:10.5},
+  {val:'13-17',mid:15},
+  {val:'18-25',mid:21.5},
+  {val:'25+',mid:28}
+];
+
 function loadTasting(){
   const id=document.getElementById('t-wine-sel').value;
   if(!id){document.getElementById('tasting-body').classList.add('hidden');return;}
   const w=wines.find(x=>x.id===id); if(!w) return;
   tastingSelected=[]; tastingRevealed=false;
+  const isBlind=w.blind==='yes';
   document.getElementById('t-name').textContent=displayName(w);
-  document.getElementById('t-meta').textContent=[w.year,w.type,w.region].filter(Boolean).join(' · ').toUpperCase();
+  document.getElementById('t-meta').textContent=isBlind?'Blind tasting':'';
   document.getElementById('t-badge').innerHTML=badge(w.type);
   document.getElementById('t-result').classList.add('hidden');
   document.getElementById('t-reveal-btn').disabled=false;
+  // Reset guesses
+  ['t-grape-guess','t-region-guess','t-age-guess'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  // Build note chips
   const known=w.aiNoteChips||[];
   const pool=[...new Set([...known,...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
   document.getElementById('t-chips').innerHTML=shuffle(pool).map(n=>
     `<button class="chip" onclick="toggleNote(this,'${n}')">${n}</button>`).join('');
   document.getElementById('tasting-body').classList.remove('hidden');
 }
+
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
 function toggleNote(el,note){
   if(tastingRevealed) return;
   el.classList.toggle('sel');
   tastingSelected=el.classList.contains('sel')?[...tastingSelected,note]:tastingSelected.filter(n=>n!==note);
 }
-function revealTasting(){
-  const w=wines.find(x=>x.id===document.getElementById('t-wine-sel').value);
-  const known=w?.aiNoteChips||[];
-  if(!known.length){toast('No tasting notes — generate them when adding the wine');return;}
-  tastingRevealed=true; document.getElementById('t-reveal-btn').disabled=true;
+
+async function revealTasting(){
+  const wineId=document.getElementById('t-wine-sel').value;
+  const w=wines.find(x=>x.id===wineId);
+  if(!w){toast('Select a wine');return;}
+
+  const grapeGuess=document.getElementById('t-grape-guess').value;
+  const regionGuess=document.getElementById('t-region-guess').value;
+  const ageGuess=document.getElementById('t-age-guess').value;
+
+  if(!grapeGuess||!regionGuess||!ageGuess){
+    toast('Please make all three guesses before revealing');return;
+  }
+
+  tastingRevealed=true;
+  document.getElementById('t-reveal-btn').disabled=true;
+  document.getElementById('t-reveal-btn').textContent='Scoring...';
+
+  // ── NOTES SCORE (up to 10pts) ──
+  const known=w.aiNoteChips||[];
   const correct=tastingSelected.filter(n=>known.includes(n));
-  const score=Math.min(10,Math.round((correct.length/Math.max(known.length,1))*10));
+  const wrong=tastingSelected.filter(n=>!known.includes(n));
+  const notePct=Math.max(0, Math.min(10, correct.length*1 - wrong.length*0.5));
+
+  // Color chips
   document.querySelectorAll('#t-chips .chip').forEach(chip=>{
     const n=chip.textContent; chip.classList.remove('sel');
     if(known.includes(n)) chip.classList.add(tastingSelected.includes(n)?'hit':'rev');
     else if(tastingSelected.includes(n)) chip.classList.add('miss');
   });
-  document.getElementById('t-score-num').textContent=score;
-  const v=[[0,2,'Your palate requires significant development. Perhaps start with water.'],[3,4,'A valiant effort. The wine is not judging you.'],[5,6,'Respectable. You clearly paid some attention.'],[7,8,'Impressive nose. Have you considered a career change?'],[9,10,'Extraordinary. Are you certain you are in finance?']];
-  document.getElementById('t-verdict').textContent=(v.find(([lo,hi])=>score>=lo&&score<=hi)||[])[2]||'';
-  document.getElementById('t-expert').textContent=w?.aiNotes||'No expert notes for this wine.';
+
+  // ── AGE SCORE (up to 20pts) ──
+  let ageScore=0, ageDetail='';
+  const actualYear=parseInt(w.year)||0;
+  const currentYear=new Date().getFullYear();
+  const actualAge=actualYear>0?currentYear-actualYear:null;
+  const guessedBracket=AGE_BRACKETS.find(b=>b.val===ageGuess);
+
+  if(actualAge!==null&&guessedBracket){
+    const diff=Math.abs(guessedBracket.mid-actualAge);
+    if(diff<=1.5) ageScore=20;
+    else if(diff<=3.5) ageScore=16;
+    else if(diff<=6) ageScore=10;
+    else if(diff<=10) ageScore=5;
+    else ageScore=0;
+    ageDetail=actualYear?`Actual vintage: ${actualYear} (${actualAge} yrs old)`:'Vintage not recorded';
+  } else if(!actualAge){
+    ageScore=10; // no vintage stored, award half
+    ageDetail='No vintage on record — partial credit';
+  }
+
+  // ── GRAPE & REGION — scored by AI ──
+  let grapeScore=0, regionScore=0, grapeDetail='', regionDetail='';
+  try{
+    const aiResp=await callClaude(`You are a sommelier scoring a blind tasting. Score these guesses:
+
+Wine: ${w.name||'Unknown'}, ${w.grape||'unknown grape'}, ${w.region||'unknown region'}, ${w.year||'unknown year'}
+
+Grape guess: "${grapeGuess}" vs actual: "${w.grape||'unknown'}"
+Region guess: "${regionGuess}" vs actual: "${w.region||'unknown'}"
+
+Score the GRAPE guess out of 30:
+- 30pts: exact or essentially identical
+- 22-28pts: same family/style (e.g. Cab Sauv vs Cab Franc, Pinot Gris vs Pinot Grigio)
+- 14-20pts: similar profile (e.g. Merlot vs Malbec, Syrah vs Grenache)
+- 6-12pts: same broad category but different profile
+- 0-5pts: completely wrong
+
+Score the REGION guess out of 30:
+- 30pts: exact match or same sub-region
+- 22-28pts: same country/major region (e.g. Napa vs Sonoma, Bordeaux vs Burgundy)
+- 14-20pts: same general world region (e.g. France vs Italy, California vs Oregon)
+- 6-12pts: Old World vs Old World or New World vs New World
+- 0-5pts: completely different
+
+Return ONLY valid JSON, no markdown:
+{"grapeScore":0,"grapeDetail":"one sentence explanation","regionScore":0,"regionDetail":"one sentence explanation"}`);
+
+    const scored=JSON.parse(aiResp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
+    grapeScore=Math.min(30,Math.max(0,Math.round(scored.grapeScore||0)));
+    regionScore=Math.min(30,Math.max(0,Math.round(scored.regionScore||0)));
+    grapeDetail=scored.grapeDetail||'';
+    regionDetail=scored.regionDetail||'';
+  } catch(e){
+    // Fallback: simple string match
+    const gNorm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+    grapeScore=gNorm(grapeGuess).includes(gNorm(w.grape||'').substring(0,4))||gNorm(w.grape||'').includes(gNorm(grapeGuess).substring(0,4))?20:0;
+    regionScore=gNorm(regionGuess).includes(gNorm(w.region||'').split(',')[0].trim())||gNorm(w.region||'').includes(gNorm(regionGuess).split(',')[0].trim())?20:0;
+    grapeDetail='Scored by text match (AI unavailable)';
+    regionDetail='Scored by text match (AI unavailable)';
+  }
+
+  // ── TOTAL ──
+  const total=Math.round(grapeScore+regionScore+ageScore+notePct);
+
+  // ── DISPLAY ──
+  document.getElementById('t-score-num').textContent=total;
+
+  // Breakdown pills
+  const pillClass=s=>s>=20?'good':s>=10?'ok':'bad';
+  const notePillClass=notePct>=7?'good':notePct>=3?'ok':'bad';
+  document.getElementById('t-breakdown').innerHTML=`
+    <div class="t-breakdown-pill ${pillClass(grapeScore)}">
+      <div class="t-bp-score">${grapeScore}<span style="font-size:14px;color:var(--ink)">/30</span></div>
+      <div class="t-bp-label">Grape</div>
+      <div class="t-bp-detail">${grapeDetail}</div>
+    </div>
+    <div class="t-breakdown-pill ${pillClass(regionScore)}">
+      <div class="t-bp-score">${regionScore}<span style="font-size:14px;color:var(--ink)">/30</span></div>
+      <div class="t-bp-label">Region</div>
+      <div class="t-bp-detail">${regionDetail}</div>
+    </div>
+    <div class="t-breakdown-pill ${pillClass(ageScore)}">
+      <div class="t-bp-score">${ageScore}<span style="font-size:14px;color:var(--ink)">/20</span></div>
+      <div class="t-bp-label">Vintage Age</div>
+      <div class="t-bp-detail">${ageDetail}</div>
+    </div>
+    <div class="t-breakdown-pill ${notePillClass}">
+      <div class="t-bp-score">${notePct.toFixed(1)}<span style="font-size:14px;color:var(--ink)">/10</span></div>
+      <div class="t-bp-label">Tasting Notes</div>
+      <div class="t-bp-detail">${correct.length} correct, ${wrong.length} wrong</div>
+    </div>`;
+
+  // Verdict
+  const verdicts=[
+    [0,29,'A bold attempt. The wine has many things to teach you.'],
+    [30,49,'Getting warmer. Your palate is developing.'],
+    [50,64,'Respectable. You clearly have opinions about wine.'],
+    [65,79,'Impressive. Are you secretly a sommelier?'],
+    [80,89,'Outstanding. You have wasted your career in finance.'],
+    [90,100,'Extraordinary. Either a gift or a cheat sheet.']
+  ];
+  document.getElementById('t-verdict').textContent=(verdicts.find(([lo,hi])=>total>=lo&&total<=hi)||[])[2]||'';
+
+  // Answers
+  document.getElementById('t-answers').innerHTML=`
+    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Grape:</strong> ${w.grape||'Not recorded'}</div>
+    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Region:</strong> ${w.region||'Not recorded'}</div>
+    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Vintage:</strong> ${w.year||'Not recorded'}${actualAge?' ('+actualAge+' years old)':''}</div>
+    <div><strong style="color:var(--gold);">Wine:</strong> ${w.blind==='yes'?w.name:displayName(w)}</div>`;
+
+  document.getElementById('t-expert').textContent=w.aiNotes||'No expert notes for this wine.';
   document.getElementById('t-result').classList.remove('hidden');
+  document.getElementById('t-reveal-btn').textContent='Reveal & Score';
 }
+
 function resetTasting(){ loadTasting(); }
 
 // ══════════════════════════════════════════════════
