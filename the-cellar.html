@@ -106,9 +106,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .s-star:hover .s-svg{transform:scale(1.1);}
 
 /* RANKINGS */
-.wrow{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:16px 20px;margin-bottom:8px;display:flex;align-items:flex-start;gap:16px;cursor:pointer;transition:border-color .2s;}
-.wrow:hover{border-color:var(--border-hi);}
-.wrank{font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--border-hi);min-width:28px;line-height:1;padding-top:2px;}
+.wine-entry-card{background:var(--card);border:1px solid var(--border);border-radius:3px;margin-bottom:10px;overflow:hidden;}
+.wine-entry-header{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .15s;}
+.wine-entry-header:hover{background:rgba(255,255,255,.02);}
+.wrank{font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--border-hi);min-width:28px;line-height:1;}
 .winfo{flex:1;min-width:0;}
 .wname{font-family:'Playfair Display',serif;font-size:19px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wmeta{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;}
@@ -119,6 +120,46 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .sbars{display:flex;gap:3px;margin-top:6px;justify-content:flex-end;}
 .sbar{width:4px;height:20px;background:var(--border);border-radius:2px;position:relative;overflow:hidden;}
 .sbar-f{position:absolute;bottom:0;left:0;right:0;background:var(--gold);border-radius:2px;transition:height .5s ease;}
+.entry-status{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.entry-status.draft{color:var(--gold);}
+.entry-status.locked{color:var(--green-b);}
+.entry-status.none{color:var(--ink);}
+
+/* ENTRY FORM inside card */
+.wine-entry-body{display:none;border-top:1px solid var(--border);padding:20px;}
+.wine-entry-body.open{display:block;}
+
+/* ENJOYMENT SLIDER */
+.enjoy-wrap{margin-bottom:6px;}
+.enjoy-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.enjoy-label{font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);width:100px;flex-shrink:0;}
+.enjoy-val{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);min-width:32px;text-align:right;}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--border);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--deep);}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--deep);}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.chip{font-family:'Noto Serif',serif;font-size:11px;font-weight:300;letter-spacing:1px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--ink);cursor:pointer;transition:all .18s;background:transparent;text-transform:lowercase;}
+.chip:hover{color:var(--cream);border-color:var(--cream-d);}
+.chip.sel{background:var(--merlot);color:var(--cream);border-color:var(--merlot);}
+.chip.hit{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
+.chip.miss{background:rgba(160,60,60,.15);border-color:#9e4040;color:#cf8e8e;text-decoration:line-through;}
+.chip.rev{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
+
+/* SCORE REVEAL */
+.score-reveal{background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:3px;padding:20px;margin-top:16px;text-align:center;}
+.score-big{font-family:'Playfair Display',serif;font-size:56px;color:var(--gold);line-height:1;}
+.score-sub{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);margin-top:4px;}
+.score-verdict{font-family:'Noto Serif',serif;font-style:italic;font-size:14px;color:var(--cream-d);margin-top:12px;line-height:1.7;}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+.bp-pill{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:3px;padding:10px 8px;text-align:center;}
+.bp-pill.good{border-color:var(--green-b);background:var(--green);}
+.bp-pill.ok{border-color:rgba(184,150,90,.4);background:rgba(184,150,90,.08);}
+.bp-pill.bad{border-color:rgba(160,60,60,.4);background:rgba(160,60,60,.1);}
+.bp-score{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);line-height:1;}
+.bp-label{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:3px;}
+.bp-detail{font-family:'Noto Serif',serif;font-size:10px;color:var(--cream-d);margin-top:3px;font-style:italic;}
 
 /* MODAL */
 .bdwn{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px;}
@@ -127,26 +168,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .pill-l{font-family:'Noto Serif',serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:2px;}
 .pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:5px;}
 .pbar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--merlot-lt));transition:width .8s ease;}
-
-/* TASTING */
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
-.chip{font-family:'Noto Serif',serif;font-size:11px;font-weight:300;letter-spacing:1px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--ink);cursor:pointer;transition:all .18s;background:transparent;text-transform:lowercase;}
-.chip:hover{color:var(--cream);border-color:var(--cream-d);}
-.chip.sel{background:var(--merlot);color:var(--cream);border-color:var(--merlot);}
-.chip.hit{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
-.chip.miss{background:rgba(160,60,60,.15);border-color:#9e4040;color:#cf8e8e;text-decoration:line-through;}
-.chip.rev{background:var(--green);border-color:var(--green-b);color:#8ecf9a;}
-.t-score{text-align:center;padding:22px;background:rgba(0,0,0,.22);border-radius:3px;border:1px solid var(--border);margin-top:16px;}
-.t-score-n{font-family:'Playfair Display',serif;font-size:60px;color:var(--gold);line-height:1;}
-.t-score-l{font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);margin-top:5px;}
-.t-verdict{font-family:'Noto Serif',serif;font-style:italic;font-size:15px;color:var(--cream-d);margin-top:14px;line-height:1.7;text-align:center;}
-.t-breakdown-pill{background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:3px;padding:12px;text-align:center;}
-.t-breakdown-pill.good{border-color:var(--green-b);background:var(--green);}
-.t-breakdown-pill.ok{border-color:rgba(184,150,90,.4);background:rgba(184,150,90,.08);}
-.t-breakdown-pill.bad{border-color:rgba(160,60,60,.4);background:rgba(160,60,60,.1);}
-.t-bp-score{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);line-height:1;}
-.t-bp-label{font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:3px;}
-.t-bp-detail{font-family:'Noto Serif',serif;font-size:11px;color:var(--cream-d);margin-top:4px;font-style:italic;}
 
 /* REPORT */
 .rep-sec{margin-bottom:24px;}
@@ -200,12 +221,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .event-rankings{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;display:none;}
 .event-rankings.open{display:block;}
 
+/* NAME GATE */
+.name-gate{background:rgba(123,29,46,.18);border:1px solid rgba(184,150,90,.3);border-radius:3px;padding:18px 20px;margin-bottom:18px;}
+
 @media(max-width:600px){
   .g2,.g3{grid-template-columns:1fr;}
-  .wrow{flex-direction:column;gap:8px;}.wscol{text-align:left;}
+  .wine-entry-header{flex-wrap:wrap;gap:8px;}.wscol{text-align:left;}
   .modal-body{padding:20px 16px 0;}.modal-footer{padding:12px 16px 16px;}
   .bdwn{grid-template-columns:repeat(4,1fr);}
   .star-row-label{width:72px;font-size:10px;}
+  .enjoy-label{width:80px;}
 }
 </style>
 </head>
@@ -223,72 +248,34 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 </div>
 
 <nav class="nav">
-  <button class="nb active" onclick="showTab('rate')">Rate a Wine</button>
-  <button class="nb" onclick="showTab('rankings')">Rankings</button>
+  <button class="nb active" onclick="showTab('rankings')">Rankings</button>
   <button class="nb" onclick="showTab('cellar')">The Cellar</button>
-  <button class="nb" onclick="showTab('tasting')">Tasting Game</button>
   <button class="nb" onclick="showTab('report')">Report Card</button>
   <button class="nb" onclick="showTab('events')">Past Events</button>
 </nav>
 
 <div class="main">
 
-<!-- ══ RATE A WINE ══ -->
-<div id="tab-rate" class="tp active">
-  <div class="sh">
-    <h2>Rate a <em>Wine</em></h2>
-    <div class="sh-desc">Select &middot; Score &middot; Submit</div>
+<!-- ══ RANKINGS + ENTRY ══ -->
+<div id="tab-rankings" class="tp active">
+  <div class="sh" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+    <div><h2>Tonight's <em>Rankings</em></h2><div class="sh-desc">Tap any wine to rate &amp; play</div></div>
   </div>
 
-  <div class="card">
-    <div class="clabel">Who are you?</div>
+  <!-- Name gate -->
+  <div class="name-gate" id="name-gate">
+    <div class="clabel" style="margin-bottom:10px;">Who are you?</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <div class="field" style="margin:0;flex:1;min-width:150px;"><input id="r-name" placeholder="Your name"></div>
-      <button class="btn bp bsm" onclick="setReviewer()">Set</button>
+      <div class="field" style="margin:0;flex:1;min-width:150px;"><input id="r-name" placeholder="Your name — required to rate &amp; play"></div>
+      <button class="btn bp bsm" onclick="setReviewer()">Set Name</button>
     </div>
     <div id="reviewer-set" class="hidden" style="margin-top:10px;font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">
-      Tasting as: <span id="reviewer-show"></span>
+      Playing as: <span id="reviewer-show"></span>
       <button onclick="clearReviewer()" style="background:none;border:none;color:var(--ink);cursor:pointer;margin-left:8px;font-size:11px;font-family:'Noto Serif',serif;">change</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="clabel">Select a Wine to Rate</div>
-    <div class="field" style="margin:0;"><select id="r-wine-sel" onchange="loadRateWine()"><option value="">Choose a wine</option></select></div>
-  </div>
-
-  <div id="rate-form" class="hidden">
-    <div class="card" id="r-wine-display"></div>
-    <div class="card">
-      <div class="clabel">Your Scores</div>
-      <div class="star-row"><div class="star-row-label">Aroma</div><div class="stars-wrap" id="st-aroma"></div><div class="star-row-val" id="lv-aroma"></div></div>
-      <div class="star-row"><div class="star-row-label">Taste</div><div class="stars-wrap" id="st-taste"></div><div class="star-row-val" id="lv-taste"></div></div>
-      <div class="star-row"><div class="star-row-label">Finish</div><div class="stars-wrap" id="st-finish"></div><div class="star-row-val" id="lv-finish"></div></div>
-      <div class="star-row"><div class="star-row-label">Overall</div><div class="stars-wrap" id="st-overall"></div><div class="star-row-val" id="lv-overall"></div></div>
-      <hr class="rule">
-      <div class="field">
-        <label>Tasting Notes <span style="color:var(--ink);font-size:10px;letter-spacing:0;text-transform:none;font-style:italic;">optional</span></label>
-        <textarea id="r-notes" placeholder="What do you smell, taste, and feel?"></textarea>
-      </div>
-      <div class="brow">
-        <button class="btn bg" onclick="submitReview()">Submit Rating</button>
-        <button class="btn bq bsm" onclick="resetRateForm()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top:20px;text-align:center;">
-    <button class="btn bq bsm" onclick="showTab('cellar')">+ Add a New Wine</button>
-  </div>
-</div>
-
-<!-- ══ RANKINGS ══ -->
-<div id="tab-rankings" class="tp">
-  <div class="sh">
-    <h2>Tonight's <em>Rankings</em></h2>
-    <div class="sh-desc">Live &middot; Updates as reviews come in</div>
-  </div>
-  <div id="rankings-list"><div class="empty">No wines rated yet.</div></div>
+  <div id="rankings-list"><div class="empty">No wines added yet. Go to The Cellar to add bottles.</div></div>
 </div>
 
 <!-- ══ THE CELLAR ══ -->
@@ -298,144 +285,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
     <button class="btn bp bsm" onclick="openAddWine()">+ Add Wine</button>
   </div>
   <div id="cellar-list"><div class="empty">No wines added yet.</div></div>
-</div>
-
-<!-- ══ TASTING GAME ══ -->
-<div id="tab-tasting" class="tp">
-  <div class="sh"><h2>Tasting <em>Game</em></h2><div class="sh-desc">Blind tasting &middot; Scored out of 100</div></div>
-  <div class="card">
-    <div class="clabel">Select Wine</div>
-    <div class="field" style="margin:0;"><select id="t-wine-sel" onchange="loadTasting()"><option value="">Choose a wine</option></select></div>
-  </div>
-  <div id="tasting-body" class="hidden">
-    <div class="card">
-      <div class="clabel" id="t-badge"></div>
-      <div class="ctitle" id="t-name"></div>
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:4px;" id="t-meta"></div>
-
-      <!-- SECTION 1: Grape guess -->
-      <hr class="rule">
-      <div class="clabel" style="margin-bottom:6px;">1 &mdash; Grape Variety <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
-      <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:10px;">Select one or more grapes — for blends, pick all you detect</div>
-      <div style="margin-bottom:8px;">
-        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:6px;">Red Grapes</div>
-        <div class="chips" id="t-grape-chips-red">
-          <button class="chip" onclick="toggleGrapeChip(this,'Cabernet Sauvignon')">Cabernet Sauvignon</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Merlot')">Merlot</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Cabernet Franc')">Cabernet Franc</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Pinot Noir')">Pinot Noir</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Syrah / Shiraz')">Syrah / Shiraz</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Grenache')">Grenache</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Mourvedre')">Mourvedre</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Nebbiolo')">Nebbiolo</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Sangiovese')">Sangiovese</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Tempranillo')">Tempranillo</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Malbec')">Malbec</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Zinfandel')">Zinfandel</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Barbera')">Barbera</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Gamay')">Gamay</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Petit Verdot')">Petit Verdot</button>
-        </div>
-      </div>
-      <div style="margin-bottom:10px;">
-        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:6px;">White Grapes</div>
-        <div class="chips" id="t-grape-chips-white">
-          <button class="chip" onclick="toggleGrapeChip(this,'Chardonnay')">Chardonnay</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Sauvignon Blanc')">Sauvignon Blanc</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Riesling')">Riesling</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Pinot Grigio / Pinot Gris')">Pinot Grigio / Gris</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Gewurztraminer')">Gewurztraminer</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Viognier')">Viognier</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Chenin Blanc')">Chenin Blanc</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Albarino')">Albarino</button>
-          <button class="chip" onclick="toggleGrapeChip(this,'Gruner Veltliner')">Gruner Veltliner</button>
-        </div>
-      </div>
-      <div id="t-grape-selected-display" style="font-family:'Noto Serif',serif;font-size:11px;color:var(--gold);font-style:italic;min-height:18px;margin-bottom:4px;"></div>
-
-      <!-- SECTION 2: Region guess -->
-      <hr class="rule">
-      <div class="clabel" style="margin-bottom:10px;">2 &mdash; Region <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
-      <div class="field" style="margin-bottom:6px;">
-        <select id="t-region-guess">
-          <option value="">Select your guess</option>
-          <optgroup label="France"><option>Bordeaux, France</option><option>Burgundy, France</option><option>Champagne, France</option><option>Rhône Valley, France</option><option>Loire Valley, France</option><option>Alsace, France</option><option>Languedoc, France</option><option>Provence, France</option></optgroup>
-          <optgroup label="Italy"><option>Tuscany, Italy</option><option>Piedmont, Italy</option><option>Veneto, Italy</option><option>Sicily, Italy</option></optgroup>
-          <optgroup label="Spain"><option>Rioja, Spain</option><option>Ribera del Duero, Spain</option><option>Priorat, Spain</option><option>Galicia, Spain</option></optgroup>
-          <optgroup label="USA"><option>Napa Valley, California</option><option>Sonoma, California</option><option>Willamette Valley, Oregon</option><option>Washington State</option></optgroup>
-          <optgroup label="Canada"><option>Okanagan Valley, BC</option><option>Niagara Peninsula, Ontario</option></optgroup>
-          <optgroup label="New World"><option>Marlborough, New Zealand</option><option>Central Otago, New Zealand</option><option>Barossa Valley, Australia</option><option>McLaren Vale, Australia</option><option>Mendoza, Argentina</option><option>Maipo Valley, Chile</option><option>Stellenbosch, South Africa</option></optgroup>
-          <optgroup label="Other"><option>Douro Valley, Portugal</option><option>Mosel, Germany</option><option>Other</option></optgroup>
-        </select>
-      </div>
-
-      <!-- SECTION 3: Vintage age -->
-      <hr class="rule">
-      <div class="clabel" style="margin-bottom:10px;">3 &mdash; Vintage Age <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 20 pts</span></div>
-      <div class="field" style="margin-bottom:6px;">
-        <select id="t-age-guess">
-          <option value="">Select your guess</option>
-          <option value="1-2">Very young (1–2 years)</option>
-          <option value="3-5">Young (3–5 years)</option>
-          <option value="6-8">Approaching maturity (6–8 years)</option>
-          <option value="9-12">Mature (9–12 years)</option>
-          <option value="13-17">Well aged (13–17 years)</option>
-          <option value="18-25">Old (18–25 years)</option>
-          <option value="25+">Very old (25+ years)</option>
-        </select>
-      </div>
-
-      <!-- SECTION 4: Tasting notes -->
-      <hr class="rule">
-      <div class="clabel" style="margin-bottom:4px;">4 &mdash; Tasting Notes <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts &middot; deductions for wrong guesses</span></div>
-      <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:12px;">+1% per correct note, &minus;0.5% per wrong guess</div>
-      <div class="chips" id="t-chips"></div>
-
-      <!-- SECTION 5: Price Range -->
-      <hr class="rule">
-      <div class="clabel" style="margin-bottom:10px;">5 &mdash; Price Range <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts</span></div>
-      <div class="field" style="margin-bottom:6px;">
-        <select id="t-price-guess">
-          <option value="">Select your guess</option>
-          <option value="Under $20">Under $20</option>
-          <option value="$20-30">$20 – $30</option>
-          <option value="$30-50">$30 – $50</option>
-          <option value="$50-75">$50 – $75</option>
-          <option value="$75-100">$75 – $100</option>
-          <option value="$100-150">$100 – $150</option>
-          <option value="$150-200">$150 – $200</option>
-          <option value="$200+">$200+</option>
-        </select>
-      </div>
-
-      <div class="brow">
-        <button class="btn bp bsm" onclick="revealTasting()" id="t-reveal-btn">Reveal &amp; Score</button>
-        <button class="btn bq bsm" onclick="resetTasting()">Reset</button>
-      </div>
-
-      <div id="t-result" class="hidden">
-        <!-- Big score -->
-        <div class="t-score" style="margin-top:20px;">
-          <div class="t-score-n"><span id="t-score-num">0</span><span style="font-size:32px;color:var(--ink)">/100</span></div>
-          <div class="t-score-l">Total Score</div>
-        </div>
-
-        <!-- Score breakdown -->
-        <div id="t-breakdown" style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
-
-        <div class="t-verdict" id="t-verdict"></div>
-
-        <!-- Reveal -->
-        <hr class="rule">
-        <div class="clabel" style="margin-bottom:12px;">The Answers</div>
-        <div id="t-answers" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:2;"></div>
-        <div style="margin-top:14px;">
-          <div class="clabel" style="margin-bottom:8px;">Expert Tasting Notes</div>
-          <div id="t-expert" style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ══ REPORT CARD ══ -->
@@ -596,7 +445,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div>
           <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">AI Tasting Notes</div>
-          <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-top:2px;">For tasting game only — hidden from raters</div>
+          <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-top:2px;">For tasting game — hidden from players until reveal</div>
         </div>
         <button class="btn bq bsm" onclick="genNotes()"><span class="spin hidden" id="notes-spin"></span>Generate</button>
       </div>
@@ -630,19 +479,33 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
-let wines=[], reviews=[], archivedEvents=[];
+let wines=[], reviews=[], archivedEvents=[], playerEntries=[];
+// playerEntries: {id, wineId, reviewer, enjoyment, wouldBuyAgain, notes,
+//   grapeGuess(array), regionGuess, ageGuess, priceGuess, noteChips(array),
+//   status:'draft'|'locked', score(null until locked), createdAt, lockedAt}
 let currentEventName='';
 let currentReviewer=localStorage.getItem('cellar-reviewer')||'';
 let currentAINotes=[], currentPeerRatings=[], labelB64=null, labelMime='image/jpeg';
-let ratings={aroma:0,taste:0,finish:0,overall:0};
-let tastingSelected=[], tastingGrapeSelected=[], tastingRevealed=false;
 let useFirebase=false;
 let DB,dbRef,dbSet,dbPush,dbOnValue,dbUpdate;
 let editingWineId=null;
+// Per-wine open state
+let openWineId=null;
 
-const DIMS=['aroma','taste','finish','overall'];
-const DIM_LABELS={aroma:'Aroma',taste:'Taste',finish:'Finish',overall:'Overall'};
 const WORKER='https://cellar-ai.rkunka31.workers.dev';
+
+const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig',
+  'prune','raisin','peach','apricot','lemon','lime','grapefruit','apple','pear','melon',
+  'vanilla','oak','cedar','tobacco','smoke','toast','leather','truffle','earth','mushroom',
+  'wet stone','mineral','pepper','clove','cinnamon','nutmeg','licorice','anise',
+  'violet','rose','lavender','jasmine','coffee','chocolate','caramel','butter','cream',
+  'honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus','dried herbs'];
+
+const AGE_BRACKETS=[
+  {val:'1-2',mid:1.5},{val:'3-5',mid:4},{val:'6-8',mid:7},
+  {val:'9-12',mid:10.5},{val:'13-17',mid:15},{val:'18-25',mid:21.5},{val:'25+',mid:28}
+];
+const PRICE_BRACKETS=['Under $20','$20-30','$30-50','$50-75','$75-100','$100-150','$150-200','$200+'];
 
 // ══════════════════════════════════════════════════
 // FIREBASE
@@ -664,6 +527,7 @@ window.addEventListener('firebase-failed',fallbackLocal);
 function listenFirebase(){
   dbOnValue(dbRef(DB,'wines'),s=>{ wines=o2a(s.val()); renderAll(); });
   dbOnValue(dbRef(DB,'reviews'),s=>{ reviews=o2a(s.val()); renderAll(); });
+  dbOnValue(dbRef(DB,'playerEntries'),s=>{ playerEntries=o2a(s.val()); renderAll(); });
   dbOnValue(dbRef(DB,'archivedEvents'),s=>{ archivedEvents=o2a(s.val()); renderEvents(); });
   dbOnValue(dbRef(DB,'currentEventName'),s=>{ currentEventName=s.val()||''; updateEventHeader(); });
 }
@@ -673,11 +537,13 @@ function fallbackLocal(){
   document.getElementById('setup-banner').classList.add('show');
   wines=JSON.parse(localStorage.getItem('cellar-wines')||'[]');
   reviews=JSON.parse(localStorage.getItem('cellar-reviews')||'[]');
+  playerEntries=JSON.parse(localStorage.getItem('cellar-entries')||'[]');
   renderAll();
 }
 function saveLocal(){
   localStorage.setItem('cellar-wines',JSON.stringify(wines));
   localStorage.setItem('cellar-reviews',JSON.stringify(reviews));
+  localStorage.setItem('cellar-entries',JSON.stringify(playerEntries));
 }
 
 // ══════════════════════════════════════════════════
@@ -703,29 +569,44 @@ function toast(msg){
 }
 
 // ══════════════════════════════════════════════════
-// SCORING — strictly keyed by wineId (the Firebase push key)
-// This is the fix for the ranking bug. Reviews store wineId as the
-// Firebase push key (e.g. "-OQx..."), never as a positional index.
-// getScore filters reviews by exact string match on that key.
+// REVIEWER / NAME GATE
 // ══════════════════════════════════════════════════
-function getScore(wineId){
-  const rs=reviews.filter(r=>String(r.wineId)===String(wineId));
-  if(!rs.length) return null;
-  const avg=k=>rs.reduce((s,r)=>s+(Number(r[k])||0),0)/rs.length;
-  const composite=DIMS.reduce((s,k)=>s+avg(k),0)/DIMS.length;
-  const obj={composite,count:rs.length};
-  DIMS.forEach(k=>obj[k]=avg(k));
-  return obj;
+function setReviewer(){
+  const n=document.getElementById('r-name').value.trim(); if(!n) return;
+  currentReviewer=n; localStorage.setItem('cellar-reviewer',n);
+  document.getElementById('reviewer-show').textContent=n;
+  document.getElementById('reviewer-set').classList.remove('hidden');
+  toast('Playing as '+n);
+  renderRankings();
+}
+function clearReviewer(){
+  currentReviewer=''; localStorage.removeItem('cellar-reviewer');
+  document.getElementById('r-name').value='';
+  document.getElementById('reviewer-set').classList.add('hidden');
+  renderRankings();
 }
 
+// ══════════════════════════════════════════════════
+// SCORING HELPERS
+// ══════════════════════════════════════════════════
 function badge(type){
   const m={Red:'bdr',White:'bdw',Rose:'bdo',Ros:'bdo',Sparkling:'bds',Dessert:'bds',Orange:'bdo'};
   const k=Object.keys(m).find(k=>type&&type.toLowerCase().startsWith(k.toLowerCase()))||'bdr';
   return`<span class="bdg ${m[k]||'bdr'}">${type||'Red'}</span>`;
 }
-
-// Blind label uses permanent blindNumber set at creation time — never changes
 function displayName(w){ return w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'}`:w.name; }
+
+// Get avg enjoyment score (0-10) across locked entries for a wine
+function getAvgEnjoyment(wineId){
+  const locked=playerEntries.filter(e=>String(e.wineId)===String(wineId)&&e.status==='locked'&&e.enjoyment!=null);
+  if(!locked.length) return null;
+  return locked.reduce((s,e)=>s+(Number(e.enjoyment)||0),0)/locked.length;
+}
+
+// Get this player's entry for a wine (any status)
+function getMyEntry(wineId){
+  return playerEntries.find(e=>String(e.wineId)===String(wineId)&&e.reviewer===currentReviewer)||null;
+}
 
 // ══════════════════════════════════════════════════
 // RENDER ALL
@@ -733,48 +614,494 @@ function displayName(w){ return w.blind==='yes'?`Blind Wine ${w.blindNumber||'?'
 function renderAll(){
   renderRankings();
   renderCellar();
-  populateSelects();
   renderReport();
   renderEvents();
   updateEventHeader();
 }
 
 function updateEventHeader(){
-  // Show current event name in header if set
   const sub=document.querySelector('.hdr-sub');
   if(sub) sub.textContent=currentEventName?currentEventName:"A king's guide to wine";
 }
 
 // ══════════════════════════════════════════════════
-// RANKINGS — no AI notes shown, blind wines show no year
+// RANKINGS — main combined view
 // ══════════════════════════════════════════════════
 function renderRankings(){
+  // Update name gate display
+  if(currentReviewer){
+    document.getElementById('r-name').value=currentReviewer;
+    document.getElementById('reviewer-show').textContent=currentReviewer;
+    document.getElementById('reviewer-set').classList.remove('hidden');
+  }
+
   const el=document.getElementById('rankings-list');
-  if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Go add some bottles.</div>';return;}
-  const sc=wines.map(w=>({w,s:getScore(w.id)}))
+  if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Add bottles in The Cellar.</div>';return;}
+
+  // Sort by avg enjoyment desc, unrated last
+  const sorted=wines.map(w=>({w,avg:getAvgEnjoyment(w.id)}))
     .sort((a,b)=>{
-      if(!a.s&&!b.s)return 0; if(!a.s)return 1; if(!b.s)return -1;
-      return b.s.composite-a.s.composite;
+      if(a.avg===null&&b.avg===null) return 0;
+      if(a.avg===null) return 1; if(b.avg===null) return -1;
+      return b.avg-a.avg;
     });
-  el.innerHTML=sc.map(({w,s},i)=>{
+
+  el.innerHTML=sorted.map(({w,avg},i)=>{
     const isBlind=w.blind==='yes';
-    const n=s?s.composite.toFixed(1):'—';
-    const bars=s?DIMS.map(k=>`<div class="sbar"><div class="sbar-f" style="height:${(s[k]/5)*100}%"></div></div>`).join(''):'';
-    return`<div class="wrow" onclick="openWineModal('${w.id}')">
-      <div class="wrank">${s?i+1:'·'}</div>
-      <div class="winfo">
-        <div class="wname">${displayName(w)}</div>
-        <div class="wmeta">${isBlind?'Identity hidden':[w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${badge(w.type)}</div>
-        ${w.bringer?`<div class="wbring">${w.bringer}</div>`:''}
-        <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;margin-top:2px;">${s?s.count+' review'+(s.count>1?'s':''):'Not yet reviewed'}</div>
+    const myEntry=getMyEntry(w.id);
+    const lockedCount=playerEntries.filter(e=>String(e.wineId)===String(w.id)&&e.status==='locked').length;
+    const draftCount=playerEntries.filter(e=>String(e.wineId)===String(w.id)&&e.status==='draft').length;
+
+    let myStatusHtml='';
+    if(myEntry&&myEntry.status==='locked'){
+      myStatusHtml=`<div class="entry-status locked">&#10003; Your score: ${myEntry.enjoyment!=null?myEntry.enjoyment+'/10':''} &middot; Locked in</div>`;
+    } else if(myEntry&&myEntry.status==='draft'){
+      myStatusHtml=`<div class="entry-status draft">&#9998; Your draft saved &mdash; tap to continue</div>`;
+    } else if(currentReviewer){
+      myStatusHtml=`<div class="entry-status none">Tap to rate &amp; play</div>`;
+    }
+
+    const isOpen=openWineId===w.id;
+    const entryBody=isOpen?buildEntryForm(w,myEntry):'';
+
+    return`<div class="wine-entry-card" id="wec-${w.id}">
+      <div class="wine-entry-header" onclick="toggleWineEntry('${w.id}')">
+        <div class="wrank" style="color:${avg!==null?'var(--border-hi)':'var(--border)'};">${avg!==null?i+1:'·'}</div>
+        <div class="winfo">
+          <div class="wname">${displayName(w)}</div>
+          <div class="wmeta">${isBlind?'Identity hidden':[w.year,w.region].filter(Boolean).join(' &middot; ')} &nbsp;${badge(w.type)}</div>
+          ${w.bringer?`<div class="wbring">${w.bringer}</div>`:''}
+          <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-weight:300;margin-top:2px;">${lockedCount} rating${lockedCount!==1?'s':''}${draftCount?' &middot; '+draftCount+' draft'+( draftCount!==1?'s':''):''}</div>
+          ${myStatusHtml}
+        </div>
+        <div class="wscol">
+          <div class="wsnum">${avg!==null?avg.toFixed(1):'—'}</div>
+          <div class="wssub">${avg!==null?'/ 10':''}</div>
+          <div style="font-family:'Noto Serif',serif;font-size:16px;color:var(--ink);margin-top:4px;">${isOpen?'&#8963;':'&#8964;'}</div>
+        </div>
       </div>
-      <div class="wscol">
-        <div class="wsnum">${n}</div>
-        <div class="wssub">/ 5.0</div>
-        <div class="sbars">${bars}</div>
-      </div>
+      <div class="wine-entry-body${isOpen?' open':''}" id="web-${w.id}">${entryBody}</div>
     </div>`;
   }).join('');
+}
+
+function toggleWineEntry(wineId){
+  if(!currentReviewer){
+    toast('Set your name first to rate wines');
+    document.getElementById('r-name').focus();
+    return;
+  }
+  if(openWineId===wineId){
+    openWineId=null;
+  } else {
+    openWineId=wineId;
+  }
+  renderRankings();
+  // Scroll to opened card
+  if(openWineId){
+    setTimeout(()=>{
+      const el=document.getElementById('wec-'+wineId);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    },50);
+  }
+}
+
+// ══════════════════════════════════════════════════
+// ENTRY FORM — built inline per wine
+// ══════════════════════════════════════════════════
+function buildEntryForm(w,entry){
+  const locked=entry&&entry.status==='locked';
+  const isBlind=w.blind==='yes';
+  const e=entry||{};
+
+  // Enjoyment levels
+  const enjoyLabels=['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'];
+  const enjoyVal=e.enjoyment!=null?e.enjoyment:5;
+
+  // Would buy again
+  const buyVal=e.wouldBuyAgain||'';
+
+  // Build grape chips state
+  const selGrapes=e.grapeGuess||[];
+  const grapeChipsRed=['Cabernet Sauvignon','Merlot','Cabernet Franc','Pinot Noir','Syrah / Shiraz','Grenache','Mourvedre','Nebbiolo','Sangiovese','Tempranillo','Malbec','Zinfandel','Barbera','Gamay','Petit Verdot'];
+  const grapeChipsWhite=['Chardonnay','Sauvignon Blanc','Riesling','Pinot Grigio / Pinot Gris','Gewurztraminer','Viognier','Chenin Blanc','Albarino','Gruner Veltliner'];
+
+  // Note chips
+  const knownChips=w.aiNoteChips||[];
+  const selNotes=e.noteChips||[];
+  const pool=locked?[...new Set([...knownChips,...selNotes])].slice(0,30):
+    [...new Set([...knownChips,...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
+
+  const lockedAttr=locked?'disabled style="pointer-events:none;opacity:0.6;"':'';
+  const lockedInputAttr=locked?'disabled':'';
+
+  let html=`<div style="margin-bottom:14px;">`;
+
+  // If locked — show score reveal first
+  if(locked&&entry.score!=null){
+    const s=entry.score;
+    const pillC=v=>v>=8?'good':v>=5?'ok':'bad';
+    html+=`<div class="score-reveal">
+      <div class="score-big">${s.total}<span style="font-size:28px;color:var(--ink)">/100</span></div>
+      <div class="score-sub">Blind Tasting Score</div>
+      ${s.verdict?`<div class="score-verdict">${s.verdict}</div>`:''}
+      <div class="breakdown-grid" style="margin-top:16px;">
+        <div class="bp-pill ${pillC(s.grape/3)}">
+          <div class="bp-score">${s.grape}<span style="font-size:12px;color:var(--ink)">/30</span></div>
+          <div class="bp-label">Grape</div>
+          <div class="bp-detail">${s.grapeDetail||''}</div>
+        </div>
+        <div class="bp-pill ${pillC(s.region/3)}">
+          <div class="bp-score">${s.region}<span style="font-size:12px;color:var(--ink)">/30</span></div>
+          <div class="bp-label">Region</div>
+          <div class="bp-detail">${s.regionDetail||''}</div>
+        </div>
+        <div class="bp-pill ${pillC(s.age/2)}">
+          <div class="bp-score">${s.age}<span style="font-size:12px;color:var(--ink)">/20</span></div>
+          <div class="bp-label">Vintage Age</div>
+          <div class="bp-detail">${s.ageDetail||''}</div>
+        </div>
+        <div class="bp-pill ${pillC(s.notes)}">
+          <div class="bp-score">${s.notes.toFixed(1)}<span style="font-size:12px;color:var(--ink)">/10</span></div>
+          <div class="bp-label">Tasting Notes</div>
+          <div class="bp-detail">${s.notesDetail||''}</div>
+        </div>
+        <div class="bp-pill ${pillC(s.price)} " style="grid-column:1/-1;">
+          <div class="bp-score">${s.price}<span style="font-size:12px;color:var(--ink)">/10</span></div>
+          <div class="bp-label">Price Range</div>
+          <div class="bp-detail">${s.priceDetail||''}</div>
+        </div>
+      </div>
+      ${!isBlind?`<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;text-align:left;">
+        <div class="clabel" style="margin-bottom:8px;">The Answers</div>
+        <div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--cream-d);line-height:2.1;">
+          <span style="color:var(--gold);">Grape:</span> ${w.grape||'—'} &nbsp;
+          <span style="color:var(--gold);">Region:</span> ${w.region||'—'} &nbsp;
+          <span style="color:var(--gold);">Vintage:</span> ${w.year||'—'} &nbsp;
+          <span style="color:var(--gold);">Price:</span> ${w.price||'—'}
+        </div>
+        ${w.aiNotes?`<div class="aibox" style="margin-top:10px;"><div class="aibox-lbl">Expert Notes</div><div style="font-family:'Noto Serif',serif;font-size:13px;font-weight:300;color:var(--cream-d);line-height:1.7;">${w.aiNotes}</div></div>`:''}
+      </div>`:''}
+    </div>
+    <div class="grule"></div>`;
+  }
+
+  // ── SECTION A: How do you like it? (always shown, intuitive for all drinkers)
+  html+=`<div class="clabel" style="margin-bottom:6px;">How do you like it?</div>
+  <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:14px;">Drag the slider — no wine expertise needed</div>
+  <div class="enjoy-row">
+    <div class="enjoy-label">Enjoyment</div>
+    <input type="range" min="0" max="10" step="0.5" value="${enjoyVal}" id="enjoy-${w.id}" ${lockedInputAttr}
+      oninput="document.getElementById('enjoy-val-${w.id}').textContent=this.value;document.getElementById('enjoy-word-${w.id}').textContent=(['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'][Math.round(this.value)]||'')" style="flex:1;">
+    <div class="enjoy-val" id="enjoy-val-${w.id}">${enjoyVal}</div>
+  </div>
+  <div style="font-family:'Noto Serif',serif;font-size:13px;font-style:italic;color:var(--cream-d);margin-bottom:14px;min-height:20px;" id="enjoy-word-${w.id}">${enjoyLabels[Math.round(enjoyVal)]||''}</div>
+
+  <div class="clabel" style="margin-bottom:8px;">Would you buy this wine?</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+    ${['Definitely yes','Probably yes','Maybe','Probably not','No way'].map(opt=>`
+      <button class="chip${buyVal===opt?' sel':''}" ${locked?'disabled style="pointer-events:none;"':''} onclick="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));this.classList.add('sel');">${opt}</button>`).join('')}
+  </div>
+
+  <div class="field">
+    <label>Tasting Notes <span style="font-size:10px;font-weight:300;letter-spacing:0;text-transform:none;font-style:italic;color:var(--ink);">optional — what do you taste?</span></label>
+    <textarea id="notes-${w.id}" placeholder="Fruity? Dry? Earthy? What do you notice?" ${lockedInputAttr}>${e.notes||''}</textarea>
+  </div>
+
+  <hr class="rule">
+  <div class="clabel" style="margin-bottom:4px;">Blind Guessing Game <span style="font-size:10px;font-weight:300;letter-spacing:0;text-transform:none;font-style:italic;color:var(--ink);">optional &mdash; earn up to 100 pts</span></div>
+  <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:16px;">Skip any section you're not sure about. Save your guesses and come back anytime before locking in.</div>
+
+  <!-- GRAPE GUESS -->
+  <div style="margin-bottom:14px;">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">1 — Grape Variety <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
+    <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:8px;">Pick one or more — for blends, select all you detect</div>
+    <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:5px;">Red</div>
+    <div class="chips" style="margin-top:0;">
+      ${grapeChipsRed.map(g=>`<button class="chip${selGrapes.includes(g)?' sel':''}" ${locked?'disabled style="pointer-events:none;"':''} onclick="toggleEntryGrape(this,'${w.id}','${g.replace(/'/g,"\\'")}')">${g}</button>`).join('')}
+    </div>
+    <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-top:10px;margin-bottom:5px;">White</div>
+    <div class="chips" style="margin-top:0;">
+      ${grapeChipsWhite.map(g=>`<button class="chip${selGrapes.includes(g)?' sel':''}" ${locked?'disabled style="pointer-events:none;"':''} onclick="toggleEntryGrape(this,'${w.id}','${g.replace(/'/g,"\\'")}')">${g}</button>`).join('')}
+    </div>
+    <div id="grape-disp-${w.id}" style="font-family:'Noto Serif',serif;font-size:11px;color:var(--gold);font-style:italic;margin-top:8px;min-height:16px;">${selGrapes.length?'Your guess: '+selGrapes.join(', '):''}</div>
+  </div>
+
+  <!-- REGION GUESS -->
+  <div style="margin-bottom:14px;">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">2 — Region <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
+    <div class="field" style="margin:0;">
+      <select id="region-${w.id}" ${lockedInputAttr}>
+        <option value="">Select your best guess</option>
+        <optgroup label="France"><option${e.regionGuess==='Bordeaux, France'?' selected':''}>Bordeaux, France</option><option${e.regionGuess==='Burgundy, France'?' selected':''}>Burgundy, France</option><option${e.regionGuess==='Champagne, France'?' selected':''}>Champagne, France</option><option${e.regionGuess==='Rhône Valley, France'?' selected':''}>Rhône Valley, France</option><option${e.regionGuess==='Loire Valley, France'?' selected':''}>Loire Valley, France</option><option${e.regionGuess==='Alsace, France'?' selected':''}>Alsace, France</option><option${e.regionGuess==='Languedoc, France'?' selected':''}>Languedoc, France</option><option${e.regionGuess==='Provence, France'?' selected':''}>Provence, France</option></optgroup>
+        <optgroup label="Italy"><option${e.regionGuess==='Tuscany, Italy'?' selected':''}>Tuscany, Italy</option><option${e.regionGuess==='Piedmont, Italy'?' selected':''}>Piedmont, Italy</option><option${e.regionGuess==='Veneto, Italy'?' selected':''}>Veneto, Italy</option><option${e.regionGuess==='Sicily, Italy'?' selected':''}>Sicily, Italy</option></optgroup>
+        <optgroup label="Spain"><option${e.regionGuess==='Rioja, Spain'?' selected':''}>Rioja, Spain</option><option${e.regionGuess==='Ribera del Duero, Spain'?' selected':''}>Ribera del Duero, Spain</option><option${e.regionGuess==='Priorat, Spain'?' selected':''}>Priorat, Spain</option></optgroup>
+        <optgroup label="USA"><option${e.regionGuess==='Napa Valley, California'?' selected':''}>Napa Valley, California</option><option${e.regionGuess==='Sonoma, California'?' selected':''}>Sonoma, California</option><option${e.regionGuess==='Willamette Valley, Oregon'?' selected':''}>Willamette Valley, Oregon</option><option${e.regionGuess==='Washington State'?' selected':''}>Washington State</option></optgroup>
+        <optgroup label="Canada"><option${e.regionGuess==='Okanagan Valley, BC'?' selected':''}>Okanagan Valley, BC</option><option${e.regionGuess==='Niagara Peninsula, Ontario'?' selected':''}>Niagara Peninsula, Ontario</option></optgroup>
+        <optgroup label="New World"><option${e.regionGuess==='Marlborough, New Zealand'?' selected':''}>Marlborough, New Zealand</option><option${e.regionGuess==='Central Otago, New Zealand'?' selected':''}>Central Otago, New Zealand</option><option${e.regionGuess==='Barossa Valley, Australia'?' selected':''}>Barossa Valley, Australia</option><option${e.regionGuess==='Mendoza, Argentina'?' selected':''}>Mendoza, Argentina</option><option${e.regionGuess==='Maipo Valley, Chile'?' selected':''}>Maipo Valley, Chile</option><option${e.regionGuess==='Stellenbosch, South Africa'?' selected':''}>Stellenbosch, South Africa</option></optgroup>
+        <optgroup label="Other"><option${e.regionGuess==='Douro Valley, Portugal'?' selected':''}>Douro Valley, Portugal</option><option${e.regionGuess==='Mosel, Germany'?' selected':''}>Mosel, Germany</option><option${e.regionGuess==='Other'?' selected':''}>Other</option></optgroup>
+      </select>
+    </div>
+  </div>
+
+  <!-- AGE GUESS -->
+  <div style="margin-bottom:14px;">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">3 — Vintage Age <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 20 pts</span></div>
+    <div class="field" style="margin:0;">
+      <select id="age-${w.id}" ${lockedInputAttr}>
+        <option value="">How old do you think it is?</option>
+        <option value="1-2"${e.ageGuess==='1-2'?' selected':''}>Very young — 1 to 2 years</option>
+        <option value="3-5"${e.ageGuess==='3-5'?' selected':''}>Young — 3 to 5 years</option>
+        <option value="6-8"${e.ageGuess==='6-8'?' selected':''}>Starting to mature — 6 to 8 years</option>
+        <option value="9-12"${e.ageGuess==='9-12'?' selected':''}>Mature — 9 to 12 years</option>
+        <option value="13-17"${e.ageGuess==='13-17'?' selected':''}>Well aged — 13 to 17 years</option>
+        <option value="18-25"${e.ageGuess==='18-25'?' selected':''}>Old — 18 to 25 years</option>
+        <option value="25+"${e.ageGuess==='25+'?' selected':''}>Very old — 25+ years</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- TASTING NOTE CHIPS -->
+  <div style="margin-bottom:14px;">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">4 — Tasting Notes <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts</span></div>
+    <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:8px;">Pick the aromas and flavours you detect. +1 for correct, −0.5 for wrong.</div>
+    <div class="chips" style="margin-top:0;" id="notechips-${w.id}">
+      ${shuffle([...pool]).map(n=>{
+        const isHit=locked&&knownChips.includes(n)&&selNotes.includes(n);
+        const isMiss=locked&&!knownChips.includes(n)&&selNotes.includes(n);
+        const isRev=locked&&knownChips.includes(n)&&!selNotes.includes(n);
+        const cls=isHit?'hit':isMiss?'miss':isRev?'rev':selNotes.includes(n)?'sel':'';
+        return`<button class="chip${cls?' '+cls:''}" ${locked?'disabled style="pointer-events:none;"':''} onclick="toggleEntryNote(this,'${w.id}','${n.replace(/'/g,"\\'")}')">${n}</button>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- PRICE GUESS -->
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">5 — Price Range <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts</span></div>
+    <div class="field" style="margin:0;">
+      <select id="price-${w.id}" ${lockedInputAttr}>
+        <option value="">What did this bottle cost?</option>
+        <option value="Under $20"${e.priceGuess==='Under $20'?' selected':''}>Under $20</option>
+        <option value="$20-30"${e.priceGuess==='$20-30'?' selected':''}>$20 – $30</option>
+        <option value="$30-50"${e.priceGuess==='$30-50'?' selected':''}>$30 – $50</option>
+        <option value="$50-75"${e.priceGuess==='$50-75'?' selected':''}>$50 – $75</option>
+        <option value="$75-100"${e.priceGuess==='$75-100'?' selected':''}>$75 – $100</option>
+        <option value="$100-150"${e.priceGuess==='$100-150'?' selected':''}>$100 – $150</option>
+        <option value="$150-200"${e.priceGuess==='$150-200'?' selected':''}>$150 – $200</option>
+        <option value="$200+"${e.priceGuess==='$200+'?' selected':''}>$200+</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  ${locked?
+    `<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--green-b);font-style:italic;">&#10003; Entry locked — your guesses are final.</div>`:
+    `<div class="brow">
+      <button class="btn bp bsm" onclick="saveDraft('${w.id}')">Save Draft</button>
+      <button class="btn bg bsm" onclick="lockEntry('${w.id}')">Lock In &amp; Submit</button>
+    </div>
+    <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-top:10px;">Save draft to come back later. Lock In is permanent — scores revealed immediately.</div>`
+  }
+  </div>`;
+
+  return html;
+}
+
+// ══════════════════════════════════════════════════
+// ENTRY INTERACTIONS
+// ══════════════════════════════════════════════════
+function toggleEntryGrape(el, wineId, grape){
+  el.classList.toggle('sel');
+  // Update display
+  const selChips=[...document.querySelectorAll(`#wec-${wineId} .wine-entry-body .chips .chip.sel`)].map(c=>c.textContent).filter(t=>['Cabernet Sauvignon','Merlot','Cabernet Franc','Pinot Noir','Syrah / Shiraz','Grenache','Mourvedre','Nebbiolo','Sangiovese','Tempranillo','Malbec','Zinfandel','Barbera','Gamay','Petit Verdot','Chardonnay','Sauvignon Blanc','Riesling','Pinot Grigio / Pinot Gris','Pinot Grigio / Gris','Gewurztraminer','Viognier','Chenin Blanc','Albarino','Gruner Veltliner'].includes(t));
+  const disp=document.getElementById('grape-disp-'+wineId);
+  if(disp) disp.textContent=selChips.length?'Your guess: '+selChips.join(', '):'';
+}
+
+function toggleEntryNote(el, wineId, note){
+  el.classList.toggle('sel');
+}
+
+function getEntryFormData(wineId){
+  const w=wines.find(x=>x.id===wineId); if(!w) return null;
+  const enjoyEl=document.getElementById('enjoy-'+wineId);
+  const enjoyment=enjoyEl?parseFloat(enjoyEl.value):null;
+
+  // Would buy again — find selected chip
+  const buyChips=[...document.querySelectorAll(`#web-${wineId} .brow ~ * .chip.sel, #web-${wineId} button.chip.sel`)];
+  // More reliable: find the buy-again section chips
+  let wouldBuyAgain='';
+  const buyOptions=['Definitely yes','Probably yes','Maybe','Probably not','No way'];
+  document.querySelectorAll(`#web-${wineId} button.chip`).forEach(c=>{
+    if(buyOptions.includes(c.textContent)&&c.classList.contains('sel')) wouldBuyAgain=c.textContent;
+  });
+
+  const notesEl=document.getElementById('notes-'+wineId);
+  const notes=notesEl?notesEl.value.trim():'';
+
+  // Grapes — all selected chips that are grape names
+  const allGrapeNames=['Cabernet Sauvignon','Merlot','Cabernet Franc','Pinot Noir','Syrah / Shiraz','Grenache','Mourvedre','Nebbiolo','Sangiovese','Tempranillo','Malbec','Zinfandel','Barbera','Gamay','Petit Verdot','Chardonnay','Sauvignon Blanc','Riesling','Pinot Grigio / Pinot Gris','Pinot Grigio / Gris','Gewurztraminer','Viognier','Chenin Blanc','Albarino','Gruner Veltliner'];
+  const grapeGuess=[];
+  document.querySelectorAll(`#web-${wineId} button.chip.sel`).forEach(c=>{
+    const t=c.textContent;
+    if(allGrapeNames.includes(t)&&!grapeGuess.includes(t)) grapeGuess.push(t);
+  });
+
+  const regionEl=document.getElementById('region-'+wineId);
+  const regionGuess=regionEl?regionEl.value:'';
+
+  const ageEl=document.getElementById('age-'+wineId);
+  const ageGuess=ageEl?ageEl.value:'';
+
+  // Note chips
+  const noteChips=[];
+  document.querySelectorAll(`#notechips-${wineId} button.chip.sel`).forEach(c=>{
+    noteChips.push(c.textContent);
+  });
+
+  const priceEl=document.getElementById('price-'+wineId);
+  const priceGuess=priceEl?priceEl.value:'';
+
+  return{wineId,reviewer:currentReviewer,enjoyment,wouldBuyAgain,notes,grapeGuess,regionGuess,ageGuess,noteChips,priceGuess};
+}
+
+async function saveDraft(wineId){
+  if(!currentReviewer){toast('Set your name first');return;}
+  const data=getEntryFormData(wineId); if(!data) return;
+  data.status='draft';
+  data.createdAt=Date.now();
+  await writeEntry(wineId,data);
+  toast('Draft saved — come back anytime');
+}
+
+async function lockEntry(wineId){
+  if(!currentReviewer){toast('Set your name first');return;}
+  const data=getEntryFormData(wineId); if(!data) return;
+  if(data.enjoyment===null){toast('Move the enjoyment slider first');return;}
+
+  data.status='locked';
+  data.lockedAt=Date.now();
+
+  // Score the blind guesses
+  const w=wines.find(x=>x.id===wineId);
+  toast('Scoring your guesses...');
+  data.score=await scoreEntry(data,w);
+
+  await writeEntry(wineId,data);
+  openWineId=wineId; // keep open to show result
+  toast('Locked in! Your score: '+data.score.total+'/100');
+  renderRankings();
+}
+
+async function writeEntry(wineId,data){
+  const existing=getMyEntry(wineId);
+  if(useFirebase){
+    if(existing){
+      await dbUpdate(dbRef(DB,'playerEntries/'+existing.id),data);
+    } else {
+      await dbPush(dbRef(DB,'playerEntries'),data);
+    }
+  } else {
+    if(existing){
+      Object.assign(existing,data);
+    } else {
+      data.id=Date.now().toString();
+      playerEntries.push(data);
+    }
+    saveLocal(); renderAll();
+  }
+}
+
+// ══════════════════════════════════════════════════
+// SCORING ENGINE
+// ══════════════════════════════════════════════════
+async function scoreEntry(data,w){
+  const score={total:0,grape:0,region:0,age:0,notes:0,price:0,grapeDetail:'',regionDetail:'',ageDetail:'',notesDetail:'',priceDetail:'',verdict:''};
+
+  // ── NOTES (up to 10pts) ──
+  const known=w.aiNoteChips||[];
+  const correct=data.noteChips.filter(n=>known.includes(n));
+  const wrong=data.noteChips.filter(n=>!known.includes(n));
+  score.notes=Math.max(0,Math.min(10,correct.length-wrong.length*0.5));
+  score.notesDetail=`${correct.length} correct, ${wrong.length} wrong`;
+
+  // ── AGE (up to 20pts) ──
+  const actualYear=parseInt(w.year)||0;
+  const curYear=new Date().getFullYear();
+  const actualAge=actualYear>0?curYear-actualYear:null;
+  const bracket=AGE_BRACKETS.find(b=>b.val===data.ageGuess);
+  if(actualAge!==null&&bracket){
+    const diff=Math.abs(bracket.mid-actualAge);
+    if(diff<=1.5) score.age=20;
+    else if(diff<=3.5) score.age=16;
+    else if(diff<=6) score.age=10;
+    else if(diff<=10) score.age=5;
+    score.ageDetail=actualYear?`Vintage ${actualYear} (${actualAge} yrs)`:'No vintage on record';
+  } else if(!data.ageGuess){
+    score.age=0; score.ageDetail='No guess';
+  } else {
+    score.age=10; score.ageDetail='No vintage on record — partial credit';
+  }
+
+  // ── PRICE (up to 10pts) ──
+  const actualPrice=w.price||'';
+  const gi=PRICE_BRACKETS.indexOf(data.priceGuess);
+  const ai=PRICE_BRACKETS.indexOf(actualPrice);
+  if(!data.priceGuess){score.price=0;score.priceDetail='No guess';}
+  else if(!actualPrice){score.price=5;score.priceDetail='No price on record — partial credit';}
+  else if(gi!==-1&&ai!==-1){
+    const d=Math.abs(gi-ai);
+    if(d===0){score.price=10;score.priceDetail=`Exact — ${actualPrice}`;}
+    else if(d===1){score.price=7;score.priceDetail=`One bracket off — actual: ${actualPrice}`;}
+    else if(d===2){score.price=4;score.priceDetail=`Two brackets off — actual: ${actualPrice}`;}
+    else{score.price=0;score.priceDetail=`Actual: ${actualPrice}`;}
+  }
+
+  // ── GRAPE + REGION — AI scored ──
+  const grapeStr=data.grapeGuess.join(', ')||'(no guess)';
+  const regionStr=data.regionGuess||'(no guess)';
+  if(data.grapeGuess.length||data.regionGuess){
+    try{
+      const resp=await callClaude(`Score these blind tasting guesses. Wine: "${w.name||'Unknown'}", grape: "${w.grape||'unknown'}", region: "${w.region||'unknown'}", vintage: "${w.year||'unknown'}".
+
+Grape guess: "${grapeStr}" (player may pick multiple for blends)
+Region guess: "${regionStr}"
+
+Score GRAPE /30: 30=exact or all blend components; 22-28=primary grape right or same family; 14-20=one blend component or similar profile; 6-12=same broad category; 0-5=wrong. If no guess, score 0.
+Score REGION /30: 30=exact; 22-28=same country/major region; 14-20=same broad world area; 6-12=same Old/New World; 0-5=wrong. If no guess, score 0.
+
+Return ONLY JSON: {"grapeScore":0,"grapeDetail":"one sentence","regionScore":0,"regionDetail":"one sentence"}`);
+      const r=JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
+      score.grape=Math.min(30,Math.max(0,Math.round(r.grapeScore||0)));
+      score.region=Math.min(30,Math.max(0,Math.round(r.regionScore||0)));
+      score.grapeDetail=r.grapeDetail||'';
+      score.regionDetail=r.regionDetail||'';
+    }catch(e){
+      // Fallback
+      const gn=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+      score.grape=data.grapeGuess.some(g=>gn(g).includes(gn(w.grape||'').substring(0,4)))||gn(w.grape||'').includes(gn(data.grapeGuess[0]||'').substring(0,4))?15:0;
+      score.region=gn(regionStr).includes(gn(w.region||'').split(',')[0])||gn(w.region||'').includes(gn(regionStr).split(',')[0])?15:0;
+      score.grapeDetail='Text match (AI unavailable)';
+      score.regionDetail='Text match (AI unavailable)';
+    }
+  } else {
+    score.grapeDetail='No guess'; score.regionDetail='No guess';
+  }
+
+  score.total=Math.round(score.grape+score.region+score.age+score.notes+score.price);
+
+  const verdicts=[
+    [0,29,'A bold attempt. The wine has many things to teach you.'],
+    [30,49,'Getting warmer. Your palate is developing.'],
+    [50,64,'Respectable. You clearly have opinions about wine.'],
+    [65,79,'Impressive. Are you secretly a sommelier?'],
+    [80,89,'Outstanding. You have wasted your career in finance.'],
+    [90,100,'Extraordinary. Either a gift or a cheat sheet.']
+  ];
+  score.verdict=(verdicts.find(([lo,hi])=>score.total>=lo&&score.total<=hi)||[])[2]||'';
+
+  return score;
 }
 
 // ══════════════════════════════════════════════════
@@ -818,7 +1145,6 @@ function renderCellar(){
       </div>
     </div>`).join('');
 
-  // Attach swipe listeners after rendering
   sorted.forEach(w=>attachSwipe(w.id));
 }
 
@@ -827,7 +1153,6 @@ function toggleCellarCard(id){
   const chevron=document.getElementById('cellar-chevron-'+id);
   if(!detail) return;
   const isOpen=!detail.classList.contains('hidden');
-  // Close any open swiped cards first
   const inner=document.getElementById('sinner-'+id);
   if(inner) inner.classList.remove('swiped');
   detail.classList.toggle('hidden');
@@ -837,300 +1162,45 @@ function toggleCellarCard(id){
 function attachSwipe(id){
   const inner=document.getElementById('sinner-'+id);
   if(!inner) return;
-  let startX=0, startY=0, isDragging=false;
-  inner.addEventListener('touchstart',e=>{
-    startX=e.touches[0].clientX;
-    startY=e.touches[0].clientY;
-    isDragging=false;
-  },{passive:true});
+  let startX=0,startY=0;
+  inner.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true});
   inner.addEventListener('touchmove',e=>{
-    const dx=e.touches[0].clientX-startX;
-    const dy=e.touches[0].clientY-startY;
-    if(Math.abs(dy)>Math.abs(dx)) return; // vertical scroll
-    isDragging=true;
+    const dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+    if(Math.abs(dy)>Math.abs(dx)) return;
     if(dx<-20) inner.classList.add('swiped');
     else if(dx>20) inner.classList.remove('swiped');
   },{passive:true});
-  inner.addEventListener('touchend',()=>{
-    // left open — tap on bg to confirm delete
-  });
-  // Also close swipe if tapping elsewhere
   document.addEventListener('touchstart',e=>{
-    if(!inner.contains(e.target)&&!document.getElementById('swrap-'+id)?.contains(e.target)){
-      inner.classList.remove('swiped');
-    }
+    if(!document.getElementById('swrap-'+id)?.contains(e.target)) inner.classList.remove('swiped');
   },{passive:true});
 }
 
 function confirmDeleteWine(id){
   const w=wines.find(x=>x.id===id); if(!w) return;
-  if(!confirm('Remove "'+displayName(w)+'" and all its reviews? This cannot be undone.')) return;
+  if(!confirm('Remove "'+displayName(w)+'" and all its entries? This cannot be undone.')) return;
   deleteWineById(id);
 }
 
 async function deleteWineById(id){
   if(useFirebase){
-    // Delete wine node
-    await dbSet(dbRef(DB,'wines/'+id), null);
-    // Delete all reviews for this wine
-    const toDelete=reviews.filter(r=>String(r.wineId)===String(id));
-    for(const r of toDelete){
-      await dbSet(dbRef(DB,'reviews/'+r.id), null);
-    }
+    await dbSet(dbRef(DB,'wines/'+id),null);
+    const toDelete=playerEntries.filter(e=>String(e.wineId)===String(id));
+    for(const e of toDelete) await dbSet(dbRef(DB,'playerEntries/'+e.id),null);
+    // Also clean old reviews
+    const revDelete=reviews.filter(r=>String(r.wineId)===String(id));
+    for(const r of revDelete) await dbSet(dbRef(DB,'reviews/'+r.id),null);
   } else {
     wines=wines.filter(x=>x.id!==id);
+    playerEntries=playerEntries.filter(e=>String(e.wineId)!==String(id));
     reviews=reviews.filter(r=>String(r.wineId)!==String(id));
     saveLocal(); renderAll();
   }
+  if(openWineId===id) openWineId=null;
   toast('Wine removed');
 }
 
 // ══════════════════════════════════════════════════
-// POPULATE SELECTS
-// ══════════════════════════════════════════════════
-function populateSelects(){
-  // Blind wines: show name without year in dropdowns
-  const opts=wines.map(w=>{
-    const label=displayName(w)+(w.blind!=='yes'&&w.year?' '+w.year:'')+(w.bringer?' ('+w.bringer+')':'');
-    return`<option value="${w.id}">${label}</option>`;
-  }).join('');
-  const empty='<option value="">Choose a wine</option>';
-  ['r-wine-sel','t-wine-sel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){const cur=el.value;el.innerHTML=empty+opts;if(cur)el.value=cur;}
-  });
-  if(currentReviewer){
-    document.getElementById('r-name').value=currentReviewer;
-    document.getElementById('reviewer-show').textContent=currentReviewer;
-    document.getElementById('reviewer-set').classList.remove('hidden');
-  }
-}
-
-// ══════════════════════════════════════════════════
-// REVIEWER
-// ══════════════════════════════════════════════════
-function setReviewer(){
-  const n=document.getElementById('r-name').value.trim(); if(!n) return;
-  currentReviewer=n; localStorage.setItem('cellar-reviewer',n);
-  document.getElementById('reviewer-show').textContent=n;
-  document.getElementById('reviewer-set').classList.remove('hidden');
-  toast('Tasting as '+n);
-}
-function clearReviewer(){
-  currentReviewer=''; localStorage.removeItem('cellar-reviewer');
-  document.getElementById('r-name').value='';
-  document.getElementById('reviewer-set').classList.add('hidden');
-}
-
-// ══════════════════════════════════════════════════
-// RATE A WINE
-// ══════════════════════════════════════════════════
-function loadRateWine(){
-  const id=document.getElementById('r-wine-sel').value;
-  if(!id){document.getElementById('rate-form').classList.add('hidden');return;}
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  const isBlind=w.blind==='yes';
-  document.getElementById('r-wine-display').innerHTML=`
-    <div style="margin-bottom:5px;">${badge(w.type)}</div>
-    <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:4px;">${isBlind?`<em style="color:var(--ink);">${displayName(w)}</em>`:w.name}</div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind?'Blind tasting — rate what you taste':[w.producer,w.year,w.region].filter(Boolean).join(' &middot; ')}</div>`;
-  ratings={aroma:0,taste:0,finish:0,overall:0};
-  DIMS.forEach(k=>{buildHalfStars(k);document.getElementById('lv-'+k).textContent='';});
-  document.getElementById('r-notes').value='';
-  document.getElementById('rate-form').classList.remove('hidden');
-}
-
-function resetRateForm(){
-  document.getElementById('r-wine-sel').value='';
-  document.getElementById('rate-form').classList.add('hidden');
-}
-
-// ══════════════════════════════════════════════════
-// HALF-STAR RATING
-// ══════════════════════════════════════════════════
-function buildHalfStars(key){
-  const wrap=document.getElementById('st-'+key);
-  wrap.innerHTML='';
-  for(let i=1;i<=5;i++){
-    const star=document.createElement('div');
-    star.className='s-star';
-    // Left half click = i - 0.5
-    const lh=document.createElement('div');
-    lh.className='s-half left';
-    lh.addEventListener('click',()=>setRating(key,i-0.5));
-    lh.addEventListener('mouseover',()=>hlStars(key,i-0.5));
-    lh.addEventListener('mouseout',()=>hlStars(key,ratings[key]));
-    // Right half click = i
-    const rh=document.createElement('div');
-    rh.className='s-half right';
-    rh.addEventListener('click',()=>setRating(key,i));
-    rh.addEventListener('mouseover',()=>hlStars(key,i));
-    rh.addEventListener('mouseout',()=>hlStars(key,ratings[key]));
-    // SVG with two colored halves
-    const ns='http://www.w3.org/2000/svg';
-    const svg=document.createElementNS(ns,'svg');
-    svg.setAttribute('width','30'); svg.setAttribute('height','30');
-    svg.setAttribute('viewBox','0 0 30 30');
-    svg.className='s-svg';
-    svg.innerHTML=`
-      <defs>
-        <clipPath id="cl-${key}-${i}"><rect x="0" y="0" width="15" height="30"/></clipPath>
-        <clipPath id="cr-${key}-${i}"><rect x="15" y="0" width="15" height="30"/></clipPath>
-      </defs>
-      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="rgba(184,150,90,0.15)"/>
-      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="var(--gold)" clip-path="url(#cl-${key}-${i})" class="sl-${key}-${i}" opacity="0"/>
-      <polygon points="15,3 18.5,11 27.5,12 21,18 23,27 15,22.5 7,27 9,18 2.5,12 11.5,11" fill="var(--gold)" clip-path="url(#cr-${key}-${i})" class="sr-${key}-${i}" opacity="0"/>`;
-    star.appendChild(svg);
-    star.appendChild(lh);
-    star.appendChild(rh);
-    wrap.appendChild(star);
-  }
-}
-
-function hlStars(key,val){
-  for(let i=1;i<=5;i++){
-    const l=document.querySelector(`.sl-${key}-${i}`);
-    const r=document.querySelector(`.sr-${key}-${i}`);
-    if(!l||!r) continue;
-    l.setAttribute('opacity', val>=i-0.5?'1':'0');
-    r.setAttribute('opacity', val>=i?'1':'0');
-  }
-}
-
-function setRating(key,val){
-  ratings[key]=val;
-  hlStars(key,val);
-  document.getElementById('lv-'+key).textContent=val%1?val.toFixed(1):val+'.0';
-}
-
-// ══════════════════════════════════════════════════
-// SUBMIT REVIEW
-// wineId is stored as the Firebase push key string.
-// This never changes regardless of sort order or blind numbering.
-// ══════════════════════════════════════════════════
-async function submitReview(){
-  const wineId=document.getElementById('r-wine-sel').value;
-  if(!wineId){toast('Select a wine first');return;}
-  if(DIMS.some(k=>ratings[k]===0)){toast('Please rate all four dimensions');return;}
-  const review={
-    wineId:String(wineId),
-    reviewer:currentReviewer||'Anonymous',
-    aroma:ratings.aroma, taste:ratings.taste,
-    finish:ratings.finish, overall:ratings.overall,
-    notes:document.getElementById('r-notes').value.trim(),
-    createdAt:Date.now()
-  };
-  if(useFirebase){ await dbPush(dbRef(DB,'reviews'),review); }
-  else{
-    review.id=Date.now().toString();
-    reviews.push(review);
-    saveLocal(); renderAll();
-  }
-  toast('Rating submitted');
-  resetRateForm();
-}
-
-// ══════════════════════════════════════════════════
-// WINE DETAIL MODAL
-// ══════════════════════════════════════════════════
-function openWineModal(id){
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  const s=getScore(id);
-  const rs=reviews.filter(r=>String(r.wineId)===String(id));
-  const isBlind=w.blind==='yes';
-
-  let html=`
-    <div style="margin-bottom:5px;">${badge(w.type)}${isBlind?` <span class="bdg" style="background:rgba(100,100,100,.3);color:var(--ink);border:1px solid var(--border);">BLIND ${w.blindNumber||''}</span>`:''}</div>
-    <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);letter-spacing:-.5px;margin-bottom:3px;">${displayName(w)}</div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${isBlind?'Identity hidden':[w.producer,w.year,w.region,w.grape].filter(Boolean).join(' &middot; ')}</div>
-    ${w.bringer?`<div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--gold);font-style:italic;margin-top:5px;">Brought by ${w.bringer}</div>`:''}`;
-
-  if(isBlind){
-    html+=`<div class="grule"></div><button class="btn bq bsm" onclick="toggleBlind('${id}',false)">Reveal Identity</button>`;
-  } else {
-    html+=`<div class="grule"></div><button class="btn bq bsm" onclick="toggleBlind('${id}',true)">Set as Blind</button>`;
-  }
-
-  if(s){
-    html+=`<div class="grule"></div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:11px;">Score &middot; ${s.count} review${s.count>1?'s':''}</div>
-    <div class="bdwn">${DIMS.map(k=>`<div class="pill"><div class="pill-v">${s[k].toFixed(1)}</div><div class="pill-l">${DIM_LABELS[k]}</div></div>`).join('')}</div>
-    <div style="text-align:center;margin-top:20px;">
-      <div style="font-family:'Playfair Display',serif;font-size:55px;color:var(--gold);line-height:1;">${s.composite.toFixed(1)}</div>
-      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--ink);">Composite Score</div>
-    </div>`;
-  } else {
-    html+=`<div class="grule"></div><div style="color:var(--ink);font-style:italic;font-size:14px;">No reviews yet.</div>`;
-  }
-
-  if(rs.length){
-    html+=`<div class="grule"></div><div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Individual Reviews</div>`;
-    rs.forEach(r=>{
-      const pompWords=(r.notes||'').match(/\b(terroir|tannins|minerality|barnyard|graphite|pencil|garrigue|brett|reductive|phenolic)\b/gi)||[];
-      const pretension=r.notes?Math.min(100,Math.round(r.notes.split(' ').length*1.1+pompWords.length*20)):0;
-      html+=`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
-        <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-lt);">${r.reviewer||'Anonymous'}</div>
-        <div style="font-family:'Noto Serif',serif;font-size:12px;color:var(--ink);margin-top:5px;display:flex;gap:6px;flex-wrap:wrap;">
-          ${DIMS.map(k=>`${DIM_LABELS[k]}: <strong style="color:var(--cream);">${r[k]||'—'}</strong>`).join(' &middot; ')}
-        </div>
-        ${r.notes?`<div style="margin-top:7px;font-style:italic;font-size:14px;color:var(--cream-d);line-height:1.7;">"${r.notes}"</div>
-          ${pretension>30?`<div style="margin-top:6px;"><div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">Pretentiousness: ${pretension}%</div><div class="pbar"><div class="pbar-f" style="width:${pretension}%"></div></div></div>`:''}`:'' }
-      </div>`;
-    });
-  }
-  html+=`<div style="height:8px;"></div>`;
-
-  // Peer ratings — hidden if blind
-  if(!isBlind&&w.peerRatings&&w.peerRatings.length){
-    html+=`<div class="grule"></div>
-    <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Peer Rankings</div>
-    ${w.peerRatings.map(r=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--cream-d);">${r.source}</div>
-          ${r.note?`<div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;">${r.note}</div>`:''}
-        </div>
-        <div style="text-align:right;">
-          <span style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);">${r.score}</span>
-          <span style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);"> / ${r.scale}</span>
-        </div>
-      </div>`).join('')}`;
-  }
-
-  // AI notes — hidden if blind
-  if(!isBlind&&w.aiNotes){
-    html+=`<div class="grule"></div><div class="aibox"><div class="aibox-lbl">AI Tasting Notes</div>
-    <div style="font-family:'Noto Serif',serif;font-size:14px;font-weight:300;color:var(--cream-d);line-height:1.75;">${w.aiNotes}</div></div>`;
-  }
-
-  html+=`<div style="height:8px;"></div>`;
-  document.getElementById('modal-content').innerHTML=html;
-  document.getElementById('modal-footer').innerHTML=`
-    <button class="btn bp bsm" onclick="closeModal();showTab('rate');setTimeout(()=>{document.getElementById('r-wine-sel').value='${id}';loadRateWine();},80)">Rate This Wine</button>
-    <button class="btn bq bsm" onclick="closeModal();showTab('tasting');setTimeout(()=>{document.getElementById('t-wine-sel').value='${id}';loadTasting();},80)">Tasting Game</button>
-    <button class="btn bq bsm" onclick="closeModal();openEditWine('${id}')">Edit</button>
-  `;
-  document.getElementById('wine-modal').classList.add('open');
-}
-function closeModal(){ document.getElementById('wine-modal').classList.remove('open'); }
-
-function toggleBlind(id, makeBlind){
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  if(makeBlind){
-    // Re-hiding: reassign a blind number
-    const newNum=(wines.filter(w=>w.blind==='yes').length)+1;
-    if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'yes',blindNumber:newNum});
-    else{ w.blind='yes'; w.blindNumber=newNum; saveLocal(); renderAll(); }
-    closeModal(); toast('Identity hidden — Blind Wine '+newNum);
-  } else {
-    if(useFirebase) dbUpdate(dbRef(DB,'wines/'+id),{blind:'no'});
-    else{ w.blind='no'; saveLocal(); renderAll(); }
-    closeModal(); toast('Identity revealed');
-  }
-}
-
-// ══════════════════════════════════════════════════
-// ADD / EDIT WINE
+// ADD / EDIT WINE MODAL
 // ══════════════════════════════════════════════════
 function openAddWine(){
   editingWineId=null;
@@ -1163,7 +1233,6 @@ function openEditWine(id){
     document.getElementById('ai-notes-box').classList.remove('hidden');
     currentAINotes=w.aiNoteChips||[];
     currentPeerRatings=w.peerRatings||[];
-    if(currentPeerRatings.length) renderPeerRatingsForm(currentPeerRatings);
   }
   document.getElementById('wine-form-modal').classList.add('open');
 }
@@ -1214,27 +1283,17 @@ async function saveWine(){
     peerRatings:currentPeerRatings
   };
   if(editingWineId){
-    // When editing, if blind mode is being turned ON for the first time, assign a number
     if(blind==='yes'){
       const existing=wines.find(x=>x.id===editingWineId);
-      if(existing&&existing.blind!=='yes'){
-        // Was not blind before, assign next number
-        data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
-      } else if(existing&&existing.blindNumber){
-        // Keep existing blind number
-        data.blindNumber=existing.blindNumber;
-      }
+      if(existing&&existing.blind!=='yes') data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
+      else if(existing&&existing.blindNumber) data.blindNumber=existing.blindNumber;
     }
     if(useFirebase){ await dbUpdate(dbRef(DB,'wines/'+editingWineId),data); }
     else{ const w=wines.find(x=>x.id===editingWineId); if(w) Object.assign(w,data); saveLocal(); renderAll(); }
     toast(name+' updated');
   } else {
     data.addedAt=Date.now();
-    if(blind==='yes'){
-      // Count wines already marked blind in the current wines array
-      const existingBlindCount=wines.filter(w=>w.blind==='yes').length;
-      data.blindNumber=existingBlindCount+1;
-    }
+    if(blind==='yes') data.blindNumber=(wines.filter(w=>w.blind==='yes').length)+1;
     if(useFirebase){ await dbPush(dbRef(DB,'wines'),data); }
     else{ data.id=Date.now().toString(); wines.push(data); saveLocal(); renderAll(); }
     toast(name+' added to the cellar');
@@ -1245,7 +1304,7 @@ async function saveWine(){
 async function deleteCurrentWine(){
   if(!editingWineId) return;
   const w=wines.find(x=>x.id===editingWineId); if(!w) return;
-  if(!confirm('Remove "'+displayName(w)+'" and all its reviews? This cannot be undone.')) return;
+  if(!confirm('Remove "'+displayName(w)+'" and all entries? This cannot be undone.')) return;
   const idToDelete=editingWineId;
   closeWineForm();
   await deleteWineById(idToDelete);
@@ -1313,7 +1372,7 @@ function fillWineForm(d){
 }
 
 // ══════════════════════════════════════════════════
-// AI NOTES + PEER RANKINGS
+// AI NOTES
 // ══════════════════════════════════════════════════
 async function genNotes(){
   const name=document.getElementById('f-name').value.trim();
@@ -1323,28 +1382,13 @@ async function genNotes(){
     document.getElementById('f-type').value,document.getElementById('f-region').value,
     document.getElementById('f-grape').value].filter(Boolean).join(', ');
   try{
-    const resp=await callClaude(`Generate professional tasting notes AND look up any known critic or public ratings for this wine: ${desc}.
-
-Return ONLY valid JSON, no markdown:
-{
-  "aiNotes":"2-3 sentence professional note on colour, aroma, flavour and finish",
-  "aiNoteChips":["blackberry","vanilla","oak"],
-  "peerRatings": [
-    {"source":"Wine Spectator","score":"92","scale":"100","note":"Brief descriptor if known"},
-    {"source":"James Suckling","score":"90","scale":"100","note":""},
-    {"source":"Vivino","score":"4.1","scale":"5","note":"avg community rating"}
-  ]
-}
-
-For peerRatings: include any real published scores you know for this specific wine and vintage. Use only sources you are confident about — Wine Spectator, James Suckling, Robert Parker/Wine Advocate, Jancis Robinson, Decanter, Vivino community avg. If you don't know a score with confidence, omit that source entirely. Return an empty array if unknown.
-12-16 specific tasting descriptor chips.`);
+    const resp=await callClaude(`Generate professional tasting notes for: ${desc}.
+Return ONLY valid JSON: {"aiNotes":"2-3 sentence note","aiNoteChips":["descriptor1"],"peerRatings":[{"source":"Wine Spectator","score":"92","scale":"100","note":""}]}
+12-16 chips. Only include peerRatings you are confident about. Empty array if unknown.`);
     const d=JSON.parse(resp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
     showNotes(d.aiNotes,d.aiNoteChips||[]);
-    // Store peer ratings on the form for saving with the wine
     currentPeerRatings=d.peerRatings||[];
-    if(currentPeerRatings.length){
-      renderPeerRatingsForm(currentPeerRatings);
-    }
+    if(currentPeerRatings.length) renderPeerRatingsForm(currentPeerRatings);
     toast('Tasting notes generated');
   }catch(e){ console.error(e); toast('Could not generate notes'); }
   finally{ spin.classList.add('hidden'); }
@@ -1353,10 +1397,8 @@ For peerRatings: include any real published scores you know for this specific wi
 function renderPeerRatingsForm(ratings){
   let box=document.getElementById('peer-ratings-form-box');
   if(!box){
-    box=document.createElement('div');
-    box.id='peer-ratings-form-box';
-    box.className='aibox';
-    box.style.marginTop='12px';
+    box=document.createElement('div'); box.id='peer-ratings-form-box';
+    box.className='aibox'; box.style.marginTop='12px';
     document.getElementById('ai-notes-box').after(box);
   }
   box.innerHTML=`<div class="aibox-lbl">Peer Rankings Found</div>`+
@@ -1374,292 +1416,61 @@ function showNotes(notes,chips){
 }
 
 // ══════════════════════════════════════════════════
-// TASTING GAME — scored out of 100
-// Grape: 30pts, Region: 30pts, Age: 20pts, Notes: 10pts (max)
-// ══════════════════════════════════════════════════
-const ALL_NOTES=['blackberry','cherry','plum','raspberry','strawberry','blueberry','currant','fig',
-  'prune','raisin','peach','apricot','lemon','lime','grapefruit','apple','pear','melon',
-  'vanilla','oak','cedar','tobacco','smoke','toast','leather','truffle','earth','mushroom',
-  'wet stone','mineral','pepper','clove','cinnamon','nutmeg','licorice','anise',
-  'violet','rose','lavender','jasmine','coffee','chocolate','caramel','butter','cream',
-  'honey','almond','hazelnut','graphite','iron','brine','green pepper','eucalyptus','dried herbs'];
-
-// Age brackets — midpoint used for scoring
-const AGE_BRACKETS=[
-  {val:'1-2',mid:1.5},
-  {val:'3-5',mid:4},
-  {val:'6-8',mid:7},
-  {val:'9-12',mid:10.5},
-  {val:'13-17',mid:15},
-  {val:'18-25',mid:21.5},
-  {val:'25+',mid:28}
-];
-
-function loadTasting(){
-  const id=document.getElementById('t-wine-sel').value;
-  if(!id){document.getElementById('tasting-body').classList.add('hidden');return;}
-  const w=wines.find(x=>x.id===id); if(!w) return;
-  tastingSelected=[]; tastingGrapeSelected=[]; tastingRevealed=false;
-  const isBlind=w.blind==='yes';
-  document.getElementById('t-name').textContent=displayName(w);
-  document.getElementById('t-meta').textContent=isBlind?'Blind tasting':'';
-  document.getElementById('t-badge').innerHTML=badge(w.type);
-  document.getElementById('t-result').classList.add('hidden');
-  document.getElementById('t-reveal-btn').disabled=false;
-  // Reset guesses
-  ['t-region-guess','t-age-guess','t-price-guess'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
-  // Reset grape chips
-  document.querySelectorAll('#t-grape-chips-red .chip, #t-grape-chips-white .chip').forEach(c=>c.classList.remove('sel','hit','miss','rev'));
-  document.getElementById('t-grape-selected-display').textContent='';
-  // Build note chips
-  const known=w.aiNoteChips||[];
-  const pool=[...new Set([...known,...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
-  document.getElementById('t-chips').innerHTML=shuffle(pool).map(n=>
-    `<button class="chip" onclick="toggleNote(this,'${n}')">${n}</button>`).join('');
-  document.getElementById('tasting-body').classList.remove('hidden');
-}
-
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-function toggleGrapeChip(el, grape){
-  if(tastingRevealed) return;
-  el.classList.toggle('sel');
-  if(el.classList.contains('sel')){
-    if(!tastingGrapeSelected.includes(grape)) tastingGrapeSelected.push(grape);
-  } else {
-    tastingGrapeSelected=tastingGrapeSelected.filter(g=>g!==grape);
-  }
-  const disp=document.getElementById('t-grape-selected-display');
-  if(tastingGrapeSelected.length){
-    disp.textContent='Your guess: '+tastingGrapeSelected.join(', ');
-  } else {
-    disp.textContent='';
-  }
-}
-
-function toggleNote(el,note){
-  if(tastingRevealed) return;
-  el.classList.toggle('sel');
-  tastingSelected=el.classList.contains('sel')?[...tastingSelected,note]:tastingSelected.filter(n=>n!==note);
-}
-
-async function revealTasting(){
-  const wineId=document.getElementById('t-wine-sel').value;
-  const w=wines.find(x=>x.id===wineId);
-  if(!w){toast('Select a wine');return;}
-
-  const grapeGuess=tastingGrapeSelected.join(', ');
-  const regionGuess=document.getElementById('t-region-guess').value;
-  const ageGuess=document.getElementById('t-age-guess').value;
-  const priceGuess=document.getElementById('t-price-guess').value;
-
-  if(!tastingGrapeSelected.length||!regionGuess||!ageGuess||!priceGuess){
-    toast('Please complete all five sections before revealing');return;
-  }
-
-  tastingRevealed=true;
-  document.getElementById('t-reveal-btn').disabled=true;
-  document.getElementById('t-reveal-btn').textContent='Scoring...';
-
-  // ── NOTES SCORE (up to 10pts) ──
-  const known=w.aiNoteChips||[];
-  const correct=tastingSelected.filter(n=>known.includes(n));
-  const wrong=tastingSelected.filter(n=>!known.includes(n));
-  const notePct=Math.max(0, Math.min(10, correct.length*1 - wrong.length*0.5));
-
-  // Color chips
-  document.querySelectorAll('#t-chips .chip').forEach(chip=>{
-    const n=chip.textContent; chip.classList.remove('sel');
-    if(known.includes(n)) chip.classList.add(tastingSelected.includes(n)?'hit':'rev');
-    else if(tastingSelected.includes(n)) chip.classList.add('miss');
-  });
-
-  // Disable grape chips visually
-  document.querySelectorAll('#t-grape-chips-red .chip, #t-grape-chips-white .chip').forEach(c=>{
-    c.style.opacity='0.6'; c.style.cursor='default';
-  });
-
-  // ── AGE SCORE (up to 20pts) ──
-  let ageScore=0, ageDetail='';
-  const actualYear=parseInt(w.year)||0;
-  const currentYear=new Date().getFullYear();
-  const actualAge=actualYear>0?currentYear-actualYear:null;
-  const guessedBracket=AGE_BRACKETS.find(b=>b.val===ageGuess);
-
-  if(actualAge!==null&&guessedBracket){
-    const diff=Math.abs(guessedBracket.mid-actualAge);
-    if(diff<=1.5) ageScore=20;
-    else if(diff<=3.5) ageScore=16;
-    else if(diff<=6) ageScore=10;
-    else if(diff<=10) ageScore=5;
-    else ageScore=0;
-    ageDetail=actualYear?`Actual vintage: ${actualYear} (${actualAge} yrs old)`:'Vintage not recorded';
-  } else if(!actualAge){
-    ageScore=10; // no vintage stored, award half
-    ageDetail='No vintage on record — partial credit';
-  }
-
-  // ── PRICE SCORE (up to 10pts) ──
-  const PRICE_BRACKETS=['Under $20','$20-30','$30-50','$50-75','$75-100','$100-150','$150-200','$200+'];
-  let priceScore=0, priceDetail='';
-  const actualPrice=w.price||'';
-  const guessIdx=PRICE_BRACKETS.indexOf(priceGuess);
-  const actualIdx=PRICE_BRACKETS.indexOf(actualPrice);
-  if(!actualPrice){
-    priceScore=5; priceDetail='No price on record — partial credit';
-  } else if(guessIdx!==-1&&actualIdx!==-1){
-    const diff=Math.abs(guessIdx-actualIdx);
-    if(diff===0){priceScore=10;priceDetail=`Exact — ${actualPrice}`;}
-    else if(diff===1){priceScore=7;priceDetail=`One bracket off — actual: ${actualPrice}`;}
-    else if(diff===2){priceScore=4;priceDetail=`Two brackets off — actual: ${actualPrice}`;}
-    else{priceScore=0;priceDetail=`Actual: ${actualPrice}`;}
-  }
-
-  // ── GRAPE & REGION — scored by AI ──
-  let grapeScore=0, regionScore=0, grapeDetail='', regionDetail='';
-  try{
-    const aiResp=await callClaude(`You are a sommelier scoring a blind tasting. Score these guesses:
-
-Wine: ${w.name||'Unknown'}, ${w.grape||'unknown grape'}, ${w.region||'unknown region'}, ${w.year||'unknown year'}
-
-Grape guess: "${grapeGuess}" vs actual: "${w.grape||'unknown'}"
-Note: The player may have selected multiple grapes (for blends). Award full or partial credit if they correctly identified the primary grape or meaningful components of a blend.
-Region guess: "${regionGuess}" vs actual: "${w.region||'unknown'}"
-
-Score the GRAPE guess out of 30:
-- 30pts: exact match or all major blend components correctly identified
-- 22-28pts: primary grape correct, or same family (e.g. Cab Sauv vs Cab Franc)
-- 14-20pts: got one component of a blend right, or similar profile
-- 6-12pts: same broad category but different grape
-- 0-5pts: completely wrong
-
-Score the REGION guess out of 30:
-- 30pts: exact match or same sub-region
-- 22-28pts: same country/major region (e.g. Napa vs Sonoma, Bordeaux vs Burgundy)
-- 14-20pts: same general world region (e.g. France vs Italy, California vs Oregon)
-- 6-12pts: Old World vs Old World or New World vs New World
-- 0-5pts: completely different
-
-Return ONLY valid JSON, no markdown:
-{"grapeScore":0,"grapeDetail":"one sentence explanation","regionScore":0,"regionDetail":"one sentence explanation"}`);
-
-    const scored=JSON.parse(aiResp.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim());
-    grapeScore=Math.min(30,Math.max(0,Math.round(scored.grapeScore||0)));
-    regionScore=Math.min(30,Math.max(0,Math.round(scored.regionScore||0)));
-    grapeDetail=scored.grapeDetail||'';
-    regionDetail=scored.regionDetail||'';
-  } catch(e){
-    // Fallback: simple string match
-    const gNorm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
-    const actualGrapeNorm=gNorm(w.grape||'');
-    grapeScore=tastingGrapeSelected.some(g=>gNorm(g).includes(actualGrapeNorm.substring(0,4))||actualGrapeNorm.includes(gNorm(g).substring(0,4)))?20:0;
-    regionScore=gNorm(regionGuess).includes(gNorm(w.region||'').split(',')[0].trim())||gNorm(w.region||'').includes(gNorm(regionGuess).split(',')[0].trim())?20:0;
-    grapeDetail='Scored by text match (AI unavailable)';
-    regionDetail='Scored by text match (AI unavailable)';
-  }
-
-  // ── TOTAL ──
-  const total=Math.round(grapeScore+regionScore+ageScore+notePct+priceScore);
-
-  // ── DISPLAY ──
-  document.getElementById('t-score-num').textContent=total;
-
-  // Breakdown pills
-  const pillClass=s=>s>=20?'good':s>=10?'ok':'bad';
-  const notePillClass=notePct>=7?'good':notePct>=3?'ok':'bad';
-  const pricePillClass=priceScore>=8?'good':priceScore>=4?'ok':'bad';
-  document.getElementById('t-breakdown').innerHTML=`
-    <div class="t-breakdown-pill ${pillClass(grapeScore)}">
-      <div class="t-bp-score">${grapeScore}<span style="font-size:14px;color:var(--ink)">/30</span></div>
-      <div class="t-bp-label">Grape</div>
-      <div class="t-bp-detail">${grapeDetail}</div>
-    </div>
-    <div class="t-breakdown-pill ${pillClass(regionScore)}">
-      <div class="t-bp-score">${regionScore}<span style="font-size:14px;color:var(--ink)">/30</span></div>
-      <div class="t-bp-label">Region</div>
-      <div class="t-bp-detail">${regionDetail}</div>
-    </div>
-    <div class="t-breakdown-pill ${pillClass(ageScore)}">
-      <div class="t-bp-score">${ageScore}<span style="font-size:14px;color:var(--ink)">/20</span></div>
-      <div class="t-bp-label">Vintage Age</div>
-      <div class="t-bp-detail">${ageDetail}</div>
-    </div>
-    <div class="t-breakdown-pill ${notePillClass}">
-      <div class="t-bp-score">${notePct.toFixed(1)}<span style="font-size:14px;color:var(--ink)">/10</span></div>
-      <div class="t-bp-label">Tasting Notes</div>
-      <div class="t-bp-detail">${correct.length} correct, ${wrong.length} wrong</div>
-    </div>
-    <div class="t-breakdown-pill ${pricePillClass}" style="grid-column:1/-1;">
-      <div class="t-bp-score">${priceScore}<span style="font-size:14px;color:var(--ink)">/10</span></div>
-      <div class="t-bp-label">Price Range</div>
-      <div class="t-bp-detail">${priceDetail}</div>
-    </div>`;
-
-  // Verdict
-  const verdicts=[
-    [0,29,'A bold attempt. The wine has many things to teach you.'],
-    [30,49,'Getting warmer. Your palate is developing.'],
-    [50,64,'Respectable. You clearly have opinions about wine.'],
-    [65,79,'Impressive. Are you secretly a sommelier?'],
-    [80,89,'Outstanding. You have wasted your career in finance.'],
-    [90,100,'Extraordinary. Either a gift or a cheat sheet.']
-  ];
-  document.getElementById('t-verdict').textContent=(verdicts.find(([lo,hi])=>total>=lo&&total<=hi)||[])[2]||'';
-
-  // Answers
-  document.getElementById('t-answers').innerHTML=`
-    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Grape:</strong> ${w.grape||'Not recorded'}</div>
-    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Region:</strong> ${w.region||'Not recorded'}</div>
-    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Vintage:</strong> ${w.year||'Not recorded'}${actualAge?' ('+actualAge+' years old)':''}</div>
-    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Price:</strong> ${w.price||'Not recorded'}</div>
-    <div><strong style="color:var(--gold);">Wine:</strong> ${w.blind==='yes'?w.name:displayName(w)}</div>`;
-
-  document.getElementById('t-expert').textContent=w.aiNotes||'No expert notes for this wine.';
-  document.getElementById('t-result').classList.remove('hidden');
-  document.getElementById('t-reveal-btn').textContent='Reveal & Score';
-}
-
-function resetTasting(){ loadTasting(); }
-
-// ══════════════════════════════════════════════════
-// REPORT CARD
+// REPORT CARD — uses playerEntries enjoyment for rankings
 // ══════════════════════════════════════════════════
 function renderReport(){
   const el=document.getElementById('report-body');
-  if(!wines.length||!reviews.length){
-    el.innerHTML='<div class="empty">Add wines and reviews to generate the report.</div>';
+  const locked=playerEntries.filter(e=>e.status==='locked');
+  if(!wines.length||!locked.length){
+    el.innerHTML='<div class="empty">No locked entries yet.</div>';
     document.getElementById('roast-section').classList.add('hidden'); return;
   }
-  const sc=wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
-  if(!sc.length){el.innerHTML='<div class="empty">No reviews yet.</div>';return;}
-  const win=sc[0], los=sc[sc.length-1];
-  const mp=reviews.filter(r=>r.notes).sort((a,b)=>b.notes.length-a.notes.length)[0];
+
+  const sc=wines.map(w=>({w,avg:getAvgEnjoyment(w.id),count:locked.filter(e=>String(e.wineId)===String(w.id)).length}))
+    .filter(x=>x.avg!==null).sort((a,b)=>b.avg-a.avg);
+  if(!sc.length){el.innerHTML='<div class="empty">No ratings yet.</div>';return;}
+
+  const win=sc[0],los=sc[sc.length-1];
+
+  // Best bringer
   const bmap={};
   wines.forEach(w=>{
-    if(w.bringer){const s=getScore(w.id);if(!s)return;
+    const avg=getAvgEnjoyment(w.id);
+    if(w.bringer&&avg!==null){
       if(!bmap[w.bringer])bmap[w.bringer]={t:0,c:0};
-      bmap[w.bringer].t+=s.composite; bmap[w.bringer].c++;}
+      bmap[w.bringer].t+=avg; bmap[w.bringer].c++;
+    }
   });
   const bs=Object.entries(bmap).sort((a,b)=>b[1].t/b[1].c-a[1].t/a[1].c);
+
+  // Most pretentious note
+  const mp=locked.filter(e=>e.notes).sort((a,b)=>b.notes.length-a.notes.length)[0];
+
+  // Top blind game scores
+  const topScores=locked.filter(e=>e.score).sort((a,b)=>b.score.total-a.score.total).slice(0,5);
+
   el.innerHTML=`
     <div class="rep-sec"><div class="rep-title">Wine of the Night</div>
-      <div class="rep-item"><strong>${displayName(win.w)}</strong> &nbsp;&middot;&nbsp; ${win.s.composite.toFixed(1)} / 5.0 &nbsp;${badge(win.w.type)}${win.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+win.w.bringer:''}</div></div>
+      <div class="rep-item"><strong>${displayName(win.w)}</strong> &nbsp;&middot;&nbsp; ${win.avg.toFixed(1)}/10 &nbsp;${badge(win.w.type)}${win.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+win.w.bringer:''}</div></div>
     <div class="rep-sec"><div class="rep-title">Final Rankings</div>
-      ${sc.map(({w,s},i)=>`<div class="rep-item">${i+1}. <strong>${displayName(w)}</strong> &nbsp;&middot;&nbsp; ${s.composite.toFixed(1)} &nbsp;&middot;&nbsp; ${s.count} review${s.count>1?'s':''}</div>`).join('')}</div>
-    ${bs.length?`<div class="rep-sec"><div class="rep-title">Best Bringer</div>${bs.map(([n,d],i)=>`<div class="rep-item">${i+1}. <strong>${n}</strong> &nbsp;&middot;&nbsp; Avg. ${(d.t/d.c).toFixed(1)}</div>`).join('')}</div>`:''}
+      ${sc.map(({w,avg,count},i)=>`<div class="rep-item">${i+1}. <strong>${displayName(w)}</strong> &nbsp;&middot;&nbsp; ${avg.toFixed(1)}/10 &nbsp;&middot;&nbsp; ${count} rating${count!==1?'s':''}</div>`).join('')}</div>
+    ${bs.length?`<div class="rep-sec"><div class="rep-title">Best Bringer</div>${bs.map(([n,d],i)=>`<div class="rep-item">${i+1}. <strong>${n}</strong> &nbsp;&middot;&nbsp; Avg. ${(d.t/d.c).toFixed(1)}/10</div>`).join('')}</div>`:''}
+    ${topScores.length?`<div class="rep-sec"><div class="rep-title">Top Blind Game Scores</div>${topScores.map((e,i)=>`<div class="rep-item">${i+1}. <strong>${e.reviewer}</strong> &nbsp;&middot;&nbsp; ${e.score.total}/100 &nbsp;&middot;&nbsp; ${displayName(wines.find(w=>w.id===e.wineId)||{name:'?'})}</div>`).join('')}</div>`:''}
     ${mp?`<div class="rep-sec"><div class="rep-title">Most Pretentious Note</div><div class="rep-item"><strong>${mp.reviewer}</strong>: "${mp.notes}"</div></div>`:''}
-    ${los&&los.w.id!==win.w.id?`<div class="rep-sec"><div class="rep-title">Bottom of the Cellar</div><div class="rep-item"><strong>${displayName(los.w)}</strong> &nbsp;&middot;&nbsp; ${los.s.composite.toFixed(1)} / 5.0${los.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+los.w.bringer:''}</div></div>`:''}`;
+    ${los&&los.w.id!==win.w.id?`<div class="rep-sec"><div class="rep-title">Bottom of the Cellar</div><div class="rep-item"><strong>${displayName(los.w)}</strong> &nbsp;&middot;&nbsp; ${los.avg.toFixed(1)}/10${los.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+los.w.bringer:''}</div></div>`:''}`;
   document.getElementById('roast-section').classList.remove('hidden');
 }
 
 async function genRoast(){
-  const sc=wines.map(w=>({w,s:getScore(w.id)})).filter(x=>x.s).sort((a,b)=>b.s.composite-a.s.composite);
-  if(!sc.length){toast('Need reviews first');return;}
+  const locked=playerEntries.filter(e=>e.status==='locked');
+  if(!locked.length){toast('Need locked entries first');return;}
   const spin=document.getElementById('roast-spin'); spin.classList.remove('hidden');
-  const summary=sc.map(({w,s},i)=>{
-    const rs=reviews.filter(r=>String(r.wineId)===String(w.id));
-    const notes=rs.map(r=>r.notes).filter(Boolean).join('; ');
-    return`${i+1}. ${displayName(w)} (${s.composite.toFixed(1)}/5)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Notes: '+notes:''}`;
+  const sc=wines.map(w=>({w,avg:getAvgEnjoyment(w.id)})).filter(x=>x.avg!==null).sort((a,b)=>b.avg-a.avg);
+  const summary=sc.map(({w,avg},i)=>{
+    const entries=locked.filter(e=>String(e.wineId)===String(w.id));
+    const notes=entries.map(e=>e.notes).filter(Boolean).join('; ');
+    const topScore=entries.filter(e=>e.score).sort((a,b)=>b.score.total-a.score.total)[0];
+    return`${i+1}. ${displayName(w)} (${avg.toFixed(1)}/10)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Notes: '+notes:''}${topScore?' Best blind score: '+topScore.reviewer+' '+topScore.score.total+'/100':''}`;
   }).join('\n');
   try{
     const roast=await callClaude(`You are a sarcastically brilliant sommelier MC at a finance industry chalet weekend at Osler Bluff in Collingwood, Ontario. Wine results:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph end-of-night roast. Name names, call out scores, mock tasting notes, shame whoever brought the worst wine. Finance humour welcome. Charming but merciless. Plain text only, no markdown.`);
@@ -1676,42 +1487,27 @@ function openNewEvent(){
   document.getElementById('new-event-name').value='';
   document.getElementById('event-modal').classList.add('open');
 }
-function closeEventModal(){
-  document.getElementById('event-modal').classList.remove('open');
-}
+function closeEventModal(){ document.getElementById('event-modal').classList.remove('open'); }
 
 async function archiveAndNewEvent(){
   const name=document.getElementById('new-event-name').value.trim();
   if(!name){toast('Enter an event name');return;}
-
-  // Snapshot current wines and reviews
-  const snapshot={
-    name,
-    archivedAt:Date.now(),
-    wines: wines.map(w=>({...w})),
-    reviews: reviews.map(r=>({...r}))
-  };
-
+  const snapshot={name,archivedAt:Date.now(),wines:wines.map(w=>({...w})),entries:playerEntries.map(e=>({...e}))};
   if(useFirebase){
-    // Save archive
-    await dbPush(dbRef(DB,'archivedEvents'), snapshot);
-    // Clear current wines and reviews
-    await dbSet(dbRef(DB,'wines'), null);
-    await dbSet(dbRef(DB,'reviews'), null);
-    // Save new event name (blank = fresh start)
-    await dbSet(dbRef(DB,'currentEventName'), '');
+    await dbPush(dbRef(DB,'archivedEvents'),snapshot);
+    await dbSet(dbRef(DB,'wines'),null);
+    await dbSet(dbRef(DB,'reviews'),null);
+    await dbSet(dbRef(DB,'playerEntries'),null);
+    await dbSet(dbRef(DB,'currentEventName'),'');
   } else {
-    archivedEvents.push({...snapshot, id:Date.now().toString()});
-    wines=[]; reviews=[];
+    archivedEvents.push({...snapshot,id:Date.now().toString()});
+    wines=[]; reviews=[]; playerEntries=[];
     saveLocal();
-    localStorage.setItem('cellar-archivedEvents', JSON.stringify(archivedEvents));
+    localStorage.setItem('cellar-archivedEvents',JSON.stringify(archivedEvents));
     renderAll();
   }
-  closeEventModal();
-  currentEventName='';
-  updateEventHeader();
-  toast('Archived as "'+name+'" — fresh start!');
-  showTab('rate');
+  closeEventModal(); currentEventName=''; openWineId=null;
+  updateEventHeader(); toast('Archived as "'+name+'" — fresh start!'); showTab('rankings');
 }
 
 function renderEvents(){
@@ -1720,53 +1516,52 @@ function renderEvents(){
   const sorted=[...archivedEvents].sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
   el.innerHTML=sorted.map(ev=>{
     const evWines=ev.wines||[];
-    const evReviews=ev.reviews||[];
+    const evEntries=ev.entries||[];
     const date=ev.archivedAt?new Date(ev.archivedAt).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'}):'';
-    // Compute scores for this event
     const scored=evWines.map(w=>{
-      const rs=evReviews.filter(r=>String(r.wineId)===String(w.id));
-      if(!rs.length) return null;
-      const avg=k=>rs.reduce((s,r)=>s+(Number(r[k])||0),0)/rs.length;
-      const composite=DIMS.reduce((s,k)=>s+avg(k),0)/DIMS.length;
-      return{w,composite,count:rs.length};
-    }).filter(Boolean).sort((a,b)=>b.composite-a.composite);
-
+      const locked=evEntries.filter(e=>String(e.wineId)===String(w.id)&&e.status==='locked');
+      if(!locked.length) return null;
+      const avg=locked.reduce((s,e)=>s+(Number(e.enjoyment)||0),0)/locked.length;
+      return{w,avg,count:locked.length};
+    }).filter(Boolean).sort((a,b)=>b.avg-a.avg);
     return`<div class="event-card" id="ecard-${ev.id}" onclick="toggleEventCard('${ev.id}')">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
           <div class="event-name">${ev.name}</div>
-          <div class="event-meta">${date} &middot; ${evWines.length} wine${evWines.length!==1?'s':''} &middot; ${evReviews.length} review${evReviews.length!==1?'s':''}</div>
+          <div class="event-meta">${date} &middot; ${evWines.length} wine${evWines.length!==1?'s':''} &middot; ${evEntries.filter(e=>e.status==='locked').length} entries</div>
         </div>
         <div style="font-family:'Noto Serif',serif;font-size:18px;color:var(--ink);" id="echev-${ev.id}">&#8964;</div>
       </div>
       <div class="event-rankings" id="erank-${ev.id}">
-        ${scored.length?scored.map(({w,composite,count},i)=>`
+        ${scored.length?scored.map(({w,avg,count},i)=>`
           <div style="display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);">
             <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:var(--border-hi);min-width:22px;">${i+1}</div>
             <div style="flex:1;">
               <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);">${displayName(w)}</div>
-              <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${count} review${count!==1?'s':''}</div>
+              <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);">${count} rating${count!==1?'s':''}</div>
             </div>
-            <div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);">${composite.toFixed(1)}</div>
+            <div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);">${avg.toFixed(1)}</div>
           </div>`).join('')
-        :'<div style="color:var(--ink);font-style:italic;font-size:14px;padding-top:8px;">No reviews in this event.</div>'}
+        :'<div style="color:var(--ink);font-style:italic;font-size:14px;padding-top:8px;">No entries in this event.</div>'}
       </div>
     </div>`;
   }).join('');
 }
 
 function toggleEventCard(id){
-  const rank=document.getElementById('erank-'+id);
-  const chev=document.getElementById('echev-'+id);
+  const rank=document.getElementById('erank-'+id),chev=document.getElementById('echev-'+id);
   if(!rank) return;
-  const isOpen=rank.classList.contains('open');
   rank.classList.toggle('open');
-  chev.innerHTML=isOpen?'&#8964;':'&#8963;';
+  chev.innerHTML=rank.classList.contains('open')?'&#8963;':'&#8964;';
 }
 
 // ══════════════════════════════════════════════════
-// CLAUDE API via Cloudflare Worker
+// HELPERS
 // ══════════════════════════════════════════════════
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function closeModal(){ document.getElementById('wine-modal').classList.remove('open'); }
+
 async function callClaude(prompt){
   const res=await fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
@@ -1780,7 +1575,6 @@ async function callClaude(prompt){
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
-DIMS.forEach(k=>buildHalfStars(k));
 document.getElementById('wine-modal').addEventListener('click',e=>{if(e.target===document.getElementById('wine-modal'))closeModal();});
 document.getElementById('wine-form-modal').addEventListener('click',e=>{if(e.target===document.getElementById('wine-form-modal'))closeWineForm();});
 setTimeout(()=>{if(!useFirebase)fallbackLocal();},4000);
