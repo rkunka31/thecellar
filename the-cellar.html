@@ -130,7 +130,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 /* WINE BOTTLE PICKER */
 .bottle-wrap{display:flex;align-items:flex-end;gap:10px;margin-bottom:6px;}
-.bottle-picker{position:relative;width:52px;height:130px;cursor:pointer;flex-shrink:0;touch-action:none;user-select:none;}
+.bottle-picker{position:relative;width:52px;height:160px;cursor:pointer;flex-shrink:0;touch-action:none;user-select:none;}
 .bottle-picker svg{width:100%;height:100%;}
 .bottle-labels{display:flex;flex-direction:column;justify-content:space-between;height:100px;padding:14px 0 0;margin-left:2px;}
 .bottle-label-item{font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);letter-spacing:1px;cursor:pointer;transition:color .15s;line-height:1;}
@@ -531,6 +531,7 @@ let DB,dbRef,dbSet,dbPush,dbOnValue,dbUpdate;
 let editingWineId=null;
 // Per-wine open state
 let openWineId=null;
+let expandedPlayer=null;
 
 const WORKER='https://cellar-ai.rkunka31.workers.dev';
 
@@ -661,7 +662,16 @@ function renderAll(){
 
 function updateEventHeader(){
   const sub=document.querySelector('.hdr-sub');
-  if(sub) sub.textContent=currentEventName?currentEventName:"A king's guide to wine";
+  if(!sub) return;
+  if(currentEventName){
+    sub.textContent=currentEventName;
+  } else {
+    // Restore a random subtitle if not already set to one
+    if(!sub.dataset.set){
+      sub.textContent=SUBTITLES[Math.floor(Math.random()*SUBTITLES.length)];
+      sub.dataset.set='1';
+    }
+  }
 }
 
 // ══════════════════════════════════════════════════
@@ -682,47 +692,72 @@ function renderRankings(){
   const locked=playerEntries.filter(e=>e.status==='locked');
   let leaderboardHtml='';
   if(locked.length){
-    // Group by reviewer
     const players={};
     locked.forEach(e=>{
-      if(!players[e.reviewer]) players[e.reviewer]={winesRated:0,totalBlind:0,blindEntries:0,enjoyTotal:0};
-      players[e.reviewer].winesRated++;
-      players[e.reviewer].enjoyTotal+=(Number(e.enjoyment)||0);
-      if(e.score){players[e.reviewer].totalBlind+=e.score.total; players[e.reviewer].blindEntries++;}
+      if(!players[e.reviewer]) players[e.reviewer]={entries:[]};
+      players[e.reviewer].entries.push(e);
     });
-    // Scoring: avg enjoyment given (normalized) + avg blind score. Winner = highest combined.
     const ranked=Object.entries(players).map(([name,p])=>{
-      const avgEnjoy=p.winesRated?p.enjoyTotal/p.winesRated:0;
-      const avgBlind=p.blindEntries?p.totalBlind/p.blindEntries:0;
-      // Combined: enjoyment avg (×5 to weight equally with blind /100) + blind avg
-      const combined=(avgEnjoy*5)+avgBlind;
-      return{name,winesRated:p.winesRated,totalBlind:p.totalBlind,blindEntries:p.blindEntries,avgEnjoy,avgBlind,combined};
-    }).sort((a,b)=>b.combined-a.combined);
-
+      const blindEntries=p.entries.filter(e=>e.score);
+      const winesRated=p.entries.length;
+      const avgBlind=blindEntries.length?blindEntries.reduce((s,e)=>s+e.score.total,0)/blindEntries.length:null;
+      const totalBlind=blindEntries.reduce((s,e)=>s+e.score.total,0);
+      return{name,winesRated,blindCount:blindEntries.length,avgBlind,totalBlind,entries:p.entries};
+    }).sort((a,b)=>{
+      if(a.avgBlind===null&&b.avgBlind===null) return b.winesRated-a.winesRated;
+      if(a.avgBlind===null) return 1;
+      if(b.avgBlind===null) return -1;
+      if(Math.abs(b.avgBlind-a.avgBlind)>0.01) return b.avgBlind-a.avgBlind;
+      return b.blindCount-a.blindCount;
+    });
     leaderboardHtml=`<div style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="clabel" style="margin:0;">Player Leaderboard</div>
-        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);">Enjoy avg + blind score</div>
+        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);">avg tasting score</div>
       </div>
       ${ranked.map((p,i)=>{
         const isCurrent=p.name===currentReviewer;
-        const isWinner=i===0;
-        return`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isCurrent?'rgba(123,29,46,.18)':'rgba(0,0,0,.18)'};border:1px solid ${isWinner?'var(--gold)':isCurrent?'rgba(184,150,90,.3)':'var(--border)'};border-radius:3px;margin-bottom:7px;">
-          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:${isWinner?'var(--gold)':'var(--border-hi)'};min-width:22px;">${i+1}</div>
-          <div style="flex:1;">
-            <div style="font-family:'Noto Serif',serif;font-size:14px;color:var(--cream);">${p.name}${isWinner?' &#127942;':''}${isCurrent?' <span style="font-size:10px;color:var(--gold);">(you)</span>':''}</div>
-            <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${p.winesRated} wine${p.winesRated!==1?'s':''} rated${p.blindEntries?' &middot; blind: '+p.totalBlind+'pts':''}</div>
+        const isWinner=i===0&&p.avgBlind!==null;
+        const isExpanded=expandedPlayer===p.name;
+        const wineRows=p.entries.map(e=>{
+          const w=wines.find(x=>x.id===e.wineId);
+          const wname=w?displayName(w):'Unknown';
+          const scoreStr=e.score
+            ?`<span style="color:var(--gold);font-family:'Playfair Display',serif;font-size:15px;">${e.score.total}</span>/100`
+            :'<span style="font-size:11px;color:var(--ink);">enjoy only</span>';
+          return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-family:'Noto Serif',serif;font-size:13px;color:var(--cream-d);">${wname}</div>
+              <div style="font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);margin-top:1px;">Enjoy: ${e.enjoyment!=null?e.enjoyment+'/10':'—'}${e.wouldBuyAgain?' &middot; '+e.wouldBuyAgain:''}</div>
+            </div>
+            <div style="font-family:'Noto Serif',serif;font-size:12px;">${scoreStr}</div>
+          </div>`;
+        }).join('');
+        const detailHtml=isExpanded?`<div style="padding:10px 14px 6px;border-top:1px solid var(--border);background:rgba(0,0,0,.12);">
+          <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Scores</div>
+          ${wineRows}
+        </div>`:'';
+        return`<div style="border:1px solid ${isWinner?'var(--gold)':isCurrent?'rgba(184,150,90,.3)':'var(--border)'};border-radius:3px;margin-bottom:7px;overflow:hidden;">
+          <div onclick="togglePlayerExpand('${p.name.replace(/'/g,'\\'')}')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isCurrent?'rgba(123,29,46,.18)':'rgba(0,0,0,.18)'};cursor:pointer;">
+            <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:${isWinner?'var(--gold)':'var(--border-hi)'};min-width:22px;">${i+1}</div>
+            <div style="flex:1;">
+              <div style="font-family:'Noto Serif',serif;font-size:14px;color:var(--cream);">${p.name}${isWinner?' &#127942;':''  }${isCurrent?' <span style="font-size:10px;color:var(--gold);">(you)</span>':''}</div>
+              <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${p.blindCount} tasting score${p.blindCount!==1?'s':''} &middot; ${p.winesRated} wine${p.winesRated!==1?'s':''} rated</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Playfair Display',serif;font-size:24px;color:${isWinner?'var(--gold)':'var(--cream)'};">${p.avgBlind!==null?p.avgBlind.toFixed(1):'—'}<span style="font-size:12px;color:var(--ink);">${p.avgBlind!==null?'/100':''}</span></div>
+              <div style="font-family:'Noto Serif',serif;font-size:9px;color:var(--ink);text-transform:uppercase;letter-spacing:1px;">avg score</div>
+            </div>
+            <div style="font-family:'Noto Serif',serif;font-size:14px;color:var(--ink);padding-left:4px;">${isExpanded?'&#8963;':'&#8964;'}</div>
           </div>
-          <div style="text-align:right;">
-            <div style="font-family:'Playfair Display',serif;font-size:24px;color:${isWinner?'var(--gold)':'var(--cream)'};">${p.avgEnjoy.toFixed(1)}<span style="font-size:12px;color:var(--ink)">/10</span></div>
-            <div style="font-family:'Noto Serif',serif;font-size:9px;color:var(--ink);text-transform:uppercase;letter-spacing:1px;">avg enjoy</div>
-          </div>
+          ${detailHtml}
         </div>`;
       }).join('')}
-      <div style="font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);font-style:italic;text-align:center;margin-top:6px;">Ranked by enjoyment average + blind tasting score</div>
+      <div style="font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);font-style:italic;text-align:center;margin-top:6px;">Ranked by average blind tasting score &middot; tap to expand</div>
     </div>`;
   }
 
+  // ── WINE LIST ──
   // ── WINE LIST ──
   const sorted=wines.map(w=>({w,avg:getAvgEnjoyment(w.id)}))
     .sort((a,b)=>{
@@ -775,6 +810,11 @@ function renderRankings(){
     const initVal=myE&&myE.enjoyment!=null?myE.enjoyment:5;
     initBottle(openWineId,initVal);
   }
+}
+
+function togglePlayerExpand(name){
+  expandedPlayer=expandedPlayer===name?null:name;
+  renderRankings();
 }
 
 function toggleWineEntry(wineId){
@@ -882,22 +922,37 @@ function buildEntryForm(w,entry){
   <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:14px;">Tap or drag the bottle to rate</div>
   <div class="bottle-wrap" id="bottle-wrap-${w.id}">
     <div class="bottle-picker" id="bottle-${w.id}" onmousedown="startBottleDrag(event,'${w.id}')" ontouchstart="startBottleDrag(event,'${w.id}')">
-      <svg viewBox="0 0 52 130" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 52 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <clipPath id="bottle-clip-${w.id}">
-            <path d="M20,8 L20,2 L32,2 L32,8 C38,12 42,20 42,30 L42,115 C42,122 37,127 26,127 C15,127 10,122 10,115 L10,30 C10,20 14,12 20,8 Z"/>
+            <!-- Full bottle silhouette: capsule top, narrow neck, sloped shoulders, wide body, rounded base -->
+            <path d="M22,4 L22,2 Q22,0 26,0 Q30,0 30,2 L30,4
+                     L30,22 Q30,22 30,22
+                     C34,25 41,33 41,42
+                     L41,140 Q41,150 26,150 Q11,150 11,140
+                     L11,42 C11,33 18,25 22,22
+                     L22,4 Z"/>
           </clipPath>
         </defs>
-        <!-- bottle outline -->
-        <path d="M20,8 L20,2 L32,2 L32,8 C38,12 42,20 42,30 L42,115 C42,122 37,127 26,127 C15,127 10,122 10,115 L10,30 C10,20 14,12 20,8 Z" fill="rgba(0,0,0,0.4)" stroke="rgba(184,150,90,0.35)" stroke-width="1.5"/>
-        <!-- fill layer clipped to bottle shape -->
-        <rect id="bottle-fill-${w.id}" x="0" y="127" width="52" height="0" fill="var(--merlot)" clip-path="url(#bottle-clip-${w.id})" style="transition:y .25s,height .25s;"/>
-        <!-- foil cap -->
-        <rect x="18" y="0" width="16" height="10" rx="2" fill="var(--gold)" opacity="0.7"/>
+        <!-- bottle body fill background -->
+        <path d="M22,4 L22,2 Q22,0 26,0 Q30,0 30,2 L30,4
+                 L30,22 C34,25 41,33 41,42
+                 L41,140 Q41,150 26,150 Q11,150 11,140
+                 L11,42 C11,33 18,25 22,22
+                 L22,4 Z"
+              fill="rgba(0,0,0,0.45)" stroke="rgba(184,150,90,0.4)" stroke-width="1.2"/>
+        <!-- wine fill — clipped to bottle shape, fills from bottom -->
+        <rect id="bottle-fill-${w.id}" x="0" y="150" width="52" height="0" fill="var(--merlot)" clip-path="url(#bottle-clip-${w.id})" style="transition:y .3s,height .3s;"/>
+        <!-- shoulder highlight line -->
+        <path d="M16,44 C18,36 34,36 36,44" fill="none" stroke="rgba(184,150,90,0.18)" stroke-width="1"/>
         <!-- label area -->
-        <rect id="bottle-label-rect-${w.id}" x="13" y="70" width="26" height="36" rx="2" fill="rgba(255,255,255,0.06)" stroke="rgba(184,150,90,0.2)" stroke-width="1"/>
-        <!-- score number on bottle -->
-        <text id="bottle-score-text-${w.id}" x="26" y="93" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" fill="var(--gold)" opacity="0.9">${enjoyVal}</text>
+        <rect id="bottle-label-rect-${w.id}" x="14" y="88" width="24" height="38" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(184,150,90,0.2)" stroke-width="0.8"/>
+        <!-- score on label -->
+        <text id="bottle-score-text-${w.id}" x="26" y="113" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" fill="var(--gold)" opacity="0.95">${enjoyVal}</text>
+        <!-- capsule/foil at very top -->
+        <rect x="20" y="0" width="12" height="8" rx="2" fill="var(--gold)" opacity="0.6"/>
+        <!-- neck ring -->
+        <rect x="20.5" y="20" width="11" height="3" rx="1" fill="rgba(184,150,90,0.3)"/>
       </svg>
     </div>
     <div style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0;flex:1;">
@@ -1033,12 +1088,12 @@ function setBottleVal(wineId, val){
 }
 
 function updateBottleUI(wineId,val){
-  // Fill: bottle body goes from y=10 (top of body) to y=127 (bottom), height=117
-  // fill pct from bottom
+  // Bottle body: top of fill area y=42, bottom y=150, total height=108 (in viewBox units)
+  // But the rect is in SVG space; we just control y and height of the fill rect
   const pct=val/10;
-  const totalH=117, topY=10;
+  const totalH=108, bottomY=150, topY=42;
   const fillH=Math.round(totalH*pct);
-  const fillY=topY+(totalH-fillH);
+  const fillY=bottomY-fillH;
   const fillEl=document.getElementById('bottle-fill-'+wineId);
   if(fillEl){ fillEl.setAttribute('y',fillY); fillEl.setAttribute('height',fillH); }
   const scoreEl=document.getElementById('bottle-score-text-'+wineId);
@@ -1047,11 +1102,11 @@ function updateBottleUI(wineId,val){
   if(bigEl) bigEl.textContent=val%1?val.toFixed(1):val;
   const wordEl=document.getElementById('bottle-word-'+wineId);
   if(wordEl) wordEl.textContent=ENJOY_LABELS[Math.round(val)]||'';
-  // highlight quick val buttons
   document.querySelectorAll(`#bottle-wrap-${wineId} .quick-val-btn`).forEach(b=>{
-    b.style.background=Number(b.textContent)===val?'var(--merlot)':'transparent';
-    b.style.color=Number(b.textContent)===val?'var(--cream)':'var(--ink)';
-    b.style.borderColor=Number(b.textContent)===val?'var(--merlot)':'var(--border)';
+    const active=Number(b.textContent)===val;
+    b.style.background=active?'var(--merlot)':'transparent';
+    b.style.color=active?'var(--cream)':'var(--ink)';
+    b.style.borderColor=active?'var(--merlot)':'var(--border)';
   });
   const input=document.getElementById('enjoy-'+wineId); if(input) input.value=val;
 }
@@ -1060,14 +1115,15 @@ function startBottleDrag(e,wineId){
   const el=document.getElementById('bottle-'+wineId); if(!el) return;
   e.preventDefault();
   const rect=el.getBoundingClientRect();
-  // bottle body: top=10/130 of height, bottom=127/130
-  const bodyTop=rect.top+(10/130)*rect.height;
-  const bodyBot=rect.top+(127/130)*rect.height;
+  // In viewBox (0 0 52 160): body starts at y=42, ends at y=150
+  // Map those proportions to DOM pixel positions
+  const bodyTop=rect.top+(42/160)*rect.height;
+  const bodyBot=rect.top+(150/160)*rect.height;
 
   function valFromY(clientY){
     const clamped=Math.max(bodyTop,Math.min(bodyBot,clientY));
     const pct=1-(clamped-bodyTop)/(bodyBot-bodyTop);
-    return Math.round(pct*20)/2; // 0.5 increments
+    return Math.round(pct*20)/2; // 0–10 in 0.5 steps
   }
 
   const startY=e.touches?e.touches[0].clientY:e.clientY;
