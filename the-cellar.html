@@ -738,7 +738,7 @@ function renderRankings(){
           ${wineRows}
         </div>`:'';
         return`<div style="border:1px solid ${isWinner?'var(--gold)':isCurrent?'rgba(184,150,90,.3)':'var(--border)'};border-radius:3px;margin-bottom:7px;overflow:hidden;">
-          <div onclick="togglePlayerExpand('${p.name.replace(/'/g,'\\'')}')" style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isCurrent?'rgba(123,29,46,.18)':'rgba(0,0,0,.18)'};cursor:pointer;">
+          <div data-player-name="${p.name}" onclick="togglePlayerExpand(this.dataset.playerName)" style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isCurrent?'rgba(123,29,46,.18)':'rgba(0,0,0,.18)'};cursor:pointer;">
             <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:${isWinner?'var(--gold)':'var(--border-hi)'};min-width:22px;">${i+1}</div>
             <div style="flex:1;">
               <div style="font-family:'Noto Serif',serif;font-size:14px;color:var(--cream);">${p.name}${isWinner?' &#127942;':''  }${isCurrent?' <span style="font-size:10px;color:var(--gold);">(you)</span>':''}</div>
