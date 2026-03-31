@@ -315,15 +315,43 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
       <!-- SECTION 1: Grape guess -->
       <hr class="rule">
-      <div class="clabel" style="margin-bottom:10px;">1 &mdash; Grape Variety <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
-      <div class="field" style="margin-bottom:6px;">
-        <select id="t-grape-guess">
-          <option value="">Select your guess</option>
-          <optgroup label="Red"><option>Cabernet Sauvignon</option><option>Merlot</option><option>Pinot Noir</option><option>Syrah / Shiraz</option><option>Grenache</option><option>Nebbiolo</option><option>Sangiovese</option><option>Tempranillo</option><option>Malbec</option><option>Zinfandel</option><option>Barbera</option><option>Cabernet Franc</option><option>Mourvedre</option><option>Gamay</option></optgroup>
-          <optgroup label="White"><option>Chardonnay</option><option>Sauvignon Blanc</option><option>Riesling</option><option>Pinot Grigio / Pinot Gris</option><option>Gewurztraminer</option><option>Viognier</option><option>Chenin Blanc</option><option>Albarino</option><option>Gruner Veltliner</option></optgroup>
-          <optgroup label="Blends"><option>Bordeaux Blend (Red)</option><option>Rhone Blend (Red)</option><option>GSM Blend</option><option>Mixed / Other</option></optgroup>
-        </select>
+      <div class="clabel" style="margin-bottom:6px;">1 &mdash; Grape Variety <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 30 pts</span></div>
+      <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:10px;">Select one or more grapes — for blends, pick all you detect</div>
+      <div style="margin-bottom:8px;">
+        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:6px;">Red Grapes</div>
+        <div class="chips" id="t-grape-chips-red">
+          <button class="chip" onclick="toggleGrapeChip(this,'Cabernet Sauvignon')">Cabernet Sauvignon</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Merlot')">Merlot</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Cabernet Franc')">Cabernet Franc</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Pinot Noir')">Pinot Noir</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Syrah / Shiraz')">Syrah / Shiraz</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Grenache')">Grenache</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Mourvedre')">Mourvedre</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Nebbiolo')">Nebbiolo</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Sangiovese')">Sangiovese</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Tempranillo')">Tempranillo</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Malbec')">Malbec</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Zinfandel')">Zinfandel</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Barbera')">Barbera</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Gamay')">Gamay</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Petit Verdot')">Petit Verdot</button>
+        </div>
       </div>
+      <div style="margin-bottom:10px;">
+        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);margin-bottom:6px;">White Grapes</div>
+        <div class="chips" id="t-grape-chips-white">
+          <button class="chip" onclick="toggleGrapeChip(this,'Chardonnay')">Chardonnay</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Sauvignon Blanc')">Sauvignon Blanc</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Riesling')">Riesling</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Pinot Grigio / Pinot Gris')">Pinot Grigio / Gris</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Gewurztraminer')">Gewurztraminer</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Viognier')">Viognier</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Chenin Blanc')">Chenin Blanc</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Albarino')">Albarino</button>
+          <button class="chip" onclick="toggleGrapeChip(this,'Gruner Veltliner')">Gruner Veltliner</button>
+        </div>
+      </div>
+      <div id="t-grape-selected-display" style="font-family:'Noto Serif',serif;font-size:11px;color:var(--gold);font-style:italic;min-height:18px;margin-bottom:4px;"></div>
 
       <!-- SECTION 2: Region guess -->
       <hr class="rule">
@@ -362,6 +390,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
       <div class="clabel" style="margin-bottom:4px;">4 &mdash; Tasting Notes <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts &middot; deductions for wrong guesses</span></div>
       <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:12px;">+1% per correct note, &minus;0.5% per wrong guess</div>
       <div class="chips" id="t-chips"></div>
+
+      <!-- SECTION 5: Price Range -->
+      <hr class="rule">
+      <div class="clabel" style="margin-bottom:10px;">5 &mdash; Price Range <span style="color:var(--ink);font-weight:300;letter-spacing:1px;text-transform:none;font-size:11px;">up to 10 pts</span></div>
+      <div class="field" style="margin-bottom:6px;">
+        <select id="t-price-guess">
+          <option value="">Select your guess</option>
+          <option value="Under $20">Under $20</option>
+          <option value="$20-30">$20 – $30</option>
+          <option value="$30-50">$30 – $50</option>
+          <option value="$50-75">$50 – $75</option>
+          <option value="$75-100">$75 – $100</option>
+          <option value="$100-150">$100 – $150</option>
+          <option value="$150-200">$150 – $200</option>
+          <option value="$200+">$200+</option>
+        </select>
+      </div>
 
       <div class="brow">
         <button class="btn bp bsm" onclick="revealTasting()" id="t-reveal-btn">Reveal &amp; Score</button>
@@ -590,7 +635,7 @@ let currentEventName='';
 let currentReviewer=localStorage.getItem('cellar-reviewer')||'';
 let currentAINotes=[], currentPeerRatings=[], labelB64=null, labelMime='image/jpeg';
 let ratings={aroma:0,taste:0,finish:0,overall:0};
-let tastingSelected=[], tastingRevealed=false;
+let tastingSelected=[], tastingGrapeSelected=[], tastingRevealed=false;
 let useFirebase=false;
 let DB,dbRef,dbSet,dbPush,dbOnValue,dbUpdate;
 let editingWineId=null;
@@ -1354,7 +1399,7 @@ function loadTasting(){
   const id=document.getElementById('t-wine-sel').value;
   if(!id){document.getElementById('tasting-body').classList.add('hidden');return;}
   const w=wines.find(x=>x.id===id); if(!w) return;
-  tastingSelected=[]; tastingRevealed=false;
+  tastingSelected=[]; tastingGrapeSelected=[]; tastingRevealed=false;
   const isBlind=w.blind==='yes';
   document.getElementById('t-name').textContent=displayName(w);
   document.getElementById('t-meta').textContent=isBlind?'Blind tasting':'';
@@ -1362,7 +1407,10 @@ function loadTasting(){
   document.getElementById('t-result').classList.add('hidden');
   document.getElementById('t-reveal-btn').disabled=false;
   // Reset guesses
-  ['t-grape-guess','t-region-guess','t-age-guess'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  ['t-region-guess','t-age-guess','t-price-guess'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  // Reset grape chips
+  document.querySelectorAll('#t-grape-chips-red .chip, #t-grape-chips-white .chip').forEach(c=>c.classList.remove('sel','hit','miss','rev'));
+  document.getElementById('t-grape-selected-display').textContent='';
   // Build note chips
   const known=w.aiNoteChips||[];
   const pool=[...new Set([...known,...shuffle([...ALL_NOTES]).slice(0,22)])].slice(0,30);
@@ -1372,6 +1420,22 @@ function loadTasting(){
 }
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function toggleGrapeChip(el, grape){
+  if(tastingRevealed) return;
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel')){
+    if(!tastingGrapeSelected.includes(grape)) tastingGrapeSelected.push(grape);
+  } else {
+    tastingGrapeSelected=tastingGrapeSelected.filter(g=>g!==grape);
+  }
+  const disp=document.getElementById('t-grape-selected-display');
+  if(tastingGrapeSelected.length){
+    disp.textContent='Your guess: '+tastingGrapeSelected.join(', ');
+  } else {
+    disp.textContent='';
+  }
+}
 
 function toggleNote(el,note){
   if(tastingRevealed) return;
@@ -1384,12 +1448,13 @@ async function revealTasting(){
   const w=wines.find(x=>x.id===wineId);
   if(!w){toast('Select a wine');return;}
 
-  const grapeGuess=document.getElementById('t-grape-guess').value;
+  const grapeGuess=tastingGrapeSelected.join(', ');
   const regionGuess=document.getElementById('t-region-guess').value;
   const ageGuess=document.getElementById('t-age-guess').value;
+  const priceGuess=document.getElementById('t-price-guess').value;
 
-  if(!grapeGuess||!regionGuess||!ageGuess){
-    toast('Please make all three guesses before revealing');return;
+  if(!tastingGrapeSelected.length||!regionGuess||!ageGuess||!priceGuess){
+    toast('Please complete all five sections before revealing');return;
   }
 
   tastingRevealed=true;
@@ -1407,6 +1472,11 @@ async function revealTasting(){
     const n=chip.textContent; chip.classList.remove('sel');
     if(known.includes(n)) chip.classList.add(tastingSelected.includes(n)?'hit':'rev');
     else if(tastingSelected.includes(n)) chip.classList.add('miss');
+  });
+
+  // Disable grape chips visually
+  document.querySelectorAll('#t-grape-chips-red .chip, #t-grape-chips-white .chip').forEach(c=>{
+    c.style.opacity='0.6'; c.style.cursor='default';
   });
 
   // ── AGE SCORE (up to 20pts) ──
@@ -1429,6 +1499,22 @@ async function revealTasting(){
     ageDetail='No vintage on record — partial credit';
   }
 
+  // ── PRICE SCORE (up to 10pts) ──
+  const PRICE_BRACKETS=['Under $20','$20-30','$30-50','$50-75','$75-100','$100-150','$150-200','$200+'];
+  let priceScore=0, priceDetail='';
+  const actualPrice=w.price||'';
+  const guessIdx=PRICE_BRACKETS.indexOf(priceGuess);
+  const actualIdx=PRICE_BRACKETS.indexOf(actualPrice);
+  if(!actualPrice){
+    priceScore=5; priceDetail='No price on record — partial credit';
+  } else if(guessIdx!==-1&&actualIdx!==-1){
+    const diff=Math.abs(guessIdx-actualIdx);
+    if(diff===0){priceScore=10;priceDetail=`Exact — ${actualPrice}`;}
+    else if(diff===1){priceScore=7;priceDetail=`One bracket off — actual: ${actualPrice}`;}
+    else if(diff===2){priceScore=4;priceDetail=`Two brackets off — actual: ${actualPrice}`;}
+    else{priceScore=0;priceDetail=`Actual: ${actualPrice}`;}
+  }
+
   // ── GRAPE & REGION — scored by AI ──
   let grapeScore=0, regionScore=0, grapeDetail='', regionDetail='';
   try{
@@ -1437,13 +1523,14 @@ async function revealTasting(){
 Wine: ${w.name||'Unknown'}, ${w.grape||'unknown grape'}, ${w.region||'unknown region'}, ${w.year||'unknown year'}
 
 Grape guess: "${grapeGuess}" vs actual: "${w.grape||'unknown'}"
+Note: The player may have selected multiple grapes (for blends). Award full or partial credit if they correctly identified the primary grape or meaningful components of a blend.
 Region guess: "${regionGuess}" vs actual: "${w.region||'unknown'}"
 
 Score the GRAPE guess out of 30:
-- 30pts: exact or essentially identical
-- 22-28pts: same family/style (e.g. Cab Sauv vs Cab Franc, Pinot Gris vs Pinot Grigio)
-- 14-20pts: similar profile (e.g. Merlot vs Malbec, Syrah vs Grenache)
-- 6-12pts: same broad category but different profile
+- 30pts: exact match or all major blend components correctly identified
+- 22-28pts: primary grape correct, or same family (e.g. Cab Sauv vs Cab Franc)
+- 14-20pts: got one component of a blend right, or similar profile
+- 6-12pts: same broad category but different grape
 - 0-5pts: completely wrong
 
 Score the REGION guess out of 30:
@@ -1464,14 +1551,15 @@ Return ONLY valid JSON, no markdown:
   } catch(e){
     // Fallback: simple string match
     const gNorm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
-    grapeScore=gNorm(grapeGuess).includes(gNorm(w.grape||'').substring(0,4))||gNorm(w.grape||'').includes(gNorm(grapeGuess).substring(0,4))?20:0;
+    const actualGrapeNorm=gNorm(w.grape||'');
+    grapeScore=tastingGrapeSelected.some(g=>gNorm(g).includes(actualGrapeNorm.substring(0,4))||actualGrapeNorm.includes(gNorm(g).substring(0,4)))?20:0;
     regionScore=gNorm(regionGuess).includes(gNorm(w.region||'').split(',')[0].trim())||gNorm(w.region||'').includes(gNorm(regionGuess).split(',')[0].trim())?20:0;
     grapeDetail='Scored by text match (AI unavailable)';
     regionDetail='Scored by text match (AI unavailable)';
   }
 
   // ── TOTAL ──
-  const total=Math.round(grapeScore+regionScore+ageScore+notePct);
+  const total=Math.round(grapeScore+regionScore+ageScore+notePct+priceScore);
 
   // ── DISPLAY ──
   document.getElementById('t-score-num').textContent=total;
@@ -1479,6 +1567,7 @@ Return ONLY valid JSON, no markdown:
   // Breakdown pills
   const pillClass=s=>s>=20?'good':s>=10?'ok':'bad';
   const notePillClass=notePct>=7?'good':notePct>=3?'ok':'bad';
+  const pricePillClass=priceScore>=8?'good':priceScore>=4?'ok':'bad';
   document.getElementById('t-breakdown').innerHTML=`
     <div class="t-breakdown-pill ${pillClass(grapeScore)}">
       <div class="t-bp-score">${grapeScore}<span style="font-size:14px;color:var(--ink)">/30</span></div>
@@ -1499,6 +1588,11 @@ Return ONLY valid JSON, no markdown:
       <div class="t-bp-score">${notePct.toFixed(1)}<span style="font-size:14px;color:var(--ink)">/10</span></div>
       <div class="t-bp-label">Tasting Notes</div>
       <div class="t-bp-detail">${correct.length} correct, ${wrong.length} wrong</div>
+    </div>
+    <div class="t-breakdown-pill ${pricePillClass}" style="grid-column:1/-1;">
+      <div class="t-bp-score">${priceScore}<span style="font-size:14px;color:var(--ink)">/10</span></div>
+      <div class="t-bp-label">Price Range</div>
+      <div class="t-bp-detail">${priceDetail}</div>
     </div>`;
 
   // Verdict
@@ -1517,6 +1611,7 @@ Return ONLY valid JSON, no markdown:
     <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Grape:</strong> ${w.grape||'Not recorded'}</div>
     <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Region:</strong> ${w.region||'Not recorded'}</div>
     <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Vintage:</strong> ${w.year||'Not recorded'}${actualAge?' ('+actualAge+' years old)':''}</div>
+    <div style="margin-bottom:6px;"><strong style="color:var(--gold);">Price:</strong> ${w.price||'Not recorded'}</div>
     <div><strong style="color:var(--gold);">Wine:</strong> ${w.blind==='yes'?w.name:displayName(w)}</div>`;
 
   document.getElementById('t-expert').textContent=w.aiNotes||'No expert notes for this wine.';
