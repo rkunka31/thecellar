@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Cellar — Osler Bluff</title>
+<title>The Cellar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <script type="module">
@@ -42,12 +42,11 @@ body{background:var(--deep);color:var(--cream);font-family:'Noto Serif',Georgia,
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.4;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
 
-.hdr{text-align:center;padding:44px 24px 28px;border-bottom:1px solid var(--border);}
-.hdr-eye{font-family:'Noto Serif',serif;font-size:10px;font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.hdr{text-align:center;padding:28px 24px 20px;border-bottom:1px solid var(--border);}
 .hdr h1{font-family:'Playfair Display',serif;font-size:clamp(40px,10vw,76px);font-weight:700;letter-spacing:-2px;line-height:.95;color:var(--cream);}
 .hdr h1 em{font-style:italic;color:var(--merlot-lt);}
-.hdr-rule{width:46px;height:1px;background:var(--gold);margin:16px auto 12px;}
-.hdr-sub{font-family:'Noto Serif',serif;font-style:italic;font-weight:300;font-size:13px;color:var(--ink);letter-spacing:1px;}
+.hdr-rule{width:46px;height:1px;background:var(--gold);margin:12px auto 10px;}
+.hdr-sub{font-family:'Noto Serif',serif;font-style:italic;font-weight:300;font-size:13px;color:var(--ink);letter-spacing:1px;min-height:18px;}
 
 .nav{display:flex;justify-content:center;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .nb{background:none;border:none;border-bottom:2px solid transparent;color:var(--ink);font-family:'Noto Serif',serif;font-size:11px;font-weight:400;letter-spacing:3px;text-transform:uppercase;padding:14px 16px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;}
@@ -129,14 +128,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .wine-entry-body{display:none;border-top:1px solid var(--border);padding:20px;}
 .wine-entry-body.open{display:block;}
 
-/* ENJOYMENT SLIDER */
-.enjoy-wrap{margin-bottom:6px;}
-.enjoy-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.enjoy-label{font-family:'Noto Serif',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);width:100px;flex-shrink:0;}
-.enjoy-val{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);min-width:32px;text-align:right;}
-input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--border);border-radius:2px;outline:none;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--deep);}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--deep);}
+/* WINE BOTTLE PICKER */
+.bottle-wrap{display:flex;align-items:flex-end;gap:10px;margin-bottom:6px;}
+.bottle-picker{position:relative;width:52px;height:130px;cursor:pointer;flex-shrink:0;touch-action:none;user-select:none;}
+.bottle-picker svg{width:100%;height:100%;}
+.bottle-labels{display:flex;flex-direction:column;justify-content:space-between;height:100px;padding:14px 0 0;margin-left:2px;}
+.bottle-label-item{font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);letter-spacing:1px;cursor:pointer;transition:color .15s;line-height:1;}
+.bottle-label-item.active{color:var(--gold);font-weight:600;}
+.bottle-val-big{font-family:'Playfair Display',serif;font-size:42px;color:var(--gold);line-height:1;margin-left:16px;align-self:center;}
+.bottle-word{font-family:'Noto Serif',serif;font-size:13px;font-style:italic;color:var(--cream-d);margin-top:4px;}
 
 /* CHIPS */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
@@ -237,10 +237,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 <body>
 
 <div class="hdr">
-  <div class="hdr-eye">Osler Bluff &middot; Collingwood &middot; 2025</div>
   <h1>The <em>Cellar</em></h1>
   <div class="hdr-rule"></div>
-  <div class="hdr-sub">A king's guide to wine</div>
+  <div class="hdr-sub" id="hdr-sub"></div>
 </div>
 
 <div class="setup-banner" id="setup-banner">
@@ -293,11 +292,46 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <div id="report-body"><div class="empty">Add wines and reviews to generate the report.</div></div>
   <div id="roast-section" class="hidden" style="margin-top:8px;">
     <hr class="rule">
-    <div class="clabel" style="margin-bottom:12px;">Sommelier Roast</div>
-    <button class="btn bp bsm" onclick="genRoast()"><span class="spin hidden" id="roast-spin"></span>Generate AI Roast</button>
-    <div id="roast-result" class="hidden aibox" style="margin-top:16px;">
-      <div class="aibox-lbl">Tonight's Verdict</div>
-      <div id="roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.8;white-space:pre-wrap;"></div>
+    <div class="clabel" style="margin-bottom:16px;">Sommelier's Corner</div>
+
+    <!-- Full night roast -->
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);margin-bottom:10px;">Roast the entire evening — wines, ratings, and all who participated.</div>
+      <button class="btn bp bsm" onclick="genRoast()"><span class="spin hidden" id="roast-spin"></span>Roast the Evening</button>
+      <div id="roast-result" class="hidden aibox" style="margin-top:14px;">
+        <div class="aibox-lbl">Tonight's Verdict</div>
+        <div id="roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- Roast a player -->
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Roast a Player</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="field" style="margin:0;flex:1;min-width:160px;"><select id="roast-player-sel"><option value="">Select a player</option></select></div>
+        <button class="btn bq bsm" onclick="genPlayerRoast()"><span class="spin hidden" id="player-roast-spin"></span>Roast</button>
+      </div>
+      <div id="player-roast-result" class="hidden aibox" style="margin-top:14px;">
+        <div class="aibox-lbl" id="player-roast-lbl">Player Roast</div>
+        <div id="player-roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- Roast a wine -->
+    <div style="margin-bottom:8px;">
+      <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Roast a Wine</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="field" style="margin:0;flex:1;min-width:160px;"><select id="roast-wine-sel"><option value="">Select a wine</option></select></div>
+        <button class="btn bq bsm" onclick="genWineRoast()"><span class="spin hidden" id="wine-roast-spin"></span>Roast</button>
+      </div>
+      <div id="wine-roast-result" class="hidden aibox" style="margin-top:14px;">
+        <div class="aibox-lbl" id="wine-roast-lbl">Wine Roast</div>
+        <div id="wine-roast-text" style="font-family:'Noto Serif',serif;font-size:15px;font-weight:300;color:var(--cream-d);line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -477,6 +511,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
 <script>
 // ══════════════════════════════════════════════════
+// HEADER SUBTITLE ROTATION
+// ══════════════════════════════════════════════════
+const SUBTITLES=['Pour. Taste. Debate.','Every bottle tells a story.','The glass is always half full.','Blind tasting. Honest opinions.','Good wine, better company.','From cellar to conversation.','Rate it. Guess it. Love it.','No cork left unpopped.'];
+(function(){ const el=document.getElementById('hdr-sub'); if(el) el.textContent=SUBTITLES[Math.floor(Math.random()*SUBTITLES.length)]; })();
+
+// ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
 let wines=[], reviews=[], archivedEvents=[], playerEntries=[];
@@ -638,7 +678,52 @@ function renderRankings(){
   const el=document.getElementById('rankings-list');
   if(!wines.length){el.innerHTML='<div class="empty">No wines yet. Add bottles in The Cellar.</div>';return;}
 
-  // Sort by avg enjoyment desc, unrated last
+  // ── PLAYER LEADERBOARD ──
+  const locked=playerEntries.filter(e=>e.status==='locked');
+  let leaderboardHtml='';
+  if(locked.length){
+    // Group by reviewer
+    const players={};
+    locked.forEach(e=>{
+      if(!players[e.reviewer]) players[e.reviewer]={winesRated:0,totalBlind:0,blindEntries:0,enjoyTotal:0};
+      players[e.reviewer].winesRated++;
+      players[e.reviewer].enjoyTotal+=(Number(e.enjoyment)||0);
+      if(e.score){players[e.reviewer].totalBlind+=e.score.total; players[e.reviewer].blindEntries++;}
+    });
+    // Scoring: avg enjoyment given (normalized) + avg blind score. Winner = highest combined.
+    const ranked=Object.entries(players).map(([name,p])=>{
+      const avgEnjoy=p.winesRated?p.enjoyTotal/p.winesRated:0;
+      const avgBlind=p.blindEntries?p.totalBlind/p.blindEntries:0;
+      // Combined: enjoyment avg (×5 to weight equally with blind /100) + blind avg
+      const combined=(avgEnjoy*5)+avgBlind;
+      return{name,winesRated:p.winesRated,totalBlind:p.totalBlind,blindEntries:p.blindEntries,avgEnjoy,avgBlind,combined};
+    }).sort((a,b)=>b.combined-a.combined);
+
+    leaderboardHtml=`<div style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="clabel" style="margin:0;">Player Leaderboard</div>
+        <div style="font-family:'Noto Serif',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);">Enjoy avg + blind score</div>
+      </div>
+      ${ranked.map((p,i)=>{
+        const isCurrent=p.name===currentReviewer;
+        const isWinner=i===0;
+        return`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isCurrent?'rgba(123,29,46,.18)':'rgba(0,0,0,.18)'};border:1px solid ${isWinner?'var(--gold)':isCurrent?'rgba(184,150,90,.3)':'var(--border)'};border-radius:3px;margin-bottom:7px;">
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:${isWinner?'var(--gold)':'var(--border-hi)'};min-width:22px;">${i+1}</div>
+          <div style="flex:1;">
+            <div style="font-family:'Noto Serif',serif;font-size:14px;color:var(--cream);">${p.name}${isWinner?' &#127942;':''}${isCurrent?' <span style="font-size:10px;color:var(--gold);">(you)</span>':''}</div>
+            <div style="font-family:'Noto Serif',serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-top:2px;">${p.winesRated} wine${p.winesRated!==1?'s':''} rated${p.blindEntries?' &middot; blind: '+p.totalBlind+'pts':''}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Playfair Display',serif;font-size:24px;color:${isWinner?'var(--gold)':'var(--cream)'};">${p.avgEnjoy.toFixed(1)}<span style="font-size:12px;color:var(--ink)">/10</span></div>
+            <div style="font-family:'Noto Serif',serif;font-size:9px;color:var(--ink);text-transform:uppercase;letter-spacing:1px;">avg enjoy</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="font-family:'Noto Serif',serif;font-size:10px;color:var(--ink);font-style:italic;text-align:center;margin-top:6px;">Ranked by enjoyment average + blind tasting score</div>
+    </div>`;
+  }
+
+  // ── WINE LIST ──
   const sorted=wines.map(w=>({w,avg:getAvgEnjoyment(w.id)}))
     .sort((a,b)=>{
       if(a.avg===null&&b.avg===null) return 0;
@@ -646,7 +731,7 @@ function renderRankings(){
       return b.avg-a.avg;
     });
 
-  el.innerHTML=sorted.map(({w,avg},i)=>{
+  el.innerHTML=leaderboardHtml+sorted.map(({w,avg},i)=>{
     const isBlind=w.blind==='yes';
     const myEntry=getMyEntry(w.id);
     const lockedCount=playerEntries.filter(e=>String(e.wineId)===String(w.id)&&e.status==='locked').length;
@@ -683,6 +768,13 @@ function renderRankings(){
       <div class="wine-entry-body${isOpen?' open':''}" id="web-${w.id}">${entryBody}</div>
     </div>`;
   }).join('');
+
+  // Init bottle pickers for open card
+  if(openWineId){
+    const myE=getMyEntry(openWineId);
+    const initVal=myE&&myE.enjoyment!=null?myE.enjoyment:5;
+    initBottle(openWineId,initVal);
+  }
 }
 
 function toggleWineEntry(wineId){
@@ -713,10 +805,6 @@ function buildEntryForm(w,entry){
   const locked=entry&&entry.status==='locked';
   const isBlind=w.blind==='yes';
   const e=entry||{};
-
-  // Enjoyment levels
-  const enjoyLabels=['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'];
-  const enjoyVal=e.enjoyment!=null?e.enjoyment:5;
 
   // Would buy again
   const buyVal=e.wouldBuyAgain||'';
@@ -786,18 +874,43 @@ function buildEntryForm(w,entry){
     <div class="grule"></div>`;
   }
 
-  // ── SECTION A: How do you like it? (always shown, intuitive for all drinkers)
-  html+=`<div class="clabel" style="margin-bottom:6px;">How do you like it?</div>
-  <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:14px;">Drag the slider — no wine expertise needed</div>
-  <div class="enjoy-row">
-    <div class="enjoy-label">Enjoyment</div>
-    <input type="range" min="0" max="10" step="0.5" value="${enjoyVal}" id="enjoy-${w.id}" ${lockedInputAttr}
-      oninput="document.getElementById('enjoy-val-${w.id}').textContent=this.value;document.getElementById('enjoy-word-${w.id}').textContent=(['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'][Math.round(this.value)]||'')" style="flex:1;">
-    <div class="enjoy-val" id="enjoy-val-${w.id}">${enjoyVal}</div>
-  </div>
-  <div style="font-family:'Noto Serif',serif;font-size:13px;font-style:italic;color:var(--cream-d);margin-bottom:14px;min-height:20px;" id="enjoy-word-${w.id}">${enjoyLabels[Math.round(enjoyVal)]||''}</div>
+  // ── SECTION A: How do you like it?
+  const enjoyLabels=['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'];
+  const enjoyVal=e.enjoyment!=null?e.enjoyment:5;
 
-  <div class="clabel" style="margin-bottom:8px;">Would you buy this wine?</div>
+  html+=`<div class="clabel" style="margin-bottom:6px;">How do you like it?</div>
+  <div style="font-family:'Noto Serif',serif;font-size:11px;color:var(--ink);font-style:italic;margin-bottom:14px;">Tap or drag the bottle to rate</div>
+  <div class="bottle-wrap" id="bottle-wrap-${w.id}">
+    <div class="bottle-picker" id="bottle-${w.id}" onmousedown="startBottleDrag(event,'${w.id}')" ontouchstart="startBottleDrag(event,'${w.id}')">
+      <svg viewBox="0 0 52 130" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="bottle-clip-${w.id}">
+            <path d="M20,8 L20,2 L32,2 L32,8 C38,12 42,20 42,30 L42,115 C42,122 37,127 26,127 C15,127 10,122 10,115 L10,30 C10,20 14,12 20,8 Z"/>
+          </clipPath>
+        </defs>
+        <!-- bottle outline -->
+        <path d="M20,8 L20,2 L32,2 L32,8 C38,12 42,20 42,30 L42,115 C42,122 37,127 26,127 C15,127 10,122 10,115 L10,30 C10,20 14,12 20,8 Z" fill="rgba(0,0,0,0.4)" stroke="rgba(184,150,90,0.35)" stroke-width="1.5"/>
+        <!-- fill layer clipped to bottle shape -->
+        <rect id="bottle-fill-${w.id}" x="0" y="127" width="52" height="0" fill="var(--merlot)" clip-path="url(#bottle-clip-${w.id})" style="transition:y .25s,height .25s;"/>
+        <!-- foil cap -->
+        <rect x="18" y="0" width="16" height="10" rx="2" fill="var(--gold)" opacity="0.7"/>
+        <!-- label area -->
+        <rect id="bottle-label-rect-${w.id}" x="13" y="70" width="26" height="36" rx="2" fill="rgba(255,255,255,0.06)" stroke="rgba(184,150,90,0.2)" stroke-width="1"/>
+        <!-- score number on bottle -->
+        <text id="bottle-score-text-${w.id}" x="26" y="93" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" fill="var(--gold)" opacity="0.9">${enjoyVal}</text>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:space-between;padding:8px 0;flex:1;">
+      <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);line-height:1;" id="bottle-bignum-${w.id}">${enjoyVal}</div>
+      <div style="font-family:'Noto Serif',serif;font-size:16px;font-style:italic;color:var(--cream-d);margin-top:4px;" id="bottle-word-${w.id}">${enjoyLabels[Math.round(enjoyVal)]||''}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:10px;">
+        ${[0,2,4,6,8,10].map(v=>`<button onclick="setBottleVal('${w.id}',${v})" style="font-family:'Noto Serif',serif;font-size:10px;padding:4px 8px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--ink);cursor:pointer;" class="quick-val-btn">${v}</button>`).join('')}
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="enjoy-${w.id}" value="${enjoyVal}">
+
+  <div class="clabel" style="margin-bottom:8px;margin-top:14px;">Would you buy this wine?</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
     ${['Definitely yes','Probably yes','Maybe','Probably not','No way'].map(opt=>`
       <button class="chip${buyVal===opt?' sel':''}" ${locked?'disabled style="pointer-events:none;"':''} onclick="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));this.classList.add('sel');">${opt}</button>`).join('')}
@@ -907,6 +1020,77 @@ function buildEntryForm(w,entry){
 
   return html;
 }
+
+// ══════════════════════════════════════════════════
+// BOTTLE PICKER
+// ══════════════════════════════════════════════════
+const ENJOY_LABELS=['Terrible','Poor','Meh','Okay','Decent','Good','Very good','Great','Excellent','Outstanding','Perfect'];
+
+function setBottleVal(wineId, val){
+  val=Math.max(0,Math.min(10,Number(val)));
+  const input=document.getElementById('enjoy-'+wineId); if(input) input.value=val;
+  updateBottleUI(wineId,val);
+}
+
+function updateBottleUI(wineId,val){
+  // Fill: bottle body goes from y=10 (top of body) to y=127 (bottom), height=117
+  // fill pct from bottom
+  const pct=val/10;
+  const totalH=117, topY=10;
+  const fillH=Math.round(totalH*pct);
+  const fillY=topY+(totalH-fillH);
+  const fillEl=document.getElementById('bottle-fill-'+wineId);
+  if(fillEl){ fillEl.setAttribute('y',fillY); fillEl.setAttribute('height',fillH); }
+  const scoreEl=document.getElementById('bottle-score-text-'+wineId);
+  if(scoreEl) scoreEl.textContent=val%1?val.toFixed(1):val;
+  const bigEl=document.getElementById('bottle-bignum-'+wineId);
+  if(bigEl) bigEl.textContent=val%1?val.toFixed(1):val;
+  const wordEl=document.getElementById('bottle-word-'+wineId);
+  if(wordEl) wordEl.textContent=ENJOY_LABELS[Math.round(val)]||'';
+  // highlight quick val buttons
+  document.querySelectorAll(`#bottle-wrap-${wineId} .quick-val-btn`).forEach(b=>{
+    b.style.background=Number(b.textContent)===val?'var(--merlot)':'transparent';
+    b.style.color=Number(b.textContent)===val?'var(--cream)':'var(--ink)';
+    b.style.borderColor=Number(b.textContent)===val?'var(--merlot)':'var(--border)';
+  });
+  const input=document.getElementById('enjoy-'+wineId); if(input) input.value=val;
+}
+
+function startBottleDrag(e,wineId){
+  const el=document.getElementById('bottle-'+wineId); if(!el) return;
+  e.preventDefault();
+  const rect=el.getBoundingClientRect();
+  // bottle body: top=10/130 of height, bottom=127/130
+  const bodyTop=rect.top+(10/130)*rect.height;
+  const bodyBot=rect.top+(127/130)*rect.height;
+
+  function valFromY(clientY){
+    const clamped=Math.max(bodyTop,Math.min(bodyBot,clientY));
+    const pct=1-(clamped-bodyTop)/(bodyBot-bodyTop);
+    return Math.round(pct*20)/2; // 0.5 increments
+  }
+
+  const startY=e.touches?e.touches[0].clientY:e.clientY;
+  updateBottleUI(wineId,valFromY(startY));
+
+  function onMove(ev){
+    const y=ev.touches?ev.touches[0].clientY:ev.clientY;
+    updateBottleUI(wineId,valFromY(y));
+  }
+  function onEnd(){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onEnd);
+    document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('touchend',onEnd);
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onEnd);
+  document.addEventListener('touchmove',onMove,{passive:false});
+  document.addEventListener('touchend',onEnd);
+}
+
+// Init bottle UI after render
+function initBottle(wineId,val){ setTimeout(()=>updateBottleUI(wineId,val),30); }
 
 // ══════════════════════════════════════════════════
 // ENTRY INTERACTIONS
@@ -1096,7 +1280,7 @@ Return ONLY JSON: {"grapeScore":0,"grapeDetail":"one sentence","regionScore":0,"
     [30,49,'Getting warmer. Your palate is developing.'],
     [50,64,'Respectable. You clearly have opinions about wine.'],
     [65,79,'Impressive. Are you secretly a sommelier?'],
-    [80,89,'Outstanding. You have wasted your career in finance.'],
+    [80,89,'Outstanding. Consider a career change to oenology.'],
     [90,100,'Extraordinary. Either a gift or a cheat sheet.']
   ];
   score.verdict=(verdicts.find(([lo,hi])=>score.total>=lo&&score.total<=hi)||[])[2]||'';
@@ -1459,6 +1643,19 @@ function renderReport(){
     ${mp?`<div class="rep-sec"><div class="rep-title">Most Pretentious Note</div><div class="rep-item"><strong>${mp.reviewer}</strong>: "${mp.notes}"</div></div>`:''}
     ${los&&los.w.id!==win.w.id?`<div class="rep-sec"><div class="rep-title">Bottom of the Cellar</div><div class="rep-item"><strong>${displayName(los.w)}</strong> &nbsp;&middot;&nbsp; ${los.avg.toFixed(1)}/10${los.w.bringer?' &nbsp;&middot;&nbsp; Brought by '+los.w.bringer:''}</div></div>`:''}`;
   document.getElementById('roast-section').classList.remove('hidden');
+
+  // Populate roast dropdowns
+  const reviewers=[...new Set(locked.map(e=>e.reviewer))].sort();
+  const playerSel=document.getElementById('roast-player-sel');
+  if(playerSel){
+    const cur=playerSel.value;
+    playerSel.innerHTML='<option value="">Select a player</option>'+reviewers.map(r=>`<option value="${r}"${r===cur?' selected':''}>${r}</option>`).join('');
+  }
+  const wineSel=document.getElementById('roast-wine-sel');
+  if(wineSel){
+    const cur=wineSel.value;
+    wineSel.innerHTML='<option value="">Select a wine</option>'+sc.map(({w})=>`<option value="${w.id}"${w.id===cur?' selected':''}>${displayName(w)}</option>`).join('');
+  }
 }
 
 async function genRoast(){
@@ -1473,10 +1670,55 @@ async function genRoast(){
     return`${i+1}. ${displayName(w)} (${avg.toFixed(1)}/10)${w.bringer?' — brought by '+w.bringer:''}.${notes?' Notes: '+notes:''}${topScore?' Best blind score: '+topScore.reviewer+' '+topScore.score.total+'/100':''}`;
   }).join('\n');
   try{
-    const roast=await callClaude(`You are a sarcastically brilliant sommelier MC at a finance industry chalet weekend at Osler Bluff in Collingwood, Ontario. Wine results:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph end-of-night roast. Name names, call out scores, mock tasting notes, shame whoever brought the worst wine. Finance humour welcome. Charming but merciless. Plain text only, no markdown.`);
+    const roast=await callClaude(`You are a sarcastically brilliant sommelier MC hosting a wine tasting evening. Wine results:\n\n${summary}\n\nWrite a sharp, witty 3-4 paragraph end-of-night roast. Name names, call out scores, mock tasting notes, shame whoever brought the worst wine. Be charming but merciless. Plain text only, no markdown.`);
     document.getElementById('roast-text').textContent=roast;
     document.getElementById('roast-result').classList.remove('hidden');
   }catch(e){ toast('Could not generate roast'); }
+  finally{ spin.classList.add('hidden'); }
+}
+
+async function genPlayerRoast(){
+  const name=document.getElementById('roast-player-sel').value;
+  if(!name){toast('Select a player first');return;}
+  const spin=document.getElementById('player-roast-spin'); spin.classList.remove('hidden');
+  document.getElementById('player-roast-result').classList.add('hidden');
+  const locked=playerEntries.filter(e=>e.status==='locked'&&e.reviewer===name);
+  if(!locked.length){toast('No locked entries for '+name);spin.classList.add('hidden');return;}
+  const lines=locked.map(e=>{
+    const w=wines.find(x=>x.id===e.wineId);
+    const wname=w?displayName(w):'Unknown wine';
+    const scoreStr=e.score?` — blind score: ${e.score.total}/100`:'';
+    const noteStr=e.notes?` — notes: "${e.notes}"`:'';
+    return`${wname}: ${e.enjoyment}/10${scoreStr}${noteStr}`;
+  }).join('\n');
+  try{
+    const roast=await callClaude(`You are a witty sommelier MC roasting a specific taster at a wine evening. Player: ${name}. Their ratings:\n\n${lines}\n\nWrite a 2-3 paragraph roast of ${name} specifically — their taste, their scores, their tasting notes (if any), their blind guessing ability. Be affectionate but pointed. No generic filler. Plain text only, no markdown.`);
+    document.getElementById('player-roast-lbl').textContent=name+' — Player Roast';
+    document.getElementById('player-roast-text').textContent=roast;
+    document.getElementById('player-roast-result').classList.remove('hidden');
+  }catch(e){ toast('Could not generate player roast'); }
+  finally{ spin.classList.add('hidden'); }
+}
+
+async function genWineRoast(){
+  const wineId=document.getElementById('roast-wine-sel').value;
+  if(!wineId){toast('Select a wine first');return;}
+  const w=wines.find(x=>x.id===wineId);
+  if(!w){toast('Wine not found');return;}
+  const spin=document.getElementById('wine-roast-spin'); spin.classList.remove('hidden');
+  document.getElementById('wine-roast-result').classList.add('hidden');
+  const locked=playerEntries.filter(e=>e.status==='locked'&&String(e.wineId)===String(wineId));
+  if(!locked.length){toast('No entries for this wine yet');spin.classList.add('hidden');return;}
+  const avg=getAvgEnjoyment(wineId);
+  const lines=locked.map(e=>`${e.reviewer}: ${e.enjoyment}/10${e.wouldBuyAgain?' ('+e.wouldBuyAgain+')':''}${e.notes?' — "'+e.notes+'"':''}`).join('\n');
+  const topBlind=locked.filter(e=>e.score).sort((a,b)=>b.score.total-a.score.total)[0];
+  const wineInfo=[displayName(w),w.grape,w.region,w.year,w.price].filter(Boolean).join(', ');
+  try{
+    const roast=await callClaude(`You are a witty sommelier MC summarising how a wine performed at a tasting evening. Wine: ${wineInfo}. Average enjoyment: ${avg?avg.toFixed(1)+'/10':'unknown'}. Individual ratings:\n\n${lines}\n${topBlind?'\nBest blind score for this wine: '+topBlind.reviewer+' ('+topBlind.score.total+'/100)':''}\n\nWrite a 2-3 paragraph roast/summary of this wine — how the group rated it, what people said, whether it delivered on expectations, who loved it and who didn't. Be entertaining and specific. Plain text only, no markdown.`);
+    document.getElementById('wine-roast-lbl').textContent=displayName(w)+' — Wine Roast';
+    document.getElementById('wine-roast-text').textContent=roast;
+    document.getElementById('wine-roast-result').classList.remove('hidden');
+  }catch(e){ toast('Could not generate wine roast'); }
   finally{ spin.classList.add('hidden'); }
 }
 
